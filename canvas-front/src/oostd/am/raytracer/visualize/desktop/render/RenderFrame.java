@@ -1,13 +1,13 @@
-package oostd.am.raytracer.visualize.desktop;
+package oostd.am.raytracer.visualize.desktop.render;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class DebugFrame extends JFrame {
+public class RenderFrame extends JFrame {
     private Canvas canvas;
 
-    public DebugFrame(){
-        super("Debug window");
+    public RenderFrame(){
+        super("Trace window");
         canvas = new Canvas();
         this.add(canvas);
 
