@@ -1,5 +1,11 @@
 package oostd.am.raytracer.api.camera;
 
 public class Color {
-    public float r,g,b;
+    public int r,g,b;
+
+    public Color(int r, int g, int b){
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    }
 }

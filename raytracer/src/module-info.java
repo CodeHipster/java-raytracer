@@ -1,6 +1,6 @@
-import oostd.am.raytracer.api.RayTracer;
+import oostd.am.raytracer.api.RayTracerService;
 
 module oostd.am.raytracer {
     requires oostd.am.raytracer.api;
-    provides RayTracer with oostd.am.raytracer.RayTracer;
+    provides RayTracerService with oostd.am.raytracer.RayTracerService;
 }

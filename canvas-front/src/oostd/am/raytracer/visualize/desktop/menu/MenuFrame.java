@@ -1,5 +1,7 @@
 package oostd.am.raytracer.visualize.desktop.menu;
 
+import oostd.am.raytracer.visualize.desktop.Service;
+
 import javax.swing.*;
 
 public class MenuFrame extends JFrame {
@@ -8,11 +10,11 @@ public class MenuFrame extends JFrame {
     public MenuFrame(){
         super("Menu");
 
-        button = new JButton("Start render");
+        button = new JButton("Start startRendering");
         button.setVerticalTextPosition(AbstractButton.CENTER);
         button.setHorizontalTextPosition(AbstractButton.LEADING); //aka LEFT, for left-to-right locales
-        button.setActionCommand("render");
-        button.addActionListener(new MenuListener());
+        button.setActionCommand("startRendering");
+        button.addActionListener(new MenuListener(new Service()));
 
         this.add(button);
 
