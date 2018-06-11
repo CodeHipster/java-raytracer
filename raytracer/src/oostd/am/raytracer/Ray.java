@@ -1,11 +1,11 @@
 package oostd.am.raytracer;
 
-import oostd.am.raytracer.api.camera.Quaternion;
+import oostd.am.raytracer.api.camera.Positioning;
 
 public class Ray {
-    private Quaternion positioning;
+    private Positioning positioning;
 
-    public Ray(Quaternion positioning){
+    public Ray(Positioning positioning){
         this.positioning = positioning;
     }
 }
