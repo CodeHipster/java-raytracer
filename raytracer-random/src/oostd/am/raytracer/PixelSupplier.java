@@ -2,11 +2,12 @@ package oostd.am.raytracer;
 
 import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.camera.Pixel;
-import oostd.am.raytracer.api.camera.Position;
+import oostd.am.raytracer.api.geography.PixelPosition;
 
 import java.util.Random;
 import java.util.concurrent.SubmissionPublisher;
 
+//supply random pixels
 public class PixelSupplier implements Runnable {
 
     private int width, height;
@@ -24,7 +25,7 @@ public class PixelSupplier implements Runnable {
 
         while(true){
             Pixel pixel = new Pixel(
-                    new Position(random.nextInt(width), random.nextInt(height)),
+                    new PixelPosition(random.nextInt(width), random.nextInt(height)),
                     new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255))
             );
             System.out.println("Submitting pixel");

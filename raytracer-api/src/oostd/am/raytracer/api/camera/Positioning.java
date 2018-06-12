@@ -1,22 +1,17 @@
 package oostd.am.raytracer.api.camera;
 
+import oostd.am.raytracer.api.geography.UnitVector;
+import oostd.am.raytracer.api.geography.Vector;
+
 /**
  * Positioning defined as a quaternion
  */
 public class Positioning {
-    public double a,b,c,d;
+    public Vector position;
+    public UnitVector direction;
 
-    /**
-     * 4 values of a quaternion defining the position and orientation of the camera.
-     * @param a
-     * @param b
-     * @param c
-     * @param d
-     */
-    public Positioning(double a, double  b, double  c, double  d){
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.d = d;
+    public Positioning(Vector position, UnitVector direction){
+        this.position = position;
+        this.direction = direction;
     }
 }
