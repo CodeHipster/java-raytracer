@@ -25,14 +25,23 @@ public class Vector {
         return new Vector(this.x - other.x, this.y - other.y, this.z - other.z);
     }
 
+    public Vector multiply(double scalar){
+        return new Vector(x *scalar, y * scalar, z *scalar);
+    }
+
+    public Vector add(Vector other) {
+        return new Vector(x + other.x, y + other.y, z + other.z);
+    }
+
     /**
      * Calculate cross product of this vector and other (TxO)
      * returns a new vector.
      */
     public Vector cross(Vector other){
         return new Vector(
-                this.x * other.y - this.y * other.x,
                 this.y * other.z - this.z * other.y,
-                this.z * other.x - this.x * other.z);
+                this.z * other.x - this.x * other.z,
+                this.x * other.y - this.y * other.x);
     }
+
 }

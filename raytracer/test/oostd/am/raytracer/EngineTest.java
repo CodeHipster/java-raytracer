@@ -29,7 +29,7 @@ public class EngineTest {
         Camera camera = new Camera(
                 new Positioning(
                         new Vector(0, 0, 0), //Camera at the center of the scene
-                        new UnitVector(0, 0, 1)) //Camera pointing 'forward' into the scene
+                        UnitVector.construct(0, 0, 1)) //Camera pointing 'forward' into the scene
                 , new Lens(300, 300, 1));
         Engine engine = new Engine(camera, scene);
         engine.start();

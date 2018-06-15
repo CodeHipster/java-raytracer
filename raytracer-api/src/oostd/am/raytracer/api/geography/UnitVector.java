@@ -8,13 +8,13 @@ public class UnitVector extends Vector {
      * @param y
      * @param z
      */
-    public UnitVector(double x, double y, double z) {
+    private UnitVector(double x, double y, double z) {
         super(x, y, z);
+    }
 
+    public static UnitVector construct(double x, double y, double z){
         //make length 1.
         double length = Math.sqrt(x*x + y*y + z*z);
-        this.x /= length;
-        this.y /= length;
-        this.z /= length;
+        return new UnitVector(x/length, y/length, z/length);
     }
 }

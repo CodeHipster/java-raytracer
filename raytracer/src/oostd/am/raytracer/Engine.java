@@ -33,7 +33,7 @@ public class Engine {
             double ypos = ((double) y / pixelsY) * height - height / 2.0;
             for (int x = 0; x < pixelsX; ++x) {
                 double xpos = ((double) x / pixelsX) * width - width / 2.0;
-                UnitVector rayDirection = new UnitVector(xpos, ypos, camera.lens.offset);
+                UnitVector rayDirection = UnitVector.construct(xpos, ypos, camera.lens.offset);
                 inverseRays.add(new InverseRay(1, rayDirection, camera.positioning.position, new PixelPosition(x, y)));
             }
         }

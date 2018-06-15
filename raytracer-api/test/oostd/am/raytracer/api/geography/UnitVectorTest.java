@@ -8,7 +8,7 @@ public class UnitVectorTest {
 
     @Test
     public void test(){
-        UnitVector unitVector = new UnitVector(1f, 2f, 4f);
+        UnitVector unitVector = UnitVector.construct(1.0, 2.0, 4.0);
         Assertions.assertEquals(0.2182178902359924, unitVector.x);
         Assertions.assertEquals(0.4364357804719848, unitVector.y);
         Assertions.assertEquals(0.8728715609439696, unitVector.z);
