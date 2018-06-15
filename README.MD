@@ -7,7 +7,7 @@ desktop interface for the raytracer
 
 ### raytracer api
 api module defining the interface for a raytracer
-- input: scenery, camera(pixels wide, pixels high, position, direction)
+- input: scene, camera(pixels wide, pixels high, position, direction)
 - output: stream of pixels (x,y, color)
 
 ### raytracer

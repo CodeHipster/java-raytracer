@@ -28,7 +28,7 @@ Step 9
 Light surface, square
 
 Step 10
-More shapes, load scenery from file .fbx(or something custom)
+More shapes, load scene from file .fbx(or something custom)
 
 Step 11
 Web interface

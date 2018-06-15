@@ -2,7 +2,7 @@ package oostd.am.raytracer.api;
 
 import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Pixel;
-import oostd.am.raytracer.api.scenery.Scenery;
+import oostd.am.raytracer.api.scenery.Scene;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,5 +17,5 @@ public interface RayTracerService {
         return list;
     }
 
-    void startRendering(Flow.Subscriber<Pixel> subscriber, Scenery scenery, Camera camera);
+    void startRendering(Flow.Subscriber<Pixel> subscriber, Scene scene, Camera camera);
 }

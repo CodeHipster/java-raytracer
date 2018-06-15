@@ -6,7 +6,7 @@ import oostd.am.raytracer.api.camera.Positioning;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
 import oostd.am.raytracer.api.scenery.PointLight;
-import oostd.am.raytracer.api.scenery.Scenery;
+import oostd.am.raytracer.api.scenery.Scene;
 import oostd.am.raytracer.api.scenery.Triangle;
 import oostd.am.raytracer.api.scenery.Vertex;
 import oostd.am.raytracer.visualize.desktop.Service;
@@ -27,7 +27,7 @@ public class MenuListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if ("startRendering".equals(e.getActionCommand())) {
             service.startRender(
-                    new Scenery(
+                    new Scene(
                             Arrays.asList(
                                     new Triangle(new Vertex[]{
                                             new Vertex(-1.5f, 2, 12),
@@ -35,7 +35,6 @@ public class MenuListener implements ActionListener {
                                             new Vertex(-1, -1, 10)
                                     })),
                             Arrays.asList(new PointLight(new Vertex(0, 5, 8)))),
-                    //TODO: transform unit vector to quaternion
                     new Camera(
                             new Positioning(
                                     new Vector(0, 0, 0), //Camera at the center of the scene

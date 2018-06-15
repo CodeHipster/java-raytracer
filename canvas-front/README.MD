@@ -7,11 +7,11 @@ It shows 2 windows
 
 ## menu
 The menu makes it possible to:
-- select a scenery
+- select a scene
 - configure a camera
 - start rendering
 
-### scenery
+### scene
 yet to figure out
 
 ### camera
