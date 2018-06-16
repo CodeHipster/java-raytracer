@@ -1,6 +1,7 @@
 package oostd.am.raytracer;
 
 
+import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
 import oostd.am.raytracer.api.scenery.Triangle;
@@ -13,7 +14,9 @@ public class CollisionCalculatorTest {
     @Test
     public void calculateCollision() {
         //simple triangle 3 units away. Triangle vertices have to go clockwise.
-        Triangle t = new Triangle(new Vertex[]{new Vertex(-1.0, -1.0, 3.0),new Vertex(0.0, 2.0, 3.0),new Vertex(1.0, -1.0, 3.0) });
+        Triangle t = new Triangle(
+                new Vertex[]{new Vertex(-1.0, -1.0, 3.0),new Vertex(0.0, 2.0, 3.0),new Vertex(1.0, -1.0, 3.0) },
+                new Color(255,0,0));
 
         // ray pointing towards triangle
         Ray r = new Ray(UnitVector.construct(0.0, 0.0, 1.0), new Vector(0.0, 0.0, 0.0));

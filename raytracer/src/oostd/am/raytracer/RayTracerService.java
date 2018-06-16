@@ -9,15 +9,16 @@ import java.util.concurrent.SubmissionPublisher;
 
 public class RayTracerService implements oostd.am.raytracer.api.RayTracerService {
 
-    private SubmissionPublisher<Pixel> pixelPusher;
+    private SubmissionPublisher<Pixel> pixelSink;
 
     public RayTracerService(){
-        this.pixelPusher = new SubmissionPublisher<>();
+        this.pixelSink = new SubmissionPublisher<>();
     }
 
     @Override
     public void startRendering(Flow.Subscriber<Pixel> subscriber, Scene scene, Camera camera) {
-        Engine engine = new Engine(camera, scene);
+        pixelSink.subscribe(subscriber);
+        Engine engine = new Engine(camera, scene, pixelSink);
         engine.start();
     }
 }

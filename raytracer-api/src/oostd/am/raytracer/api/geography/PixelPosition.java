@@ -7,4 +7,12 @@ public class PixelPosition {
         this.x = x;
         this.y = y;
     }
+
+    @Override
+    public String toString() {
+        return "PixelPosition{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

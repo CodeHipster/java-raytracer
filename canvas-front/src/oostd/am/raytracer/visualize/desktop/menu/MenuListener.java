@@ -1,6 +1,7 @@
 package oostd.am.raytracer.visualize.desktop.menu;
 
 import oostd.am.raytracer.api.camera.Camera;
+import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.camera.Lens;
 import oostd.am.raytracer.api.camera.Positioning;
 import oostd.am.raytracer.api.geography.UnitVector;
@@ -33,12 +34,13 @@ public class MenuListener implements ActionListener {
                                             new Vertex(-1.5f, 2, 12),
                                             new Vertex(1, 1, 11),
                                             new Vertex(-1, -1, 10)
-                                    })),
+                                    },
+                                            new Color(0,0,255))),
                             Arrays.asList(new PointLight(new Vertex(0, 5, 8)))),
                     new Camera(
                             new Positioning(
                                     new Vector(0, 0, 0), //Camera at the center of the scene
-                                    new UnitVector(0, 0, 1)) //Camera pointing 'forward' into the scene
+                                    UnitVector.construct(0, 0, 1)) //Camera pointing 'forward' into the scene
                             , new Lens(300, 300, 1)));
         }
     }

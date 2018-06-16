@@ -10,4 +10,12 @@ public class Pixel {
         this.position = position;
         this.color = color;
     }
+
+    @Override
+    public String toString() {
+        return "Pixel{" +
+                "position=" + position +
+                ", color=" + color +
+                '}';
+    }
 }

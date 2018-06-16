@@ -11,14 +11,19 @@ import oostd.am.raytracer.api.scenery.Triangle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Flow;
+import java.util.concurrent.SubmissionPublisher;
 
 public class Engine {
     private List<PointLight> pointLights;
     private List<InverseRay> inverseRays = new ArrayList<>();
     private List<LightRay> lightRays = new ArrayList<>();
     private List<Triangle> objects;
+    private SubmissionPublisher<Pixel> pixelSink;
 
-    public Engine(Camera camera, Scene scene) {
+    public Engine(Camera camera, Scene scene, SubmissionPublisher<Pixel> pixelSink) {
+        this.pixelSink = pixelSink;
+
         this.pointLights = scene.getPointLights();
         this.objects = scene.getTriangles();
 
@@ -44,7 +49,11 @@ public class Engine {
             //check collision with triangles;
             for (Triangle triangle : objects) {
                 Vector vector = CollisionCalculator.calculateCollision(triangle, ray);
+                if(vector != null){
+                   pixelSink.submit(new Pixel(ray.getDestination(), triangle.color));
+                }
             }
         }
+        pixelSink.close();
     }
 }

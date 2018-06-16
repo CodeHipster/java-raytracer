@@ -8,4 +8,13 @@ public class Color {
         this.g = g;
         this.b = b;
     }
+
+    @Override
+    public String toString() {
+        return "Color{" +
+                "r=" + r +
+                ", g=" + g +
+                ", b=" + b +
+                '}';
+    }
 }
