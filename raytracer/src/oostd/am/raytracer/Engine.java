@@ -50,7 +50,7 @@ public class Engine implements Runnable{
         for (InverseRay ray : inverseRays) {
             //check collision with triangles;
             for (Triangle triangle : objects) {
-                Vector vector = CollisionCalculator.calculateCollision(triangle, ray);
+                Vector vector = CollisionCalculator.calculateCollision2(triangle, ray);
                 if(vector != null){
                     pixelSink.submit(new Pixel(ray.getDestination(), triangle.color));
                 }

@@ -50,7 +50,8 @@ public class RenderPanel extends JPanel implements Flow.Subscriber<Pixel> {
 
         int rgb = (r << 16) + (g << 8) + b;
         System.out.println("received pixel");
-        imageBuffer.setRGB(pixel.position.x, pixel.position.y, rgb);
+        //TODO something with the camera size and panel size and image size.
+        imageBuffer.setRGB(pixel.position.x, 300 - pixel.position.y, rgb);
         subscription.request(1);
     }
 

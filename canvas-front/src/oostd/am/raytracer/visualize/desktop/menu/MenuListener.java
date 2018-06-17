@@ -31,9 +31,9 @@ public class MenuListener implements ActionListener {
                     new Scene(
                             Arrays.asList(
                                     new Triangle(new Vertex[]{
-                                            new Vertex(-1.5f, 2, 12),
-                                            new Vertex(1, 1, 11),
-                                            new Vertex(-1, -1, 10)
+                                            new Vertex(-1.0, -1.0, 30.0),
+                                            new Vertex(0.0, 2.0, 30.0),
+                                            new Vertex(1.0, -1.0, 30.0)
                                     },
                                             new Color(0,0,255))),
                             Arrays.asList(new PointLight(new Vertex(0, 5, 8)))),
