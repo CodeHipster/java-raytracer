@@ -22,7 +22,9 @@ For each pixel on the lens a ray is cast. The lens is 1 unit in front of the cam
 
 ## render output
 The render output window shows the result of the rendering. 
-This window is continuously updated as raytracer renders more pixels.
+This window and the rendering output are coupled with an ImageBuffer.
+The pixels generated from the ray tracers are placed on the image buffer.
+The buffer is painted at an interval on the gui.
 
 # java modules
 This module depends on the raytracer-api during compile time.

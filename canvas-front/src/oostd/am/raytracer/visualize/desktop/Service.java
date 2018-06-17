@@ -14,7 +14,7 @@ import java.util.List;
 public class Service {
 
     private RayTracerService rayTracerService;
-    public final static int INTERVAL = 1000;
+    public final static int INTERVAL = 33;
 
     public Service(){
         List<RayTracerService> instances = RayTracerService.getInstances();
