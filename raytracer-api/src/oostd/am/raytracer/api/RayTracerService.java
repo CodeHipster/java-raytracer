@@ -17,5 +17,11 @@ public interface RayTracerService {
         return list;
     }
 
+    /**
+     * This method should immediately return and render asynchronously
+     * @param subscriber
+     * @param scene
+     * @param camera
+     */
     void startRendering(Flow.Subscriber<Pixel> subscriber, Scene scene, Camera camera);
 }

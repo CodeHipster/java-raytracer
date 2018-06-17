@@ -19,6 +19,7 @@ public class RayTracerService implements oostd.am.raytracer.api.RayTracerService
     public void startRendering(Flow.Subscriber<Pixel> subscriber, Scene scene, Camera camera) {
         pixelSink.subscribe(subscriber);
         Engine engine = new Engine(camera, scene, pixelSink);
-        engine.start();
+
+        new Thread(engine).start();
     }
 }

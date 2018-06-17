@@ -2,9 +2,14 @@ package oostd.am.raytracer.visualize.desktop;
 
 import oostd.am.raytracer.visualize.desktop.menu.MenuFrame;
 
+import javax.swing.*;
+
 public class Main {
 
     public static void main(String[] args){
-        new MenuFrame();
+        SwingUtilities.invokeLater(() -> {
+            System.out.println("Created Menu on EDT? "+ SwingUtilities.isEventDispatchThread());
+            new MenuFrame();
+        });
     }
 }

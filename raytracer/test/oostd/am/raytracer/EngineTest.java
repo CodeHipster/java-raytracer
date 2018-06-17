@@ -38,7 +38,7 @@ public class EngineTest {
                         UnitVector.construct(0, 0, 1)) //Camera pointing 'forward' into the scene
                 , new Lens(300, 300, 1));
         Engine engine = new Engine(camera, scene, publisher);
-        engine.start();
+        engine.run();
     }
 
 

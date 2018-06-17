@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
 
-public class Engine {
+public class Engine implements Runnable{
     private List<PointLight> pointLights;
     private List<InverseRay> inverseRays = new ArrayList<>();
     private List<LightRay> lightRays = new ArrayList<>();
@@ -44,13 +44,15 @@ public class Engine {
         }
     }
 
-    public void start() {
+    @Override
+    public void run() {
+
         for (InverseRay ray : inverseRays) {
             //check collision with triangles;
             for (Triangle triangle : objects) {
                 Vector vector = CollisionCalculator.calculateCollision(triangle, ray);
                 if(vector != null){
-                   pixelSink.submit(new Pixel(ray.getDestination(), triangle.color));
+                    pixelSink.submit(new Pixel(ray.getDestination(), triangle.color));
                 }
             }
         }
