@@ -80,55 +80,25 @@ public class Engine implements Runnable{
             }
             if(hitLight){
                 //calculate color
-
-                //add phong?
-                //diffuse
-                //specular
-                //ambient?
-
                 UnitVector lightNormal = UnitVector.construct(ray.position.subtract(ray.light.getPosition()));
                 UnitVector inverseLightNormal = lightNormal.inverse();
                 UnitVector surfaceNormal = ray.triangle.surfaceNormal;
                 UnitVector reflectNormal = lightNormal.reflectOn(surfaceNormal);
                 UnitVector inverseViewNormal = ray.predecessor.direction.inverse();
 
-                double diffuseFactor1 = surfaceNormal.dot(inverseLightNormal);
+                double diffuseFactor = surfaceNormal.dot(inverseLightNormal);
 
-                double specularFactor1 = reflectNormal.dot(inverseViewNormal);
-                specularFactor1 = Math.pow(specularFactor1,20);
-                // L = vector from surface to light
-                Vector L = UnitVector.construct(ray.position.subtract(ray.light.getPosition()));
-                // N = normal of triangle        Vector vert0 = triangle.vertices[0];
+                double specularIntensity = 1;
+                double specularPower = 100;
+                double specularFactor = reflectNormal.dot(inverseViewNormal);
+                specularFactor = Math.pow(specularFactor,specularPower);
+                Color specular = ray.light.color.clone().scale(specularIntensity*specularFactor);
 
-                Vector edge1 = ray.triangle.vertices[1].subtract(ray.triangle.vertices[0]);
-                Vector edge2 = ray.triangle.vertices[2].subtract(ray.triangle.vertices[0]);
+                Color diffuse = ray.light.color.clone().scale(diffuseFactor).filter(ray.triangle.colorFilter);
 
-                Vector n = edge1.cross(edge2);
-                Vector N = UnitVector.construct(n);
-                // R = the normalized reflection vector for L about the surface normal,
-                //r=d−2(d⋅n)n
-                Vector R = UnitVector.construct(L.subtract(N.multiply(ray.direction.dot(N) * 2)));
-                // V = the normalized view vector.
-                Vector V = ray.predecessor.direction;
-                // diffuse = (L . N) * lightColor
-                double diffuseFactor = L.dot(N) *-1;
-                Color diffuse = new Color((int)(diffuseFactor * ray.light.color.r),(int)(diffuseFactor * ray.light.color.g),(int)(diffuseFactor * ray.light.color.b));
-                // specular = ((R . V) ^ specularPower) * lightColor
-                double specularFactor = Math.pow(R.dot(V), 1);
-                Color specular = new Color((int)(specularFactor1 * ray.light.color.r),(int)(specularFactor1 * ray.light.color.g),(int)(specularFactor1 * ray.light.color.b));
-
-                Color color = diffuse.filter(ray.triangle.colorFilter).add(specular); //we should not filter specular?
-                pixelSink.submit(new Pixel(ray.getDestination(), specular));
+                pixelSink.submit(new Pixel(ray.getDestination(), diffuse.add(specular)));
             }
         }
         pixelSink.close();
     }
 }
-
-//    vec3 VertexToEye = normalize(gEyeWorldPos - WorldPos0);
-//    vec3 LightReflect = normalize(reflect(gDirectionalLight.Direction, Normal));
-//    float SpecularFactor = dot(VertexToEye, LightReflect);
-//        if (SpecularFactor > 0) {
-//                SpecularFactor = pow(SpecularFactor, gSpecularPower);
-//                SpecularColor = vec4(gDirectionalLight.Color * gMatSpecularIntensity * SpecularFactor, 1.0f);
-//                }

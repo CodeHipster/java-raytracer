@@ -11,10 +11,21 @@ public class Color {
         this.b = b;
     }
 
+    public Color clone(){
+        return new Color(r,g,b);
+    }
+
     public Color add(Color color){
         this.r += color.r;
         this.g += color.g;
         this.b += color.b;
+        return this;
+    }
+
+    public Color scale(double factor){
+        this.r = (int)(r * factor);
+        this.g = (int)(g * factor);
+        this.b = (int)(b * factor);
         return this;
     }
 
