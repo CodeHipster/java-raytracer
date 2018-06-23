@@ -42,14 +42,15 @@ public class RenderPanel extends JPanel implements Flow.Subscriber<Pixel> {
 
     @Override
     public void onNext(Pixel pixel) {
+        System.out.println("received pixel");
         //scale colors down to 8bit
         Color c = pixel.color;
-        int r = (c.r > 255)? c.r = 255: c.r;
-        int g = (c.g > 255)? c.g = 255: c.g;
-        int b = (c.b > 255)? c.b = 255: c.b;
+        int r = (int)(((c.r > 1)? c.r = 1: c.r) * 255);
+        int g = (int)(((c.g > 1)? c.g = 1: c.g) * 255);
+        int b = (int)(((c.b > 1)? c.b = 1: c.b) * 255);
 
+        //put the colors in the correct place in the integer.
         int rgb = (r << 16) + (g << 8) + b;
-        System.out.println("received pixel");
         //TODO something with the camera size and panel size and image size.
         imageBuffer.setRGB(pixel.position.x, 300 - pixel.position.y, rgb);
         subscription.request(1);

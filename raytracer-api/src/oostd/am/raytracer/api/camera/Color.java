@@ -3,9 +3,9 @@ package oostd.am.raytracer.api.camera;
 import oostd.am.raytracer.api.scenery.ColorFilter;
 
 public class Color {
-    public int r,g,b;
+    public double r,g,b;
 
-    public Color(int r, int g, int b){
+    public Color(double r, double g, double b){
         this.r = r;
         this.g = g;
         this.b = b;
@@ -23,17 +23,9 @@ public class Color {
     }
 
     public Color scale(double factor){
-        this.r = (int)(r * factor);
-        this.g = (int)(g * factor);
-        this.b = (int)(b * factor);
-        return this;
-    }
-
-    public Color filter(ColorFilter filter){
-
-        this.r = (int)(r * filter.r);
-        this.g = (int)(g * filter.g);
-        this.b = (int)(b * filter.b);
+        this.r = r * factor;
+        this.g = g * factor;
+        this.b = b * factor;
         return this;
     }
 

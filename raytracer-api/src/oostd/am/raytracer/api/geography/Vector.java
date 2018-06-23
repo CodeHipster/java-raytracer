@@ -44,4 +44,8 @@ public class Vector {
                 this.x * other.y - this.y * other.x);
     }
 
+    public double length(){
+        return Math.sqrt(x*x + y*y + z*z);
+    }
+
 }

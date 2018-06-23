@@ -56,13 +56,13 @@ public class Engine implements Runnable{
                     for(PointLight light: pointLights){
                         Vector direction = light.getPosition().subtract(collision); //useless, can be calculated when needed?
                         lightRays.add(new LightRay(light, triangle, UnitVector.construct(direction), collision, ray.getDestination(),ray));
-//collision is incorrent?
                     }
                 }
             }
         }
+
         for(LightRay ray: lightRays){
-                    //calculate distance to intersection point, if closer then light, then add no color.
+            //calculate distance to intersection point, if closer then light, then add no color.
 
             //check collision with triangles;
             boolean hitLight = true;
@@ -72,7 +72,7 @@ public class Engine implements Runnable{
                 }
                 double collisionDistance = CollisionCalculator.calculateCollisionDistance(triangle, ray);
                 Vector rayToLight = ray.position.subtract(ray.light.getPosition());
-                double distanceToLight = Math.sqrt(rayToLight.x * rayToLight.x + rayToLight.y * rayToLight.y + rayToLight.z * rayToLight.z);
+                double distanceToLight = rayToLight.length();
                 if(collisionDistance < distanceToLight){
                     hitLight = false;
                     break;
@@ -94,7 +94,7 @@ public class Engine implements Runnable{
                 specularFactor = Math.pow(specularFactor,specularPower);
                 Color specular = ray.light.color.clone().scale(specularIntensity*specularFactor);
 
-                Color diffuse = ray.light.color.clone().scale(diffuseFactor).filter(ray.triangle.colorFilter);
+                Color diffuse = ray.triangle.colorFilter.filter(ray.light.color.clone()).scale(diffuseFactor);
 
                 pixelSink.submit(new Pixel(ray.getDestination(), diffuse.add(specular)));
             }

@@ -33,7 +33,7 @@ public class MenuListener implements ActionListener {
                                             new Vertex(1.0, -1.0, 3.0)
                                     },
                                             new ColorFilter(0.5f,0.5f,0.0f))),
-                            Arrays.asList(new PointLight(new Vertex(0, 2, 1.5), new Color(255,255,255)))),
+                            Arrays.asList(new PointLight(new Vertex(0, 2, 1.5), new Color(1,1,1)))),
                     new Camera(
                             new Positioning(
                                     new Vector(0, 0, 0), //Camera at the center of the scene
