@@ -6,10 +6,7 @@ import oostd.am.raytracer.api.camera.Lens;
 import oostd.am.raytracer.api.camera.Positioning;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
-import oostd.am.raytracer.api.scenery.PointLight;
-import oostd.am.raytracer.api.scenery.Scene;
-import oostd.am.raytracer.api.scenery.Triangle;
-import oostd.am.raytracer.api.scenery.Vertex;
+import oostd.am.raytracer.api.scenery.*;
 import oostd.am.raytracer.visualize.desktop.Service;
 
 import java.awt.event.ActionEvent;
@@ -31,12 +28,12 @@ public class MenuListener implements ActionListener {
                     new Scene(
                             Arrays.asList(
                                     new Triangle(new Vertex[]{
-                                            new Vertex(-1.0, -1.0, 30.0),
-                                            new Vertex(0.0, 2.0, 30.0),
-                                            new Vertex(1.0, -1.0, 30.0)
+                                            new Vertex(-1.0, -1.0, 3.0),
+                                            new Vertex(0.0, 2.0, 3.0),
+                                            new Vertex(1.0, -1.0, 3.0)
                                     },
-                                            new Color(0,0,255))),
-                            Arrays.asList(new PointLight(new Vertex(0, 5, 8)))),
+                                            new ColorFilter(1,1,1))),
+                            Arrays.asList(new PointLight(new Vertex(0, 2, 1.5), new Color(150,150,0)))),
                     new Camera(
                             new Positioning(
                                     new Vector(0, 0, 0), //Camera at the center of the scene

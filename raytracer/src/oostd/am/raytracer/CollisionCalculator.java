@@ -95,7 +95,14 @@ public class CollisionCalculator {
 
 
         //is this correct?
-        return new Vector(t, u, v);
+        return ray.direction.multiply(t);
+    }
+
+    public static double calculateCollisionDistance(Triangle triangle, LightRay ray) {
+        Vector vector = CollisionCalculator.calculateCollision2(triangle, ray);
+        if(vector == null) return Double.POSITIVE_INFINITY;
+        //TODO optimize away the sqrt
+        return Math.sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
     }
 }
 

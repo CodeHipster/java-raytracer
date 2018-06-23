@@ -11,19 +11,13 @@ import oostd.am.raytracer.api.geography.Vector;
  */
 public class InverseRay extends Ray{
     private int depth;
-    private PixelPosition destination;
 
     public InverseRay(int depth, UnitVector direction, Vector position, PixelPosition destination) {
-        super(direction, position);
+        super(direction, position, destination);
         this.depth = depth;
-        this.destination = destination;
     }
 
     public int getDepth() {
         return depth;
-    }
-
-    public PixelPosition getDestination() {
-        return destination;
     }
 }

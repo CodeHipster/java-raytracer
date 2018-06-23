@@ -3,10 +3,7 @@ package oostd.am.raytracer;
 import oostd.am.raytracer.api.camera.*;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
-import oostd.am.raytracer.api.scenery.PointLight;
-import oostd.am.raytracer.api.scenery.Scene;
-import oostd.am.raytracer.api.scenery.Triangle;
-import oostd.am.raytracer.api.scenery.Vertex;
+import oostd.am.raytracer.api.scenery.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -30,8 +27,8 @@ public class EngineTest {
                                 new Vertex(1, 1, 11),
                                 new Vertex(-1, -1, 10)
                         },
-                                new Color(0, 255, 0))),
-                Arrays.asList(new PointLight(new Vertex(0, 5, 8))));
+                                new ColorFilter(1, 1, 1))),
+                Arrays.asList(new PointLight(new Vertex(0, 5, 8), new Color(255,80,0))));
         Camera camera = new Camera(
                 new Positioning(
                         new Vector(0, 0, 0), //Camera at the center of the scene

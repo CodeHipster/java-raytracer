@@ -17,4 +17,19 @@ public class UnitVector extends Vector {
         double length = Math.sqrt(x*x + y*y + z*z);
         return new UnitVector(x/length, y/length, z/length);
     }
+
+    public static UnitVector construct(Vector vector){
+        return UnitVector.construct(vector.x, vector.y, vector.z);
+    }
+
+    public UnitVector inverse() {
+        return new UnitVector(x * -1.0, y * -1.0, z * -1.0);
+    }
+
+    public UnitVector reflectOn(UnitVector surfaceNormal){
+
+        UnitVector inverseLightNormal = this.inverse();
+        Vector reflection = surfaceNormal.multiply(inverseLightNormal.dot(surfaceNormal) * 2).add(this);
+        return new UnitVector(reflection.x, reflection.y, reflection.z);
+    }
 }
