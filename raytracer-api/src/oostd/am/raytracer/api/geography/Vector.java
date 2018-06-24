@@ -25,7 +25,7 @@ public class Vector {
         return new Vector(this.x - other.x, this.y - other.y, this.z - other.z);
     }
 
-    public Vector multiply(double scalar){
+    public Vector scale(double scalar){
         return new Vector(x *scalar, y * scalar, z *scalar);
     }
 
@@ -48,4 +48,7 @@ public class Vector {
         return Math.sqrt(x*x + y*y + z*z);
     }
 
+    public double square() {
+        return x * x + y * y + z * z;
+    }
 }

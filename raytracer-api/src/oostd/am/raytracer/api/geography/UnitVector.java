@@ -29,7 +29,7 @@ public class UnitVector extends Vector {
     public UnitVector reflectOn(UnitVector surfaceNormal){
 
         UnitVector inverseLightNormal = this.inverse();
-        Vector reflection = surfaceNormal.multiply(inverseLightNormal.dot(surfaceNormal) * 2).add(this);
+        Vector reflection = surfaceNormal.scale(inverseLightNormal.dot(surfaceNormal) * 2).add(this);
         return new UnitVector(reflection.x, reflection.y, reflection.z);
     }
 }

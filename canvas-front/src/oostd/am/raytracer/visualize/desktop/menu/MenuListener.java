@@ -29,11 +29,19 @@ public class MenuListener implements ActionListener {
                             Arrays.asList(
                                     new Triangle(new Vertex[]{
                                             new Vertex(-1.0, -1.0, 3.0),
-                                            new Vertex(0.0, 2.0, 3.0),
-                                            new Vertex(1.0, -1.0, 3.0)
-                                    },
-                                            new ColorFilter(0.5f,0.5f,0.0f))),
-                            Arrays.asList(new PointLight(new Vertex(0, 2, 1.5), new Color(1,1,1)))),
+                                            new Vertex(0.0, 2.0, 4.0),
+                                            new Vertex(1.0, -1.0, 5.0)
+                                    }, new ColorFilter(0.5f, 0.5f, 0.0f)),
+                                    new Triangle(new Vertex[]{
+                                            new Vertex(-10.0, -1.0, 0.0),
+                                            new Vertex(0.0, -1.0, 20.0),
+                                            new Vertex(10.0, -1.0, 0.0)
+                                    }, new ColorFilter(1.0f, 0.0f, 0.0f))
+                            ),
+                            Arrays.asList(
+                                    new PointLight(new Vertex(3, 1, 3), new Color(1, 1, 1)),
+                                    new PointLight(new Vertex(1.1, -0.5, 4.5), new Color(1, 1, 1))
+                            )),
                     new Camera(
                             new Positioning(
                                     new Vector(0, 0, 0), //Camera at the center of the scene

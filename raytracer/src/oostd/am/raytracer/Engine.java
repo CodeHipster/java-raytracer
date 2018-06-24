@@ -10,22 +10,24 @@ import oostd.am.raytracer.api.scenery.PointLight;
 import oostd.am.raytracer.api.scenery.Scene;
 import oostd.am.raytracer.api.scenery.Triangle;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.SubmissionPublisher;
 
 public class Engine implements Runnable{
     private List<PointLight> pointLights;
-    private List<InverseRay> inverseRays = new ArrayList<>();
-    private List<LightRay> lightRays = new ArrayList<>();
-    private List<Triangle> objects;
+    private Queue<InverseRay> inverseRays = new ArrayDeque<>();
+    private Queue<InverseRay> inverseRaysBuffer = new ArrayDeque<>();
+    private Queue<ShadowRay> shadowRays = new ArrayDeque<>();
+    private List<Triangle> triangles;
     private SubmissionPublisher<Pixel> pixelSink;
 
     public Engine(Camera camera, Scene scene, SubmissionPublisher<Pixel> pixelSink) {
         this.pixelSink = pixelSink;
 
         this.pointLights = scene.getPointLights();
-        this.objects = scene.getTriangles();
+        this.triangles = scene.getTriangles();
 
         int pixelsX = camera.lens.width;
         int pixelsY = camera.lens.height;
@@ -46,59 +48,90 @@ public class Engine implements Runnable{
 
     @Override
     public void run() {
+        boolean running = true;
+        while(running) {
+            inverseRays.stream().forEach(
+                    ray ->{
+                        //check collision with triangles;
+                        double distance = Double.POSITIVE_INFINITY;
+                        Triangle target = null;
 
-        for (InverseRay ray : inverseRays) {
-            //check collision with triangles;
-            for (Triangle triangle : objects) {
-                Vector collision = CollisionCalculator.calculateCollision2(triangle, ray);
-                if(collision != null){
-                    //add ray to lightRays
-                    for(PointLight light: pointLights){
-                        Vector direction = light.getPosition().subtract(collision); //useless, can be calculated when needed?
-                        lightRays.add(new LightRay(light, triangle, UnitVector.construct(direction), collision, ray.getDestination(),ray));
+                        for (Triangle triangle : triangles) {
+                            double d = CollisionCalculator.calculateCollisionDistance(triangle, ray);
+                            if (d > 0 && d < distance) {
+                                distance = d;
+                                target = triangle;
+                            }
+                        }
+                        if (target != null) {
+                            //for each light create a lightray
+                            for (PointLight light : pointLights) {
+                                Vector collision = ray.direction.scale(distance);
+                                shadowRays.add(new ShadowRay(light, target, collision, ray.getDestination(), ray));
+                            }
+                        }
+                    }
+            );
+            inverseRays.clear();
+
+            // If there are no new rays generated, we can stop the engine.
+            if(inverseRaysBuffer.isEmpty()){
+                running = false;
+            }
+
+            swapBuffer();
+
+            shadowRays.stream().forEach(shadowRay ->{
+                //check if ray reaches the light;
+                //if light is behind triangle it will not hit.
+                UnitVector lightNormal = shadowRay.direction.inverse();
+                UnitVector inverseLightNormal = shadowRay.direction;
+                UnitVector surfaceNormal = shadowRay.triangle.surfaceNormal;
+                double diffuseFactor = surfaceNormal.dot(inverseLightNormal);
+                if(diffuseFactor < 0) {
+                    return;
+                }
+
+                double distanceToLightSquared = shadowRay.light.getPosition().subtract(shadowRay.position).square();
+                for (Triangle triangle : triangles) {
+                    if (triangle == shadowRay.triangle) {
+                        //No need to check collision with self.
+                        continue;
+                    }
+                    double collisionDistance = CollisionCalculator.calculateCollisionDistance(triangle, shadowRay);
+                    if(collisionDistance < 0) continue; //triangle was not hit.
+                    double collisionSquared = collisionDistance * collisionDistance;
+                    if (collisionSquared < distanceToLightSquared) {
+                        return;
                     }
                 }
-            }
-        }
 
-        for(LightRay ray: lightRays){
-            //calculate distance to intersection point, if closer then light, then add no color.
-
-            //check collision with triangles;
-            boolean hitLight = true;
-            for (Triangle triangle : objects) {
-                if(triangle == ray.triangle){
-                    continue;
-                }
-                double collisionDistance = CollisionCalculator.calculateCollisionDistance(triangle, ray);
-                Vector rayToLight = ray.position.subtract(ray.light.getPosition());
-                double distanceToLight = rayToLight.length();
-                if(collisionDistance < distanceToLight){
-                    hitLight = false;
-                    break;
-                }
-            }
-            if(hitLight){
                 //calculate color
-                UnitVector lightNormal = UnitVector.construct(ray.position.subtract(ray.light.getPosition()));
-                UnitVector inverseLightNormal = lightNormal.inverse();
-                UnitVector surfaceNormal = ray.triangle.surfaceNormal;
                 UnitVector reflectNormal = lightNormal.reflectOn(surfaceNormal);
-                UnitVector inverseViewNormal = ray.predecessor.direction.inverse();
-
-                double diffuseFactor = surfaceNormal.dot(inverseLightNormal);
+                UnitVector inverseViewNormal = shadowRay.predecessor.direction.inverse();
 
                 double specularIntensity = 1;
                 double specularPower = 100;
                 double specularFactor = reflectNormal.dot(inverseViewNormal);
-                specularFactor = Math.pow(specularFactor,specularPower);
-                Color specular = ray.light.color.clone().scale(specularIntensity*specularFactor);
+                specularFactor = Math.pow(specularFactor, specularPower);
+                Color specular = shadowRay.light.color.clone().scale(specularIntensity * specularFactor);
 
-                Color diffuse = ray.triangle.colorFilter.filter(ray.light.color.clone()).scale(diffuseFactor);
+                Color diffuse = shadowRay.triangle.colorFilter.filter(shadowRay.light.color.clone()).scale(diffuseFactor);
 
-                pixelSink.submit(new Pixel(ray.getDestination(), diffuse.add(specular)));
-            }
+                pixelSink.submit(new Pixel(shadowRay.getDestination(), diffuse.add(specular)));
+
+            });
+
+            shadowRays.clear();
+
         }
+        System.out.println("finished tracing rays");
         pixelSink.close();
+    }
+
+    private void swapBuffer(){
+        Queue<InverseRay> temp = inverseRays;
+        inverseRays = inverseRaysBuffer;
+        inverseRaysBuffer = temp;
     }
 }
