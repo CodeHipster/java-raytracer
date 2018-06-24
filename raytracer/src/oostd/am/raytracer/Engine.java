@@ -15,6 +15,12 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.SubmissionPublisher;
 
+/**
+ * The engine renders a given scene from a camera perspective.
+ * It does this asynchronously and continously generates pixel updates.
+ * The pixels that are published will have to be added to previous pixels for the same destination.
+ * This way each iteration provides more detail.
+ */
 public class Engine implements Runnable{
     private List<PointLight> pointLights;
     private Queue<InverseRay> inverseRays = new ArrayDeque<>();

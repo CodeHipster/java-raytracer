@@ -22,7 +22,7 @@ public class Service {
         rayTracerService = instances.get(0);
     }
     public void startRender(Scene scene, Camera camera){
-        RenderPanel renderPanel = new RenderPanel();
+        RenderPanel renderPanel = new RenderPanel(camera.lens.width, camera.lens.height);
         SwingUtilities.invokeLater(() -> {
             System.out.println("Created renderFrame on EDT? "+ SwingUtilities.isEventDispatchThread());
             RenderFrame renderFrame = new RenderFrame(camera.lens.width, camera.lens.height);
@@ -34,7 +34,6 @@ public class Service {
         Timer timer = new Timer(INTERVAL, evt -> {
             //Refresh the panel
             renderPanel.repaint();
-            System.out.println("repainting renderPanel.");
 
 //            if (/* condition to terminate the thread. */) {
 //                timer.stop();
