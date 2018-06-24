@@ -6,13 +6,13 @@ import oostd.am.raytracer.api.geography.Vector;
 
 public class Triangle {
     public Vertex[] vertices;
-    public ColorFilter colorFilter;
+    public Material material;
     public UnitVector surfaceNormal;
 
-    public Triangle(Vertex[] vertices, ColorFilter colorFilter){
+    public Triangle(Vertex[] vertices, Material material){
         if(vertices.length != 3) throw new IllegalArgumentException("exactly 3 vertices required in a triangle.");
         this.vertices = vertices;
-        this.colorFilter = colorFilter;
+        this.material = material;
 
         Vector edge1 = vertices[1].subtract(vertices[0]);
         Vector edge2 = vertices[2].subtract(vertices[0]);

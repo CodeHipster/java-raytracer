@@ -47,7 +47,7 @@ public class Engine implements Runnable{
             for (int x = 0; x < pixelsX; ++x) {
                 double xpos = ((double) x / pixelsX) * width - width / 2.0;
                 UnitVector rayDirection = UnitVector.construct(xpos, ypos, camera.lens.offset);
-                inverseRays.add(new InverseRay(1, rayDirection, camera.positioning.position, new PixelPosition(x, y)));
+                inverseRays.add(new InverseRay(1, 1, rayDirection, camera.positioning.position, new PixelPosition(x, y),null));
             }
         }
     }
@@ -63,18 +63,30 @@ public class Engine implements Runnable{
                         Triangle target = null;
 
                         for (Triangle triangle : triangles) {
+                            if(triangle == ray.origin) continue; //skip triangle we come from.
                             double d = CollisionCalculator.calculateCollisionDistance(triangle, ray);
                             if (d > 0 && d < distance) {
                                 distance = d;
                                 target = triangle;
                             }
                         }
-                        if (target != null) {
-                            //for each light create a lightray
-                            for (PointLight light : pointLights) {
-                                Vector collision = ray.direction.scale(distance);
-                                shadowRays.add(new ShadowRay(light, target, collision, ray.getDestination(), ray));
-                            }
+                        if(target == null) return;
+
+                        //for each light create a lightray
+                        Vector collision = ray.direction.scale(distance);
+                        for (PointLight light : pointLights) {
+                            shadowRays.add(new ShadowRay(light, target, collision, ray.getDestination(), ray));
+                        }
+
+                        if(target.material.reflectionFactor > 0){
+                            //todo if intensity goes below a certain level, stop reflecting.
+                            //create reflection ray.
+                            int depth = ray.depth + 1;
+                            System.out.println("Creating reflection ray. depth: " + depth);
+                            double intensity = ray.intensity * target.material.reflectionFactor;
+                            UnitVector direction = ray.direction.reflectOn(target.surfaceNormal);
+                            InverseRay reflection = new InverseRay(depth, intensity, direction, collision,ray.destination, target);
+                            inverseRaysBuffer.add(reflection);
                         }
                     }
             );
@@ -114,17 +126,18 @@ public class Engine implements Runnable{
 
                 //calculate color
                 UnitVector reflectNormal = lightNormal.reflectOn(surfaceNormal);
-                UnitVector inverseViewNormal = shadowRay.predecessor.direction.inverse();
+                UnitVector inverseViewNormal = shadowRay.inverseRay.direction.inverse();
 
-                double specularIntensity = 1;
-                double specularPower = 100;
+                double specularIntensity = shadowRay.triangle.material.specularIntensity;
+                double specularPower = shadowRay.triangle.material.specularPower;
                 double specularFactor = reflectNormal.dot(inverseViewNormal);
                 specularFactor = Math.pow(specularFactor, specularPower);
                 Color specular = shadowRay.light.color.clone().scale(specularIntensity * specularFactor);
 
-                Color diffuse = shadowRay.triangle.colorFilter.filter(shadowRay.light.color.clone()).scale(diffuseFactor);
+                Color diffuse = shadowRay.triangle.material.colorFilter.filter(shadowRay.light.color.clone()).scale(diffuseFactor);
 
-                pixelSink.submit(new Pixel(shadowRay.getDestination(), diffuse.add(specular)));
+                Color color = diffuse.add(specular).scale(shadowRay.inverseRay.intensity);
+                pixelSink.submit(new Pixel(shadowRay.getDestination(), color));
 
             });
 
