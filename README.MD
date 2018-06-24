@@ -1,15 +1,16 @@
 # Raytracer
 
-## modules
+## version 1
 
-### desktop visualizer
-desktop interface for the raytracer
+implemented:
+- support for multiple lights
+- multiple triangles
+- specular lighting
+- diffuse lighting
+- async coupling between engine and gui
 
-### raytracer api
-api module defining the interface for a raytracer
-- input: scene, camera(pixels wide, pixels high, position, direction)
-- output: stream of pixels (x,y, color)
+using:
+- java 9 modules
+- java 10 reactive streams
 
-### raytracer
-implementation of the api  
-- first phase: rays without reflection
+![Image of scene](https://github.com/CodeHipster/java-raytracer/blob/release/v1/v1-screen.png)
