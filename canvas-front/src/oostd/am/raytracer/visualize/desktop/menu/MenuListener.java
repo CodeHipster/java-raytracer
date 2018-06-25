@@ -11,7 +11,9 @@ import oostd.am.raytracer.visualize.desktop.Service;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MenuListener implements ActionListener {
 
@@ -24,59 +26,107 @@ public class MenuListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if ("startRendering".equals(e.getActionCommand())) {
-            Scene scene = new Scene(
-                    Arrays.asList(
-                            new Triangle(
-                                    new Vertex[]{
-                                            new Vertex(-2.0, -1.0, 3.0),
-                                            new Vertex(-1.0, 2.0, 4.0),
-                                            new Vertex(0.0, -1.0, 5.0)
-                                    },
-                                    new Material(
-                                            100,
-                                            1,
-                                            0,
-                                            0,
-                                            new ColorFilter(0.5f, 0.5f, 0.0f)
-                                    )
-                            ),
-                            new Triangle(
-                                    new Vertex[]{
-                                            new Vertex(-10.0, -1.0, 0.0),
-                                            new Vertex(0.0, -1.0, 20.0),
-                                            new Vertex(10.0, -1.0, 0.0)
-                                    },
-                                    new Material(
-                                            100,
-                                            1,
-                                            0,
-                                            0,
-                                            new ColorFilter(1.0f, 0.0f, 0.0f)
-                                    )
-                            ),
-                            new Triangle(
-                                    new Vertex[]{
-                                            new Vertex(-10.0, -1.0, 20.0),
-                                            new Vertex(0.0, 10.0, 17.0),
-                                            new Vertex(10.0, -1.0, 14.0)
-                                    },
-                                    new Material(
-                                            100,
-                                            1,
-                                            1,
-                                            0,
-                                            new ColorFilter(0.0f, 0.0f, 1.0f)
-                                    )
+
+            Triangle[] pyramid = new Triangle[]{
+                    new Triangle(
+                            new Vertex[]{
+                                    new Vertex(-1.0, 0.0, -1.0),
+                                    new Vertex(0.0, 1.0, 0.0),
+                                    new Vertex(1.0, 0.0, -1.0)
+                            },
+                            new Material(
+                                    100,
+                                    1,
+                                    0,
+                                    0,
+                                    new ColorFilter(0.5f, 0.5f, 0.0f)
                             )
                     ),
-                    Arrays.asList(
-                            new PointLight(new Vertex(3, 1, 3), new Color(1, 1, 1)),
-                            new PointLight(new Vertex(1.1, -0.5, 4.5), new Color(1, 1, 1))
+                    new Triangle(
+                            new Vertex[]{
+                                    new Vertex(1.0, 0.0, -1.0),
+                                    new Vertex(0.0, 1.0, 0.0),
+                                    new Vertex(1.0, 0.0, 1.0)
+                            },
+                            new Material(
+                                    100,
+                                    1,
+                                    0,
+                                    0,
+                                    new ColorFilter(0.5f, 0.5f, 0.0f)
+                            )
+                    ),
+                    new Triangle(
+                            new Vertex[]{
+                                    new Vertex(1.0, 0.0, 1.0),
+                                    new Vertex(0.0, 1.0, 0.0),
+                                    new Vertex(-1.0, 0.0, 1.0)
+                            },
+                            new Material(
+                                    100,
+                                    1,
+                                    0,
+                                    0,
+                                    new ColorFilter(0.5f, 0.5f, 0.0f)
+                            )
+                    ),
+                    new Triangle(
+                            new Vertex[]{
+                                    new Vertex(-1.0, 0.0, 1.0),
+                                    new Vertex(0.0, 1.0, 0.0),
+                                    new Vertex(-1.0, 0.0, -1.0)
+                            },
+                            new Material(
+                                    100,
+                                    1,
+                                    0,
+                                    0,
+                                    new ColorFilter(0.5f, 0.5f, 0.0f)
+                            )
+                    )
+            };
+            Triangle floor = new Triangle(
+                    new Vertex[]{
+                            new Vertex(-100.0, 0.0, -100.0),
+                            new Vertex(0.0, 0.0, 200.0),
+                            new Vertex(100.0, 0.0, -100.0)
+                    },
+                    new Material(
+                            1000,
+                            1,
+                            0,
+                            0,
+                            new ColorFilter(1.0f, 0.0f, 0.0f)
                     )
             );
+            Triangle mirror = new Triangle(
+                    new Vertex[]{
+                            new Vertex(-10.0, 0.0, 20.0),
+                            new Vertex(0.0, 10.0, 20.0),
+                            new Vertex(10.0, 0.0, 20.0)
+                    },
+                    new Material(
+                            1000000,
+                            0,
+                            1,
+                            0,
+                            new ColorFilter(0.0f, 0.0f, 1.0f)
+                    )
+            );
+
+            List<Triangle> triangles = new ArrayList<>();
+            //triangles.addAll(Arrays.asList(pyramid));
+            triangles.add(floor);
+            triangles.add(mirror);
+
+            List<PointLight> pointLights = Arrays.asList(
+                    new PointLight(new Vertex(2, 1.2, 0), new Color(1, 1, 1))
+            );
+
+            Scene scene = new Scene(triangles, pointLights);
             Camera camera = new Camera(
                     new Positioning(
-                            new Vector(0, 0, 0), //Camera at the center of the scene
+                            new Vector(0, 2, -10), //Camera at the center of the scene
                             UnitVector.construct(0, 0, 1)) //Camera pointing 'forward' into the scene
                     , new Lens(500, 500, 1)
             );

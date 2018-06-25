@@ -71,7 +71,7 @@ public class Engine implements Runnable{
                             }
                         }
                         if(target == null) return;
-                        Vector collision = ray.direction.scale(distance);
+                        Vector collision = ray.position.add(ray.direction.scale(distance));
 
                         if(target.material.reflectance > 0){
                             //todo if intensity goes below a certain level, stop reflecting.
@@ -134,13 +134,22 @@ public class Engine implements Runnable{
                 double specularIntensity = shadowRay.triangle.material.specularIntensity;
                 double specularPower = shadowRay.triangle.material.specularPower;
                 double specularFactor = reflectNormal.dot(inverseViewNormal);
-                specularFactor = Math.pow(specularFactor, specularPower);
+                if(specularFactor < 0){
+                    //makes no sense to apply specular if the light does not reflect in the direction of the eye.
+                    specularFactor = 0;
+                }else{
+                    specularFactor = Math.pow(specularFactor, specularPower);
+                }
                 Color specular = shadowRay.light.color.clone().scale(specularIntensity * specularFactor);
 
+                if(specularIntensity == 0 && specular.r != 0){
+                    int debug = 0;
+                }
                 Color diffuse = shadowRay.triangle.material.colorFilter.filter(shadowRay.light.color.clone()).scale(diffuseFactor);
 
                 //TODO: actual intensity /  how much it adds to the color? That is based on the intensity of all predecessor rays.
                 Color color = diffuse.add(specular).scale(shadowRay.intensity);
+                //Color color = diffuse.scale(shadowRay.intensity);
                 pixelSink.submit(new Pixel(shadowRay.getDestination(), color));
 
             });
