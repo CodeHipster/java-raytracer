@@ -71,22 +71,25 @@ public class Engine implements Runnable{
                             }
                         }
                         if(target == null) return;
-
-                        //for each light create a lightray
                         Vector collision = ray.direction.scale(distance);
-                        for (PointLight light : pointLights) {
-                            shadowRays.add(new ShadowRay(light, target, collision, ray.getDestination(), ray));
-                        }
 
-                        if(target.material.reflectionFactor > 0){
+                        if(target.material.reflectance > 0){
                             //todo if intensity goes below a certain level, stop reflecting.
                             //create reflection ray.
                             int depth = ray.depth + 1;
                             System.out.println("Creating reflection ray. depth: " + depth);
-                            double intensity = ray.intensity * target.material.reflectionFactor;
+                            double intensity = ray.intensity * target.material.reflectance;
                             UnitVector direction = ray.direction.reflectOn(target.surfaceNormal);
                             InverseRay reflection = new InverseRay(depth, intensity, direction, collision,ray.destination, target);
                             inverseRaysBuffer.add(reflection);
+                        }
+
+                        //TODO: fresnel, to figure out the actual reflectance factor
+                        double lightIntensity = (1 - target.material.reflectance) * ray.intensity;
+
+                        //for each light create a lightray
+                        for (PointLight light : pointLights) {
+                            shadowRays.add(new ShadowRay(light, target, collision, ray.getDestination(), ray, lightIntensity));
                         }
                     }
             );
@@ -136,7 +139,8 @@ public class Engine implements Runnable{
 
                 Color diffuse = shadowRay.triangle.material.colorFilter.filter(shadowRay.light.color.clone()).scale(diffuseFactor);
 
-                Color color = diffuse.add(specular).scale(shadowRay.inverseRay.intensity);
+                //TODO: actual intensity /  how much it adds to the color? That is based on the intensity of all predecessor rays.
+                Color color = diffuse.add(specular).scale(shadowRay.intensity);
                 pixelSink.submit(new Pixel(shadowRay.getDestination(), color));
 
             });

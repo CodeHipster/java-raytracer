@@ -16,8 +16,8 @@ public class ShadowRay extends Ray{
     public final Triangle triangle;
     public PointLight light;
     public InverseRay inverseRay;
-    public ShadowRay(PointLight light, Triangle triangle, Vector position, PixelPosition destination, InverseRay inverseRay) {
-        super(UnitVector.construct(light.getPosition().subtract(position)), position, destination);
+    public ShadowRay(PointLight light, Triangle triangle, Vector position, PixelPosition destination, InverseRay inverseRay, double intensity) {
+        super(UnitVector.construct(light.getPosition().subtract(position)), position, destination, intensity);
         this.light = light;
         this.triangle = triangle;
         this.inverseRay = inverseRay;

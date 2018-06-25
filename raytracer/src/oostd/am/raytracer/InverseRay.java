@@ -12,13 +12,11 @@ import oostd.am.raytracer.api.scenery.Triangle;
  */
 public class InverseRay extends Ray{
     public final int depth;
-    public final double intensity;
     public Triangle origin;
 
     public InverseRay(int depth, double intensity, UnitVector direction, Vector position, PixelPosition destination, Triangle origin) {
-        super(direction, position, destination);
+        super(direction, position, destination, intensity);
         this.depth = depth;
-        this.intensity = intensity;
         this.origin = origin;
     }
 }

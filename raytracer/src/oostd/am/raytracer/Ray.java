@@ -6,14 +6,17 @@ import oostd.am.raytracer.api.geography.Vector;
 
 public class Ray {
 
-    protected UnitVector direction;
-    protected Vector position;
-    protected PixelPosition destination;
+    public UnitVector direction;
+    public Vector position;
+    public PixelPosition destination;
+    //for what factor the ray adds to the final color
+    public final double intensity;
 
-    public Ray(UnitVector direction, Vector position, PixelPosition destination) {
+    public Ray(UnitVector direction, Vector position, PixelPosition destination, double intensity) {
         this.direction = direction;
         this.position = position;
         this.destination = destination;
+        this.intensity = intensity;
     }
 
     public UnitVector getDirection() {

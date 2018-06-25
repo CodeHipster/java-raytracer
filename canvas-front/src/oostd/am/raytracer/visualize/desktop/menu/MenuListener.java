@@ -36,6 +36,7 @@ public class MenuListener implements ActionListener {
                                             100,
                                             1,
                                             0,
+                                            0,
                                             new ColorFilter(0.5f, 0.5f, 0.0f)
                                     )
                             ),
@@ -48,6 +49,7 @@ public class MenuListener implements ActionListener {
                                     new Material(
                                             100,
                                             1,
+                                            0,
                                             0,
                                             new ColorFilter(1.0f, 0.0f, 0.0f)
                                     )
@@ -62,6 +64,7 @@ public class MenuListener implements ActionListener {
                                             100,
                                             1,
                                             1,
+                                            0,
                                             new ColorFilter(0.0f, 0.0f, 1.0f)
                                     )
                             )
@@ -75,7 +78,7 @@ public class MenuListener implements ActionListener {
                     new Positioning(
                             new Vector(0, 0, 0), //Camera at the center of the scene
                             UnitVector.construct(0, 0, 1)) //Camera pointing 'forward' into the scene
-                    , new Lens(300, 300, 1)
+                    , new Lens(500, 500, 1)
             );
             service.startRender(scene, camera);
         }
