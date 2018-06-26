@@ -93,7 +93,7 @@ public class MenuListener implements ActionListener {
                     },
                     new Material(
                             1000,
-                            1,
+                            0.7,
                             0,
                             0,
                             new ColorFilter(1.0f, 0.0f, 0.0f)
@@ -101,26 +101,26 @@ public class MenuListener implements ActionListener {
             );
             Triangle mirror = new Triangle(
                     new Vertex[]{
-                            new Vertex(-10.0, 0.0, 20.0),
-                            new Vertex(0.0, 10.0, 20.0),
-                            new Vertex(10.0, 0.0, 20.0)
+                            new Vertex(-4.0, 0.0, 0.0),
+                            new Vertex(-2.0, 3.0, 2.0),
+                            new Vertex(0.0, 0.0, 4.0)
                     },
                     new Material(
-                            1000000,
+                            10000,
+                            2,
+                            0.9,
                             0,
-                            1,
-                            0,
-                            new ColorFilter(0.0f, 0.0f, 1.0f)
+                            new ColorFilter(0.5f, 0.5f, 0.5f)
                     )
             );
 
             List<Triangle> triangles = new ArrayList<>();
-            //triangles.addAll(Arrays.asList(pyramid));
+            triangles.addAll(Arrays.asList(pyramid));
             triangles.add(floor);
             triangles.add(mirror);
 
             List<PointLight> pointLights = Arrays.asList(
-                    new PointLight(new Vertex(2, 1.2, 0), new Color(1, 1, 1))
+                    new PointLight(new Vertex(3, 2, 1), new Color(1, 1, 1))
             );
 
             Scene scene = new Scene(triangles, pointLights);
