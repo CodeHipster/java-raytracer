@@ -18,16 +18,4 @@ public class Ray {
         this.destination = destination;
         this.intensity = intensity;
     }
-
-    public UnitVector getDirection() {
-        return direction;
-    }
-
-    public Vector getPosition() {
-        return position;
-    }
-
-    public PixelPosition getDestination() {
-        return destination;
-    }
 }

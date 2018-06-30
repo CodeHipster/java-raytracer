@@ -20,13 +20,15 @@ public class Material {
     public final double specularIntensity;
     public final double reflectance;
     public final double refractance;
+    public final double refractionIndex;
     public final ColorFilter colorFilter;
 
-    public Material(double specularPower, double specularIntensity, double reflectance, double refractance, ColorFilter colorFilter) {
+    public Material(double specularPower, double specularIntensity, double reflectance, double refractance, double refractionIndex, ColorFilter colorFilter) {
         this.specularPower = specularPower;
         this.specularIntensity = specularIntensity;
         this.reflectance = reflectance;
         this.colorFilter = colorFilter;
         this.refractance = refractance;
+        this.refractionIndex = refractionIndex;
     }
 }

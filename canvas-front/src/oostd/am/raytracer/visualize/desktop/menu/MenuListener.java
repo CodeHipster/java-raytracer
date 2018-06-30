@@ -27,6 +27,14 @@ public class MenuListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if ("startRendering".equals(e.getActionCommand())) {
 
+            Material pyramidSurface = new Material(
+                    100,
+                    1,
+                    0,
+                    0,
+                    1.2,
+                    new ColorFilter(0.5f, 0.5f, 0.0f)
+            );
             Triangle[] pyramid = new Triangle[]{
                     new Triangle(
                             new Vertex[]{
@@ -34,13 +42,7 @@ public class MenuListener implements ActionListener {
                                     new Vertex(0.0, 1.0, 0.0),
                                     new Vertex(1.0, 0.0, -1.0)
                             },
-                            new Material(
-                                    100,
-                                    1,
-                                    0,
-                                    0,
-                                    new ColorFilter(0.5f, 0.5f, 0.0f)
-                            )
+                            pyramidSurface
                     ),
                     new Triangle(
                             new Vertex[]{
@@ -48,13 +50,7 @@ public class MenuListener implements ActionListener {
                                     new Vertex(0.0, 1.0, 0.0),
                                     new Vertex(1.0, 0.0, 1.0)
                             },
-                            new Material(
-                                    100,
-                                    1,
-                                    0,
-                                    0,
-                                    new ColorFilter(0.5f, 0.5f, 0.0f)
-                            )
+                            pyramidSurface
                     ),
                     new Triangle(
                             new Vertex[]{
@@ -62,13 +58,7 @@ public class MenuListener implements ActionListener {
                                     new Vertex(0.0, 1.0, 0.0),
                                     new Vertex(-1.0, 0.0, 1.0)
                             },
-                            new Material(
-                                    100,
-                                    1,
-                                    0,
-                                    0,
-                                    new ColorFilter(0.5f, 0.5f, 0.0f)
-                            )
+                            pyramidSurface
                     ),
                     new Triangle(
                             new Vertex[]{
@@ -76,13 +66,7 @@ public class MenuListener implements ActionListener {
                                     new Vertex(0.0, 1.0, 0.0),
                                     new Vertex(-1.0, 0.0, -1.0)
                             },
-                            new Material(
-                                    100,
-                                    1,
-                                    0,
-                                    0,
-                                    new ColorFilter(0.5f, 0.5f, 0.0f)
-                            )
+                            pyramidSurface
                     )
             };
             Triangle floor = new Triangle(
@@ -96,6 +80,7 @@ public class MenuListener implements ActionListener {
                             0.7,
                             0,
                             0,
+                            1,
                             new ColorFilter(1.0f, 0.0f, 0.0f)
                     )
             );
@@ -110,6 +95,7 @@ public class MenuListener implements ActionListener {
                             2,
                             0.9,
                             0,
+                            1,
                             new ColorFilter(0.5f, 0.5f, 0.5f)
                     )
             );

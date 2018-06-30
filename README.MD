@@ -14,3 +14,13 @@ api module defining the interface for a raytracer
 implementation of the api  
 - first phase: rays without reflection (see release v1)
 - second phase: reflection and refraction (with fresnel)
+
+### side projects
+- performance comparison of basic operations
+    - Math.pow 
+    - sqrt
+    - multiplication
+    - devision
+    - floats vs doubles
+    - addition
+    - subtraction
