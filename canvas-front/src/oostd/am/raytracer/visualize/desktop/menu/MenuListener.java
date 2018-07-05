@@ -31,7 +31,7 @@ public class MenuListener implements ActionListener {
                     100,
                     1,
                     0,
-                    0,
+                    true,
                     1.2,
                     new ColorFilter(0.5f, 0.5f, 0.0f)
             );
@@ -79,7 +79,7 @@ public class MenuListener implements ActionListener {
                             1000,
                             0.7,
                             0,
-                            0,
+                            false,
                             1,
                             new ColorFilter(1.0f, 0.0f, 0.0f)
                     )
@@ -94,7 +94,7 @@ public class MenuListener implements ActionListener {
                             10000,
                             2,
                             0.9,
-                            0,
+                            false,
                             1,
                             new ColorFilter(0.5f, 0.5f, 0.5f)
                     )

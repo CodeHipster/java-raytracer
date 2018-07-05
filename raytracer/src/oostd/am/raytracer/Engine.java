@@ -74,35 +74,52 @@ public class Engine implements Runnable{
                         if(target == null) return;
                         Vector collision = ray.position.add(ray.direction.scale(distance));
 
-                        if(target.material.reflectance > 0){
+                        //Add refraction
+                        // initial refractionFactor = (1 - reflectionFactor) * refractionFactor. e.g. (1-0.1) * 0.5 = 0.45
+                        //refractionFactor = reflection.normal^2 (at 90 degrees it is 1)
+                        ReflectionFactorCalculator calculator = new ReflectionFactorCalculator();
+                        double reflectionFactor = target.material.reflectionFactor;
+                        double additionalReflectionFactor = calculator.calculateReflectionFactor(target.surfaceNormal, ray.direction.inverse(), target.material.refractionIndex, ray.refractionIndex);
+                        double nonReflectionFactor = 1 - additionalReflectionFactor;
+                        nonReflectionFactor = (1 - reflectionFactor) * nonReflectionFactor;
+                        additionalReflectionFactor = (1 - reflectionFactor) * additionalReflectionFactor;
+                        double totalReflectionFactor = reflectionFactor + additionalReflectionFactor;
+
+
+                        if(totalReflectionFactor > 0){
                             //create reflection ray.
                             int depth = ray.depth + 1;
                             System.out.println("Creating reflection ray. depth: " + depth);
-                            double intensity = ray.intensity * target.material.reflectance;
+                            double intensity = ray.intensity * totalReflectionFactor;
                             if(intensity > 0.001){ //no need to add the light as it has to little impact on the scene.
                                 UnitVector direction = ray.direction.reflectOn(target.surfaceNormal);
                                 //refraction factor is the same, as we stay within the same space.
-                                InverseRay reflection = new InverseRay(depth, intensity,ray.refractionIndex, direction, collision,ray.destination, target);
+                                InverseRay reflection = new InverseRay(depth, intensity, ray.refractionIndex, direction, collision,ray.destination, target);
                                 inverseRaysBuffer.add(reflection);
                             }
                         }
 
-                        //Add refraction
-                        // initial refractance = (1 - reflectance) * refractance. e.g. (1-0.1) * 0.5 = 0.45
-                        //refractance = reflection.normal^2 (at 90 degrees it is 1)
-                        ReflectionFactorCalculator calculator = new ReflectionFactorCalculator();
-                        double refractionFactor = calculator.calculateReflectionFactor(target.surfaceNormal, ray.direction.inverse(), target.material.refractionIndex, ray.refractionIndex);
+                        if(target.material.transparent){ //cast refraction ray.
+                            int depth = ray.depth + 1;
+                            System.out.println("Creating refraction ray. depth: " + depth);
+                            double intensity = ray.intensity * nonReflectionFactor;
+                            if(intensity > 0.001){ //no need to add the light as it has to little impact on the scene.
+                                UnitVector vector = calculateRefractionDirection(ray.refractionIndex, target.material.refractionIndex, ray, target);
+                                int debug = 0;
 
-
-                        double lightIntensity = (1 - target.material.reflectance) * ray.intensity;
-
-                        //for each light create a lightray
-                        if(lightIntensity > 0.001) { //no need to add the light as it has to little impact on the scene.
-                            for (PointLight light : pointLights) {
-                                    shadowRays.add(new ShadowRay(light, target, collision, ray.destination, ray, lightIntensity));
                             }
                         }else{
-                            System.out.println("Intensity of lightray at: " + lightIntensity + " depth: " + ray.depth);
+                            double lightIntensity = nonReflectionFactor * ray.intensity;
+
+                            //TODO: add color filter based on refraction factor. (for reflection and diffuse)
+                            //for each light create a lightray
+                            if(lightIntensity > 0.001) { //no need to add the light as it has to little impact on the scene.
+                                for (PointLight light : pointLights) {
+                                    shadowRays.add(new ShadowRay(light, target, collision, ray.destination, ray, lightIntensity));
+                                }
+                            }else{
+                                System.out.println("Intensity of lightray at: " + lightIntensity + " depth: " + ray.depth);
+                            }
                         }
                     }
             );
@@ -174,5 +191,20 @@ public class Engine implements Runnable{
         Queue<InverseRay> temp = inverseRays;
         inverseRays = inverseRaysBuffer;
         inverseRaysBuffer = temp;
+    }
+
+    private UnitVector calculateRefractionDirection(double refractionIndexFrom, double refractionIndexTo, InverseRay ray, Triangle target){
+
+        UnitVector I = ray.direction;
+        UnitVector N = target.surfaceNormal;
+        double n = refractionIndexFrom / refractionIndexTo;
+
+        double c1 = I.dot(N);
+
+        double c2 = Math.sqrt(1 - (n*n) * (1-(c1*c1)));
+
+        Vector T = I.scale(n).add(N.scale(n*c1-c2));
+
+        return UnitVector.construct(T);
     }
 }

@@ -1,24 +1,31 @@
 # Raytracer
 
+TODO: refactor, 
+- redefine what a ray is.
+- encapsulate complex math.
+- extra output stream for debugging
+    - multiple windows for side views etc.
+- multiple scenes to highlight different capabilities of the engine.
+
 ## steps
 
-Step 1 
+Step 1 , done
 Triangle shape
 Ray from camera
 
-Step 2
+Step 2 , done
 Shadow ray to light source
 
-Step 3
+Step 3 , done
 Add phong
 
-Step 4
+Step 4 , skip
 Multiple point lights
 
-Step 6
+Step 6, in progress
 Transparent objects
 
-Step 7 
+Step 7 , done
 Materials: color, shinyness
 
 Step 8

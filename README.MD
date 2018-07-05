@@ -16,11 +16,4 @@ implementation of the api
 - second phase: reflection and refraction (with fresnel)
 
 ### side projects
-- performance comparison of basic operations
-    - Math.pow 
-    - sqrt
-    - multiplication
-    - devision
-    - floats vs doubles
-    - addition
-    - subtraction
+

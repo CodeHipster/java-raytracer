@@ -14,4 +14,16 @@ public class UnitVectorTest {
         Assertions.assertEquals(0.8728715609439696, unitVector.z);
     }
 
+    @Test
+    public void testDot(){
+        UnitVector unitVector1 = UnitVector.construct(1, 1, 0); //45 degrees
+        UnitVector unitVector2 = UnitVector.construct(1, 0, 0); //0 degrees
+        double dot = unitVector1.dot(unitVector2);
+        double dot2 = unitVector2.dot(unitVector1);
+        double sin = Math.sin(Math.PI / 4);
+        double cos = Math.cos(Math.PI / 4);
+
+        int test = 0;
+    }
+
 }
