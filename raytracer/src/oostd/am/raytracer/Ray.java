@@ -3,19 +3,17 @@ package oostd.am.raytracer;
 import oostd.am.raytracer.api.geography.PixelPosition;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
+import oostd.am.raytracer.api.scenery.VolumeProperties;
 
 public class Ray {
 
     public UnitVector direction;
     public Vector position;
-    public PixelPosition destination;
-    //for what factor the ray adds to the final color
-    public final double intensity;
+    public VolumeProperties volumeProperties;
 
-    public Ray(UnitVector direction, Vector position, PixelPosition destination, double intensity) {
+    public Ray(UnitVector direction, Vector position, VolumeProperties volumeProperties) {
         this.direction = direction;
         this.position = position;
-        this.destination = destination;
-        this.intensity = intensity;
+        this.volumeProperties = volumeProperties;
     }
 }

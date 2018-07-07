@@ -16,19 +16,18 @@ package oostd.am.raytracer.api.scenery;
  *
  */
 public class Material {
+
     public final double specularPower;
     public final double specularIntensity;
     public final double reflectionFactor;
-    public final double refractionIndex;
     public final ColorFilter colorFilter;
     public final boolean transparent;
 
-    public Material(double specularPower, double specularIntensity, double reflectionFactor, boolean transparent, double refractionIndex, ColorFilter colorFilter) {
+    public Material(double specularPower, double specularIntensity, double reflectionFactor, boolean transparent, ColorFilter colorFilter) {
         this.specularPower = specularPower;
         this.specularIntensity = specularIntensity;
         this.reflectionFactor = reflectionFactor;
         this.colorFilter = colorFilter;
-        this.refractionIndex = refractionIndex;
         this.transparent = transparent;
     }
 }

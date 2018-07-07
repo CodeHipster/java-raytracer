@@ -16,6 +16,10 @@ public class ReflectionFactorCalculator {
 
         double a = 1 - surfaceNormal.dot(view);
         double pow = a*a*a*a*a;
-        return r0 + (1-r0)* pow;
+        double factor = r0 + (1 - r0) * pow;
+        if(factor > 1){
+            int debug = 0;
+        }
+        return factor;
     }
 }
