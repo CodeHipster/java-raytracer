@@ -3,6 +3,7 @@ package oostd.am.raytracer;
 import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.camera.Pixel;
+import oostd.am.raytracer.api.debug.DebugLine;
 import oostd.am.raytracer.api.geography.PixelPosition;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
@@ -26,12 +27,14 @@ public class Engine implements Runnable{
     private Queue<ShadowRay> shadowRays = new ArrayDeque<>();
     private List<Triangle> triangles;
     private SubmissionPublisher<Pixel> pixelSink;
+    private SubmissionPublisher<DebugLine> lineSink;
 
 
     ReflectionFactorCalculator reflectionFactorCalculator = new ReflectionFactorCalculator();
 
-    public Engine(Camera camera, Scene scene, SubmissionPublisher<Pixel> pixelSink) {
+    public Engine(Camera camera, Scene scene, SubmissionPublisher<Pixel> pixelSink, SubmissionPublisher<DebugLine> lineSink) {
         this.pixelSink = pixelSink;
+        this.lineSink = lineSink;
 
         this.pointLights = scene.getPointLights();
         this.triangles = scene.getTriangles();
@@ -48,14 +51,15 @@ public class Engine implements Runnable{
             for (int x = 0; x < pixelsX; ++x) {
                 double xpos = ((double) x / pixelsX) * width - width / 2.0;
                 UnitVector rayDirection = UnitVector.construct(xpos, ypos, camera.lens.offset);
-                inverseRays.add(new InverseRay(
+                InverseRay ray = new InverseRay(
                         1
                         , 1
                         , rayDirection
                         , camera.positioning.position
                         , new PixelPosition(x, y)
-                        ,null
-                        , camera.volumeProperties));
+                        , null
+                        , camera.volumeProperties);
+                inverseRays.add(ray);
             }
         }
     }
@@ -130,6 +134,7 @@ public class Engine implements Runnable{
                     Collision collision = findCollision(ray, ray.origin);
                     if(collision == null) return; // We did not hit anything. No light comes from the void.
                     Triangle target = collision.target;
+                    lineSink.submit(new DebugLine(ray.position, collision.impactPoint, ray.intensity));
 
                     boolean hitFromBehind = (ray.direction.dot(target.surfaceNormal) > 0);
 
@@ -247,6 +252,7 @@ public class Engine implements Runnable{
     private void processShadowRays(){
         shadowRays.stream().forEach(shadowRay ->{
 
+            lineSink.submit(new DebugLine(shadowRay.position, shadowRay.light.position, shadowRay.inverseRay.intensity));
             double diffuseFactor = shadowRay.triangle.surfaceNormal.dot(shadowRay.direction);
 
             //if light is behind triangle it will not hit.

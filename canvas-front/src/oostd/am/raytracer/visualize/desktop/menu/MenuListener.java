@@ -79,7 +79,7 @@ public class MenuListener implements ActionListener {
 
             List<Triangle> triangles = new ArrayList<>();
             triangles.addAll(Arrays.asList(pyramid));
-            triangles.addAll(Arrays.asList(transparentPyramid));
+            //triangles.addAll(Arrays.asList(transparentPyramid));
             triangles.add(floor);
             triangles.add(mirror);
 

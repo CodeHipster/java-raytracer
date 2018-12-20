@@ -2,6 +2,7 @@ package oostd.am.raytracer.api;
 
 import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Pixel;
+import oostd.am.raytracer.api.debug.DebugLine;
 import oostd.am.raytracer.api.scenery.Scene;
 
 import java.util.ArrayList;
@@ -24,4 +25,12 @@ public interface RayTracerService {
      * @param camera
      */
     void startRendering(Flow.Subscriber<Pixel> subscriber, Scene scene, Camera camera);
+
+    /**
+     * This method should immediately return and render asynchronously
+     * @param subscriber
+     * @param scene
+     * @param camera
+     */
+    void startRendering(Flow.Subscriber<Pixel> subscriber, Flow.Subscriber<DebugLine> debugSubcriber, Scene scene, Camera camera);
 }
