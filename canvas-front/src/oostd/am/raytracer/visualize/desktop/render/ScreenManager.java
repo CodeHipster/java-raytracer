@@ -1,6 +1,7 @@
 package oostd.am.raytracer.visualize.desktop.render;
 
 import oostd.am.raytracer.api.camera.Pixel;
+import oostd.am.raytracer.api.camera.Resolution;
 
 import javax.swing.JFrame;
 import java.awt.Dimension;
@@ -14,7 +15,7 @@ import java.util.concurrent.Flow;
 /**
  * Creates and manages windows for pixel output
  */
-public class ScreenManager {
+public class ScreenManager implements PixelSubscriberFactory {
     private List<JFrame> frames;
     private Rectangle screen;
 
@@ -24,8 +25,9 @@ public class ScreenManager {
         screen = new Rectangle(0,0, displayMode.getWidth(), displayMode.getHeight());
     }
 
-    public Flow.Subscriber<Pixel> createWindow(Dimension dimension){
-        RenderFrame renderFrame = new RenderFrame(dimension);
+    @Override
+    public Flow.Subscriber<Pixel> createSubscriber(Resolution resolution) {
+        RenderFrame renderFrame = new RenderFrame(convert(resolution));
         placeFrame(renderFrame);
         frames.add(renderFrame);
         return renderFrame.getPixelConsumer();
@@ -62,5 +64,9 @@ public class ScreenManager {
             return true;
         }
         return false;
+    }
+
+    private Dimension convert(Resolution resolution){
+        return new Dimension(resolution.width, resolution.height);
     }
 }

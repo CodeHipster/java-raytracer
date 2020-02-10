@@ -1,53 +1,28 @@
 package oostd.am.raytracer.visualize.desktop.scene;
 
-import oostd.am.raytracer.api.camera.*;
+import oostd.am.raytracer.api.camera.Camera;
+import oostd.am.raytracer.api.camera.Color;
+import oostd.am.raytracer.api.camera.Positioning;
+import oostd.am.raytracer.api.camera.Resolution;
 import oostd.am.raytracer.api.debug.DebugCamera;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
-import oostd.am.raytracer.api.scenery.*;
+import oostd.am.raytracer.api.scenery.ColorFilter;
+import oostd.am.raytracer.api.scenery.Material;
+import oostd.am.raytracer.api.scenery.PointLight;
+import oostd.am.raytracer.api.scenery.Triangle;
+import oostd.am.raytracer.api.scenery.Vertex;
+import oostd.am.raytracer.api.scenery.VolumeProperties;
+import oostd.am.raytracer.visualize.desktop.render.PixelSubscriberFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Flow;
 
-public class Pyramid implements Scene {
+public class Pyramid extends BaseScene {
 
-    //to be upgraded to a model that partitions
-    private List<Triangle> triangles;
-    private List<PointLight> pointLights;
-    private Camera renderCamera;
-    private List<DebugCamera> debugCameras;
-
-    public Pyramid() {
-        triangles = new ArrayList<>();
-        pointLights = new ArrayList<>();
+    public Pyramid(PixelSubscriberFactory factory) {
+        super(factory);
         setupScene();
-    }
-
-    @Override
-    public List<Triangle> getTriangles() {
-        return triangles;
-    }
-
-    @Override
-    public List<PointLight> getPointLights() {
-        return pointLights;
-    }
-
-    @Override
-    public Camera getRenderCamera() {
-        return renderCamera;
-    }
-
-    @Override
-    public List<DebugCamera> getDebugCameras() {
-        return debugCameras;
-    }
-
-    public void attachPixelConsumers(Flow.Subscriber<Pixel> renderOutput, Flow.Subscriber<Pixel> debugOutput){
-        debugCameras.get(0).outputConsumer = debugOutput;
-        renderCamera.outputConsumer = renderOutput;
     }
 
     private void setupScene() {
@@ -109,22 +84,24 @@ public class Pyramid implements Scene {
         pointLights.add(new PointLight(new Vertex(3, 2, 1), new Color(1, 1, 1)));
 
         VolumeProperties cameraVolume = new VolumeProperties(new ColorFilter(1, 1, 1), 1);
+        Resolution renderResolution = new Resolution(500, 500);
         renderCamera = new Camera(
                 new Positioning(
                         new Vector(0, 2, -10),
                         UnitVector.construct(0, 0, 1))
                 ,1
-                , new Resolution(500, 500)
-                , null
+                , renderResolution
+                , this.subscriberFactory.createSubscriber(renderResolution)
         );
 
+        Resolution debugResolution = new Resolution(500, 500);
         DebugCamera debugCamRight = new DebugCamera(
                 new Positioning(
                         new Vector(10, 0, 0), // moved 10 units to the right
                         UnitVector.construct(-1, 0, 0)) //pointing left
                 , 10,10
-                , new Resolution(500, 500)
-                , null
+                , debugResolution
+                , this.subscriberFactory.createSubscriber(debugResolution)
         );
         debugCameras = new ArrayList<>();
         debugCameras.add(debugCamRight);
