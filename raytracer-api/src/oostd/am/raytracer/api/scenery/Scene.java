@@ -1,22 +1,17 @@
 package oostd.am.raytracer.api.scenery;
 
+import oostd.am.raytracer.api.camera.Camera;
+import oostd.am.raytracer.api.debug.DebugCamera;
+
 import java.util.List;
 
-public class Scene {
-    //to be upgraded to a model that partitions
-    private List<Triangle> triangles;
-    private List<PointLight> pointLights;
+public interface Scene {
 
-    public Scene(List<Triangle> triangles, List<PointLight> pointLights){
-        this.triangles = triangles;
-        this.pointLights = pointLights;
-    }
+    List<Triangle> getTriangles();
 
-    public List<Triangle> getTriangles() {
-        return triangles;
-    }
+    List<PointLight> getPointLights();
 
-    public List<PointLight> getPointLights() {
-        return pointLights;
-    }
+    Camera getRenderCamera();
+
+    List<DebugCamera> getDebugCameras();
 }

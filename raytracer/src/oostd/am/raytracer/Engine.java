@@ -3,7 +3,6 @@ package oostd.am.raytracer;
 import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.camera.Pixel;
-import oostd.am.raytracer.api.debug.DebugLine;
 import oostd.am.raytracer.api.geography.PixelPosition;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
@@ -27,20 +26,19 @@ public class Engine implements Runnable{
     private Queue<ShadowRay> shadowRays = new ArrayDeque<>();
     private List<Triangle> triangles;
     private SubmissionPublisher<Pixel> pixelSink;
-    private SubmissionPublisher<DebugLine> lineSink;
-
 
     ReflectionFactorCalculator reflectionFactorCalculator = new ReflectionFactorCalculator();
 
-    public Engine(Camera camera, Scene scene, SubmissionPublisher<Pixel> pixelSink, SubmissionPublisher<DebugLine> lineSink) {
-        this.pixelSink = pixelSink;
-        this.lineSink = lineSink;
+    public Engine(Scene scene) {
+        this.pixelSink = new SubmissionPublisher<>();
+        Camera camera = scene.getRenderCamera();
+        pixelSink.subscribe(camera.outputConsumer);
 
         this.pointLights = scene.getPointLights();
         this.triangles = scene.getTriangles();
 
-        int pixelsX = camera.lens.width;
-        int pixelsY = camera.lens.height;
+        int pixelsX = camera.resolution.width;
+        int pixelsY = camera.resolution.height;
         //TODO: use camera direction as well.
         //TODO: lens position and size in units
         //for now using 1 by 1 unit.
@@ -50,7 +48,7 @@ public class Engine implements Runnable{
             double ypos = ((double) y / pixelsY) * height - height / 2.0;
             for (int x = 0; x < pixelsX; ++x) {
                 double xpos = ((double) x / pixelsX) * width - width / 2.0;
-                UnitVector rayDirection = UnitVector.construct(xpos, ypos, camera.lens.offset);
+                UnitVector rayDirection = UnitVector.construct(xpos, ypos, camera.lensOffset);
                 InverseRay ray = new InverseRay(
                         1
                         , 1
@@ -58,7 +56,7 @@ public class Engine implements Runnable{
                         , camera.positioning.position
                         , new PixelPosition(x, y)
                         , null
-                        , camera.volumeProperties);
+                        , new VolumeProperties(new ColorFilter(1,1,1), 1)); //expect the camera to be in the void. TODO: check if the camera is inside an object and use those properties.
                 inverseRays.add(ray);
             }
         }
@@ -134,7 +132,6 @@ public class Engine implements Runnable{
                     Collision collision = findCollision(ray, ray.origin);
                     if(collision == null) return; // We did not hit anything. No light comes from the void.
                     Triangle target = collision.target;
-                    lineSink.submit(new DebugLine(ray.position, collision.impactPoint, ray.intensity));
 
                     boolean hitFromBehind = (ray.direction.dot(target.surfaceNormal) > 0);
 
@@ -251,8 +248,6 @@ public class Engine implements Runnable{
 
     private void processShadowRays(){
         shadowRays.stream().forEach(shadowRay ->{
-
-            lineSink.submit(new DebugLine(shadowRay.position, shadowRay.light.position, shadowRay.inverseRay.intensity));
             double diffuseFactor = shadowRay.triangle.surfaceNormal.dot(shadowRay.direction);
 
             //if light is behind triangle it will not hit.

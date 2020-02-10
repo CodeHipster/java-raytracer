@@ -8,12 +8,19 @@ import java.util.concurrent.Flow;
 
 public class RenderFrame extends JFrame {
 
-    public RenderFrame(int width, int height){
-        super("Trace window");
+    private RenderPanel renderPanel;
 
-        this.setSize(width, height);
+    public RenderFrame(Dimension dimension){
+        super("Trace window");
         this.setLocationRelativeTo(null);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//TODO: register a WindowListener to unsubscribe from the pixel output.
         this.setVisible(true);
+        renderPanel = new RenderPanel(dimension, 10);
+        this.add(renderPanel);
+        this.pack();
+    }
+
+    public Flow.Subscriber<Pixel> getPixelConsumer(){
+        return renderPanel;
     }
 }

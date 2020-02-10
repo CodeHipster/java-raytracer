@@ -2,6 +2,7 @@ package oostd.am.raytracer.random;
 
 import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.camera.Pixel;
+import oostd.am.raytracer.api.camera.Resolution;
 import oostd.am.raytracer.api.geography.PixelPosition;
 
 import java.util.Random;
@@ -13,10 +14,10 @@ public class PixelSupplier implements Runnable {
     private int width, height;
     private SubmissionPublisher<Pixel> target;
 
-    public PixelSupplier(SubmissionPublisher<Pixel> target, int width, int height){
+    public PixelSupplier(SubmissionPublisher<Pixel> target, Resolution resolution){
         this.target = target;
-        this.width = width;
-        this.height = height;
+        this.width = resolution.width;
+        this.height = resolution.height;
     }
 
     @Override

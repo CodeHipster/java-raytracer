@@ -1,11 +1,9 @@
 package oostd.am.raytracer.random;
 
-import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Pixel;
-import oostd.am.raytracer.api.debug.DebugLine;
+import oostd.am.raytracer.api.debug.DebugCamera;
 import oostd.am.raytracer.api.scenery.Scene;
 
-import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
 
 /**
@@ -13,31 +11,22 @@ import java.util.concurrent.SubmissionPublisher;
  */
 public class RayTracerService implements oostd.am.raytracer.api.RayTracerService {
 
-    private SubmissionPublisher<Pixel> pixelPusher;
-    private SubmissionPublisher<DebugLine> linePusher;
-
-    public RayTracerService(){
-        this.pixelPusher = new SubmissionPublisher<>();
-        this.linePusher = new SubmissionPublisher<>();
-    }
-
     @Override
-    public void startRendering(Flow.Subscriber<Pixel> subscriber, Scene scene, Camera camera) {
-
-    }
-
-    @Override
-    public void startRendering(Flow.Subscriber<Pixel> subscriber, Flow.Subscriber<DebugLine> debugSubcriber, Scene scene, Camera camera) {
-
+    public void startRendering(Scene scene) {
         System.out.println("Logging from inside the renderer.");
+        SubmissionPublisher<Pixel> renderOutput = new SubmissionPublisher<>();
 
-        pixelPusher.subscribe(subscriber);
-        linePusher.subscribe(debugSubcriber);
-
-        Thread pixelThread = new Thread(new PixelSupplier(pixelPusher, camera.lens.width, camera.lens.height));
+        renderOutput.subscribe(scene.getRenderCamera().outputConsumer);
+        Thread pixelThread = new Thread(new PixelSupplier(renderOutput, scene.getRenderCamera().resolution));
         pixelThread.start();
-        Thread lineThread = new Thread(new LineSupplier(linePusher));
-        lineThread.start();
+
+        for(DebugCamera debugCamera: scene.getDebugCameras()){
+            SubmissionPublisher<Pixel> debugOutput = new SubmissionPublisher<>();
+            debugOutput.subscribe(debugCamera.outputConsumer);
+
+            Thread thread = new Thread(new PixelSupplier(debugOutput, debugCamera.resolution));
+            thread.start();
+        }
 
         System.out.println("Started generating pixels in separate thread.");
     }

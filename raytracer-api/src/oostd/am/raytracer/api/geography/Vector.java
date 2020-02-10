@@ -1,5 +1,11 @@
 package oostd.am.raytracer.api.geography;
 
+
+/**
+ * x = right
+ * y = up
+ * z = forward
+ */
 public class Vector {
 
     public final double x,y,z;
