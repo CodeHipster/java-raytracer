@@ -15,7 +15,7 @@ public class MenuFrame extends JFrame {
         button.setVerticalTextPosition(AbstractButton.CENTER);
         button.setHorizontalTextPosition(AbstractButton.LEADING); //aka LEFT, for left-to-right locales
         button.setActionCommand("startRendering");
-        button.addActionListener(new MenuListener(new RenderService(), screenManager));
+        button.addActionListener(new MenuListener(new RenderService(screenManager)));
 
         this.add(button);
 

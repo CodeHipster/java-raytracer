@@ -4,6 +4,8 @@ import oostd.am.raytracer.api.PixelSubscriberFactory;
 import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.camera.Pixel;
+import oostd.am.raytracer.api.camera.PixelSubscriber;
+import oostd.am.raytracer.api.camera.Resolution;
 import oostd.am.raytracer.api.debug.Line;
 import oostd.am.raytracer.api.geography.PixelPosition;
 import oostd.am.raytracer.api.geography.UnitVector;
@@ -13,6 +15,7 @@ import oostd.am.raytracer.api.scenery.PointLight;
 import oostd.am.raytracer.api.scenery.Scene;
 import oostd.am.raytracer.api.scenery.Triangle;
 import oostd.am.raytracer.api.scenery.VolumeProperties;
+import oostd.am.raytracer.debug.DebugLineProcessor;
 
 import java.util.ArrayDeque;
 import java.util.List;
@@ -42,15 +45,24 @@ public class Engine implements Runnable{
     public Engine(Scene scene, PixelSubscriberFactory pixelSubscriberFactory) {
         this.renderOutput = new SubmissionPublisher<>();
         this.debugLineOutput = new SubmissionPublisher<>();
-        pixelSubscriberFactory.createSubscriber(scene.renderCamera.)
-        Camera camera = scene.renderCamera;
-        renderOutput.subscribe(camera.outputConsumer);
-        scene.getDebugWindows().forEach(lineSubscriber -> debugLineOutput.subscribe(lineSubscriber));
+        PixelSubscriber renderSubscriber = pixelSubscriberFactory.createRenderSubscriber();
+        renderOutput.subscribe(renderSubscriber);
 
-        this.pointLights = scene.getPointLights();
-        this.triangles = scene.getTriangles();
+        scene.debugWindows.forEach(window -> {
+            // consumes Pixels
+            PixelSubscriber pixelSubscriber = pixelSubscriberFactory.createDebugSubscriber();
+            // consumes Lines, produces Pixels
+            DebugLineProcessor lineToPixelProcessor = new DebugLineProcessor(window, pixelSubscriber.getResolution());
+            // hook up pixel consumer to pixel producer
+            lineToPixelProcessor.subscribe(pixelSubscriber);
+            // hook up line consumer to line producer
+            debugLineOutput.subscribe(lineToPixelProcessor);
+        });
 
-        initializeRays(camera);
+        this.pointLights = scene.pointLights;
+        this.triangles = scene.triangles;
+
+        initializeRays(scene.renderCamera, renderSubscriber.getResolution());
     }
 
     /**
@@ -58,9 +70,9 @@ public class Engine implements Runnable{
      * The rays start from the camera position and are aimed at a 1 by 1 unit square at given offset.
      * @param camera
      */
-    private void initializeRays(Camera camera){
-        int pixelsX = camera.resolution.width;
-        int pixelsY = camera.resolution.height;
+    private void initializeRays(Camera camera, Resolution resolution){
+        int pixelsX = resolution.width;
+        int pixelsY = resolution.height;
         //TODO: use camera direction as well.
         double width = 1;
         double height = 1;

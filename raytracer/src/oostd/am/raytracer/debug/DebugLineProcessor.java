@@ -4,9 +4,7 @@ import oostd.am.raytracer.api.camera.Pixel;
 import oostd.am.raytracer.api.camera.Resolution;
 import oostd.am.raytracer.api.debug.Line;
 import oostd.am.raytracer.api.debug.Line2D;
-import oostd.am.raytracer.api.geography.Dimension;
-import oostd.am.raytracer.api.geography.UnitVector;
-import oostd.am.raytracer.api.geography.Vector;
+import oostd.am.raytracer.api.debug.Window;
 import oostd.am.raytracer.api.geography.Vector2D;
 import oostd.am.raytracer.api.scenery.Scene;
 
@@ -16,27 +14,29 @@ import java.util.concurrent.SubmissionPublisher;
 /**
  * DebugWindow wraps a DebugCamera to translate from lines to pixels.
  */
-public class DebugWindow extends oostd.am.raytracer.api.debug.DebugWindow implements Flow.Processor<Line, Pixel>{
+public class DebugLineProcessor implements Flow.Processor<Line, Pixel> {
 
     private Resolution resolution;
+    private Window window;
     private SubmissionPublisher<Pixel> output;
 
-    public DebugWindow(Vector origin, Vector normal, UnitVector alignmentVector, Dimension dimension, Resolution resolution) {
-        super(origin, normal, alignmentVector, dimension);
+    public DebugLineProcessor(Window window, Resolution resolution) {
         this.resolution = resolution;
+        this.window = window;
         this.output = new SubmissionPublisher<>();
     }
 
     /**
      * draw lines for the scene geometry to the camera
+     *
      * @param scene
      */
-    public void renderSceneGeometry(Scene scene){
+    public void renderSceneGeometry(Scene scene) {
         scene.triangles.stream().forEach(triangle -> {
             // render each line of the triangle to the window.
-            Vector2D v0 = this.project(triangle.vertices[0]);
-            Vector2D v1 = this.project(triangle.vertices[1]);
-            Vector2D v2 = this.project(triangle.vertices[2]);
+            Vector2D v0 = window.project(triangle.vertices[0]);
+            Vector2D v1 = window.project(triangle.vertices[1]);
+            Vector2D v2 = window.project(triangle.vertices[2]);
 
             this.drawLine(new Line2D(v0, v1));
             this.drawLine(new Line2D(v1, v2));
@@ -44,9 +44,11 @@ public class DebugWindow extends oostd.am.raytracer.api.debug.DebugWindow implem
         });
     }
 
-    private void drawLine(Line2D line){
+    private void drawLine(Line2D line) {
         // clip
-        Line2D clip = LineClipper.clipLine(line);
+        Line2D clip = LineClipper.clipLine(line, window);
+        // convert to pixels
+
         // submit pixels to the publisher.
 
     }

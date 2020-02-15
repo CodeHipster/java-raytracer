@@ -3,7 +3,7 @@ package oostd.am.raytracer.scene.simple.factory;
 import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.camera.Positioning;
-import oostd.am.raytracer.api.debug.DebugWindow;
+import oostd.am.raytracer.api.debug.Window;
 import oostd.am.raytracer.api.geography.Dimension;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
@@ -14,16 +14,11 @@ import oostd.am.raytracer.api.scenery.Scene;
 import oostd.am.raytracer.api.scenery.Triangle;
 import oostd.am.raytracer.api.scenery.VolumeProperties;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class Pyramid extends BaseSceneFactory {
 
     public Pyramid() {
-        List<Triangle> triangles = new ArrayList<>();
-        List<PointLight> pointLights = new ArrayList<>();
-        List<DebugWindow> debugWindows = new ArrayList<>();
         Material pyramidSurface = new Material(
                 100,
                 1,
@@ -87,7 +82,7 @@ public class Pyramid extends BaseSceneFactory {
                         UnitVector.construct(0, 0, 1))
                 , 1);
 
-        DebugWindow debugWindow = new DebugWindow(
+        Window debugWindow = new Window(
                 new Vector(0, 0, 0),
                 UnitVector.construct(new Vector(1, 0, 0)),
                 UnitVector.construct(new Vector(0, 1, 0)),

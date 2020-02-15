@@ -1,7 +1,7 @@
 package oostd.am.raytracer.api.scenery;
 
 import oostd.am.raytracer.api.camera.Camera;
-import oostd.am.raytracer.api.debug.DebugWindow;
+import oostd.am.raytracer.api.debug.Window;
 
 import java.util.List;
 
@@ -44,9 +44,9 @@ public final class Scene {
     public List<Triangle> triangles;
     public List<PointLight> pointLights;
     public Camera renderCamera;
-    public List<DebugWindow> debugWindows;
+    public List<Window> debugWindows;
 
-    public Scene(List<Triangle> triangles, List<PointLight> pointLights, Camera renderCamera, List<DebugWindow> debugWindows) {
+    public Scene(List<Triangle> triangles, List<PointLight> pointLights, Camera renderCamera, List<Window> debugWindows) {
         this.triangles = triangles;
         this.pointLights = pointLights;
         this.renderCamera = renderCamera;
