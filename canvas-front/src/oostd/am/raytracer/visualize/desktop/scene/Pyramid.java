@@ -4,7 +4,8 @@ import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.camera.Positioning;
 import oostd.am.raytracer.api.camera.Resolution;
-import oostd.am.raytracer.api.debug.DebugCamera;
+import oostd.am.raytracer.api.debug.DebugWindow;
+import oostd.am.raytracer.api.geography.Dimension;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
 import oostd.am.raytracer.api.scenery.ColorFilter;
@@ -15,7 +16,6 @@ import oostd.am.raytracer.api.scenery.Vertex;
 import oostd.am.raytracer.api.scenery.VolumeProperties;
 import oostd.am.raytracer.visualize.desktop.render.PixelSubscriberFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Pyramid extends BaseScene {
@@ -95,16 +95,14 @@ public class Pyramid extends BaseScene {
         );
 
         Resolution debugResolution = new Resolution(500, 500);
-        DebugCamera debugCamRight = new DebugCamera(
-                new Positioning(
-                        new Vector(10, 0, 0), // moved 10 units to the right
-                        UnitVector.construct(-1, 0, 0)) //pointing left
-                , 10,10
-                , debugResolution
-                , this.subscriberFactory.createSubscriber(debugResolution)
+        DebugWindow debugWindow = new DebugWindow(
+                new Vector(0, 0, 0),
+                UnitVector.construct(new Vector(1, 0, 0)),
+                UnitVector.construct(new Vector(0, 1, 0)),
+                new Dimension(10,10),
+                debugResolution
         );
-        debugCameras = new ArrayList<>();
-        debugCameras.add(debugCamRight);
+        debugWindows.add(debugWindow);
     }
 
     /**

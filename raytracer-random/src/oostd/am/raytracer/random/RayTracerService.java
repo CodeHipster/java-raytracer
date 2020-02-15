@@ -2,6 +2,7 @@ package oostd.am.raytracer.random;
 
 import oostd.am.raytracer.api.camera.Pixel;
 import oostd.am.raytracer.api.debug.DebugCamera;
+import oostd.am.raytracer.api.debug.DebugWindow;
 import oostd.am.raytracer.api.scenery.Scene;
 
 import java.util.concurrent.SubmissionPublisher;
@@ -20,11 +21,11 @@ public class RayTracerService implements oostd.am.raytracer.api.RayTracerService
         Thread pixelThread = new Thread(new PixelSupplier(renderOutput, scene.getRenderCamera().resolution));
         pixelThread.start();
 
-        for(DebugCamera debugCamera: scene.getDebugCameras()){
+        for(DebugWindow debugWindow: scene.getDebugWindows()){
             SubmissionPublisher<Pixel> debugOutput = new SubmissionPublisher<>();
-            debugOutput.subscribe(debugCamera.outputConsumer);
+            debugOutput.subscribe(debugWindow); //TODO: random line generator
 
-            Thread thread = new Thread(new PixelSupplier(debugOutput, debugCamera.resolution));
+            Thread thread = new Thread(new PixelSupplier(debugWindow, debugWindow.resolution));
             thread.start();
         }
 

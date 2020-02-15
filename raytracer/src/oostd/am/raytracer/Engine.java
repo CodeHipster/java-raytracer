@@ -3,10 +3,15 @@ package oostd.am.raytracer;
 import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.camera.Pixel;
+import oostd.am.raytracer.api.debug.Line;
 import oostd.am.raytracer.api.geography.PixelPosition;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
-import oostd.am.raytracer.api.scenery.*;
+import oostd.am.raytracer.api.scenery.ColorFilter;
+import oostd.am.raytracer.api.scenery.PointLight;
+import oostd.am.raytracer.api.scenery.Scene;
+import oostd.am.raytracer.api.scenery.Triangle;
+import oostd.am.raytracer.api.scenery.VolumeProperties;
 
 import java.util.ArrayDeque;
 import java.util.List;
@@ -18,6 +23,9 @@ import java.util.concurrent.SubmissionPublisher;
  * It does this asynchronously and continously generates pixel updates.
  * The pixels that are published will have to be added to previous pixels for the same pixelPosition.
  * This way each iteration provides more detail.
+ *
+ * The engine first renders the first ray for each pixel of the render camera.
+ * Then it goes full depth for each ray.
  */
 public class Engine implements Runnable{
     private List<PointLight> pointLights;
@@ -25,23 +33,33 @@ public class Engine implements Runnable{
     private Queue<InverseRay> inverseRaysBuffer = new ArrayDeque<>();
     private Queue<ShadowRay> shadowRays = new ArrayDeque<>();
     private List<Triangle> triangles;
-    private SubmissionPublisher<Pixel> pixelSink;
+    private SubmissionPublisher<Pixel> renderOutput;
+    private SubmissionPublisher<Line> debugLineOutput;
 
     ReflectionFactorCalculator reflectionFactorCalculator = new ReflectionFactorCalculator();
 
     public Engine(Scene scene) {
-        this.pixelSink = new SubmissionPublisher<>();
+        this.renderOutput = new SubmissionPublisher<>();
+        this.debugLineOutput = new SubmissionPublisher<>();
         Camera camera = scene.getRenderCamera();
-        pixelSink.subscribe(camera.outputConsumer);
+        renderOutput.subscribe(camera.outputConsumer);
+        scene.getDebugWindows().forEach(lineSubscriber -> debugLineOutput.subscribe(lineSubscriber));
 
         this.pointLights = scene.getPointLights();
         this.triangles = scene.getTriangles();
 
+        initializeRays(camera);
+    }
+
+    /**
+     * Initailize the first rays from the scene.
+     * The rays start from the camera position and are aimed at a 1 by 1 unit square at given offset.
+     * @param camera
+     */
+    private void initializeRays(Camera camera){
         int pixelsX = camera.resolution.width;
         int pixelsY = camera.resolution.height;
         //TODO: use camera direction as well.
-        //TODO: lens position and size in units
-        //for now using 1 by 1 unit.
         double width = 1;
         double height = 1;
         for (int y = 0; y < pixelsY; ++y) {
@@ -76,7 +94,7 @@ public class Engine implements Runnable{
             }
         }
         System.out.println("finished tracing rays");
-        pixelSink.close();
+        renderOutput.close();
     }
 
     private void swapBuffer(){
@@ -132,6 +150,8 @@ public class Engine implements Runnable{
                     Collision collision = findCollision(ray, ray.origin);
                     if(collision == null) return; // We did not hit anything. No light comes from the void.
                     Triangle target = collision.target;
+
+                    debugLineOutput.submit(new Line(ray.position, collision.impactPoint, ray.intensity));
 
                     boolean hitFromBehind = (ray.direction.dot(target.surfaceNormal) > 0);
 
@@ -280,7 +300,7 @@ public class Engine implements Runnable{
             //TODO: actual intensity /  how much it adds to the color? That is based on the intensity of all predecessor rays.
             Color color = diffuse.add(specular).scale(shadowRay.inverseRay.intensity);
             //Color color = diffuse.scale(shadowRay.intensity);
-            pixelSink.submit(new Pixel(shadowRay.inverseRay.pixelPosition, color));
+            renderOutput.submit(new Pixel(shadowRay.inverseRay.pixelPosition, color));
 
         });
 

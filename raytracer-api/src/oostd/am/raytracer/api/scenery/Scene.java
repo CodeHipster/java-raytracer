@@ -1,7 +1,7 @@
 package oostd.am.raytracer.api.scenery;
 
 import oostd.am.raytracer.api.camera.Camera;
-import oostd.am.raytracer.api.debug.DebugCamera;
+import oostd.am.raytracer.api.debug.DebugWindow;
 
 import java.util.List;
 
@@ -13,5 +13,5 @@ public interface Scene {
 
     Camera getRenderCamera();
 
-    List<DebugCamera> getDebugCameras();
+    List<DebugWindow> getDebugWindows();
 }

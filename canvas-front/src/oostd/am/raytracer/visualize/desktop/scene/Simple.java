@@ -4,7 +4,8 @@ import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.camera.Positioning;
 import oostd.am.raytracer.api.camera.Resolution;
-import oostd.am.raytracer.api.debug.DebugCamera;
+import oostd.am.raytracer.api.debug.DebugWindow;
+import oostd.am.raytracer.api.geography.Dimension;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
 import oostd.am.raytracer.api.scenery.ColorFilter;
@@ -37,7 +38,6 @@ public class Simple extends BaseScene {
                 material,
                 new VolumeProperties(new ColorFilter(1, 1, 1), 1)
         ));
-
         pointLights.add(new PointLight(new Vertex(3, 2, 1), new Color(1, 1, 1)));
 
         Resolution renderResolution = new Resolution(1, 1);
@@ -51,13 +51,12 @@ public class Simple extends BaseScene {
         );
 
         Resolution debugResolution = new Resolution(300, 300);
-        debugCameras.add(new DebugCamera(
-                new Positioning(
-                        new Vector(10, 2, 0),
-                        UnitVector.construct(-1, 0, 0))
-                ,10,10
-                , debugResolution
-                , this.subscriberFactory.createSubscriber(debugResolution)
+        debugWindows.add(new DebugWindow(
+                new Vector(0, 0, -10),
+                UnitVector.construct(new Vector(1, 0, 0)),
+                UnitVector.construct(new Vector(0, 1, 0)),
+                new Dimension(10,10),
+                debugResolution
         ));
     }
 }

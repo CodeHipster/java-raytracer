@@ -1,7 +1,7 @@
 package oostd.am.raytracer.visualize.desktop.scene;
 
 import oostd.am.raytracer.api.camera.Camera;
-import oostd.am.raytracer.api.debug.DebugCamera;
+import oostd.am.raytracer.api.debug.DebugWindow;
 import oostd.am.raytracer.api.scenery.PointLight;
 import oostd.am.raytracer.api.scenery.Scene;
 import oostd.am.raytracer.api.scenery.Triangle;
@@ -16,13 +16,13 @@ public abstract class BaseScene implements Scene {
     protected List<Triangle> triangles;
     protected List<PointLight> pointLights;
     protected Camera renderCamera;
-    protected List<DebugCamera> debugCameras;
+    protected List<DebugWindow> debugWindows;
 
     public BaseScene(PixelSubscriberFactory subscriberFactory){
         this.subscriberFactory = subscriberFactory;
         this.triangles = new ArrayList<>();
         this.pointLights = new ArrayList<>();
-        this.debugCameras = new ArrayList<>();
+        this.debugWindows = new ArrayList<>();
     }
 
     @Override
@@ -41,7 +41,7 @@ public abstract class BaseScene implements Scene {
     }
 
     @Override
-    public List<DebugCamera> getDebugCameras() {
-        return debugCameras;
+    public List<DebugWindow> getDebugWindows() {
+        return debugWindows;
     }
 }

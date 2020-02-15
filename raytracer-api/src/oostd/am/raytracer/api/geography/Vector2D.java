@@ -1,19 +1,18 @@
 package oostd.am.raytracer.api.geography;
 
-/**
- * Position of a pixel on the 2d output
- */
-public class PixelPosition {
-    public int x,y;
+public class Vector2D {
+    public double x;
 
-    public PixelPosition(int x, int y){
+    public Vector2D(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
+    public double y;
+
     @Override
     public String toString() {
-        return "PixelPosition{" +
+        return "Vector2D{" +
                 "x=" + x +
                 ", y=" + y +
                 '}';
