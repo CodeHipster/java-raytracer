@@ -1,16 +1,15 @@
 package oostd.am.raytracer.visualize.desktop.render;
 
-import oostd.am.raytracer.api.camera.Pixel;
+import oostd.am.raytracer.api.PixelSubscriberFactory;
+import oostd.am.raytracer.api.camera.PixelSubscriber;
 import oostd.am.raytracer.api.camera.Resolution;
 
 import javax.swing.JFrame;
-import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Flow;
 
 /**
  * Creates and manages windows for pixel output
@@ -18,16 +17,29 @@ import java.util.concurrent.Flow;
 public class ScreenManager implements PixelSubscriberFactory {
     private List<JFrame> frames;
     private Rectangle screen;
+    private Resolution renderResolution;
+    private Resolution debugResolution;
 
-    public ScreenManager() {
+    public ScreenManager(Resolution renderResolution, Resolution debugResolution) {
+        this.renderResolution = renderResolution;
+        this.debugResolution = debugResolution;
         this.frames = new ArrayList<>();
         DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
         screen = new Rectangle(0,0, displayMode.getWidth(), displayMode.getHeight());
     }
 
     @Override
-    public Flow.Subscriber<Pixel> createSubscriber(Resolution resolution) {
-        RenderFrame renderFrame = new RenderFrame(convert(resolution));
+    public PixelSubscriber createRenderSubscriber() {
+        return this.createSubscriber(renderResolution);
+    }
+
+    @Override
+    public PixelSubscriber createDebugSubscriber() {
+        return this.createSubscriber(debugResolution);
+    }
+
+    public PixelSubscriber createSubscriber(Resolution resolution) {
+        RenderFrame renderFrame = new RenderFrame(resolution);
         placeFrame(renderFrame);
         frames.add(renderFrame);
         return renderFrame.getPixelConsumer();
@@ -64,9 +76,5 @@ public class ScreenManager implements PixelSubscriberFactory {
             return true;
         }
         return false;
-    }
-
-    private Dimension convert(Resolution resolution){
-        return new Dimension(resolution.width, resolution.height);
     }
 }

@@ -7,15 +7,15 @@ import oostd.am.raytracer.api.geography.PixelPosition;
 
 import java.util.Random;
 import java.util.concurrent.Flow;
+import java.util.concurrent.SubmissionPublisher;
 
 //supply random pixels
-public class PixelSupplier implements Runnable {
+public class PixelSupplier implements Runnable, Flow.Publisher<Pixel> {
 
     private int width, height;
-    private Flow.Publisher<Pixel> target;
+    private SubmissionPublisher<Pixel> publisher = new SubmissionPublisher<>();
 
-    public PixelSupplier(Flow.Publisher<Pixel> target, Resolution resolution){
-        this.target = target;
+    public PixelSupplier(Resolution resolution){
         this.width = resolution.width;
         this.height = resolution.height;
     }
@@ -29,9 +29,12 @@ public class PixelSupplier implements Runnable {
                     new PixelPosition(random.nextInt(width), random.nextInt(height)),
                     new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255))
             );
-            System.out.println("Submitting pixel");
-            target.
-            target.submit(pixel);
+            publisher.submit(pixel);
         }
+    }
+
+    @Override
+    public void subscribe(Flow.Subscriber<? super Pixel> subscriber) {
+        publisher.subscribe(subscriber);
     }
 }

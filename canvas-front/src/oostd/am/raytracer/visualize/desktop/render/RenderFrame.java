@@ -1,26 +1,25 @@
 package oostd.am.raytracer.visualize.desktop.render;
 
-import oostd.am.raytracer.api.camera.Pixel;
+import oostd.am.raytracer.api.camera.PixelSubscriber;
+import oostd.am.raytracer.api.camera.Resolution;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.concurrent.Flow;
+import javax.swing.JFrame;
 
 public class RenderFrame extends JFrame {
 
     private RenderPanel renderPanel;
 
-    public RenderFrame(Dimension dimension){
+    public RenderFrame(Resolution resolution){
         super("Trace window");
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//TODO: register a WindowListener to unsubscribe from the pixel output.
         this.setVisible(true);
-        renderPanel = new RenderPanel(dimension, 10);
+        renderPanel = new RenderPanel(resolution, 10);
         this.add(renderPanel);
         this.pack();
     }
 
-    public Flow.Subscriber<Pixel> getPixelConsumer(){
+    public PixelSubscriber getPixelConsumer(){
         return renderPanel;
     }
 }

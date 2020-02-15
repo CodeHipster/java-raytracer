@@ -3,8 +3,6 @@ package oostd.am.raytracer;
 import oostd.am.raytracer.api.geography.Vector;
 import oostd.am.raytracer.api.scenery.Triangle;
 
-import java.util.Optional;
-
 public class CollisionCalculator {
 
     private static double EPSILON = Math.ulp(1.0);
@@ -17,8 +15,8 @@ public class CollisionCalculator {
     public static double calculateCollisionDistance(Triangle triangle, Ray ray) {
         Vector vert0 = triangle.vertices[0];
 
-        Vector edge1 = triangle.vertices[1].subtract(triangle.vertices[0]);
-        Vector edge2 = triangle.vertices[2].subtract(triangle.vertices[0]);
+        Vector edge1 = triangle.vertices[1].subtractNew(triangle.vertices[0]);
+        Vector edge2 = triangle.vertices[2].subtractNew(triangle.vertices[0]);
 
         Vector n = edge1.cross(edge2);
         double norm = Math.sqrt(n.square());
@@ -37,7 +35,7 @@ public class CollisionCalculator {
         double invDet = 1.0 / det;
 
         // Calculate distance from vert0 to ray origin
-        Vector tvec = ray.position.subtract(vert0);
+        Vector tvec = ray.position.subtractNew(vert0);
         double a = -(n.dot(tvec));
         double b = n.dot(ray.direction);
 

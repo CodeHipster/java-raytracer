@@ -1,4 +1,4 @@
-package oostd.am.raytracer.visualize.desktop.scene;
+package oostd.am.raytracer.scene.simple.factory;
 
 import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Positioning;
@@ -7,15 +7,14 @@ import oostd.am.raytracer.api.debug.DebugWindow;
 import oostd.am.raytracer.api.geography.Dimension;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
-import oostd.am.raytracer.visualize.desktop.render.PixelSubscriberFactory;
+import oostd.am.raytracer.api.scenery.Scene;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LotsOCameras extends BaseScene {
+public class LotsOCameras extends BaseSceneFactory{
+    public LotsOCameras() {
 
-    public LotsOCameras(PixelSubscriberFactory factory) {
-        super(factory);
         List<DebugWindow> debugWindows = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             Resolution debugResolution = new Resolution(300, 300);
@@ -23,16 +22,14 @@ public class LotsOCameras extends BaseScene {
                     new Vector(0, i*2, 0),
                     UnitVector.construct(new Vector(1, 0, 0)),
                     UnitVector.construct(new Vector(0, 1, 0)),
-                    new Dimension(10,10),
-                    debugResolution
+                    new Dimension(10,10)
             ));
         }
-        this.debugWindows = debugWindows;
-        Resolution renderResolution = new Resolution(300, 300);
-        this.renderCamera = new Camera(
+
+        Camera renderCamera = new Camera(
                 new Positioning(new Vector(0, 0, 0), UnitVector.construct(new Vector(1, 0, 0)))
-                , 1
-                , renderResolution
-                , this.subscriberFactory.createSubscriber(renderResolution));
+                , 1);
+
+        this.scene = new Scene(new ArrayList<>(), new ArrayList<>(), renderCamera, debugWindows);
     }
 }

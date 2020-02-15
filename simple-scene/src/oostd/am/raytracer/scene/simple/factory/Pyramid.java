@@ -1,9 +1,8 @@
-package oostd.am.raytracer.visualize.desktop.scene;
+package oostd.am.raytracer.scene.simple.factory;
 
 import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.camera.Positioning;
-import oostd.am.raytracer.api.camera.Resolution;
 import oostd.am.raytracer.api.debug.DebugWindow;
 import oostd.am.raytracer.api.geography.Dimension;
 import oostd.am.raytracer.api.geography.UnitVector;
@@ -11,21 +10,20 @@ import oostd.am.raytracer.api.geography.Vector;
 import oostd.am.raytracer.api.scenery.ColorFilter;
 import oostd.am.raytracer.api.scenery.Material;
 import oostd.am.raytracer.api.scenery.PointLight;
+import oostd.am.raytracer.api.scenery.Scene;
 import oostd.am.raytracer.api.scenery.Triangle;
-import oostd.am.raytracer.api.scenery.Vertex;
 import oostd.am.raytracer.api.scenery.VolumeProperties;
-import oostd.am.raytracer.visualize.desktop.render.PixelSubscriberFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class Pyramid extends BaseScene {
+public class Pyramid extends BaseSceneFactory {
 
-    public Pyramid(PixelSubscriberFactory factory) {
-        super(factory);
-        setupScene();
-    }
-
-    private void setupScene() {
+    public Pyramid() {
+        List<Triangle> triangles = new ArrayList<>();
+        List<PointLight> pointLights = new ArrayList<>();
+        List<DebugWindow> debugWindows = new ArrayList<>();
         Material pyramidSurface = new Material(
                 100,
                 1,
@@ -46,10 +44,10 @@ public class Pyramid extends BaseScene {
         Triangle[] transparentPyramid = createPyramid(pyramidTransparentSurface, volumeProperties, new Vector(0, 0, -2));
 
         Triangle floor = new Triangle(
-                new Vertex[]{
-                        new Vertex(-100.0, 0.0, -100.0),
-                        new Vertex(0.0, 0.0, 200.0),
-                        new Vertex(100.0, 0.0, -100.0)
+                new Vector[]{
+                        new Vector(-100.0, 0.0, -100.0),
+                        new Vector(0.0, 0.0, 200.0),
+                        new Vector(100.0, 0.0, -100.0)
                 },
                 new Material(
                         1000,
@@ -61,10 +59,10 @@ public class Pyramid extends BaseScene {
                 volumeProperties
         );
         Triangle mirror = new Triangle(
-                new Vertex[]{
-                        new Vertex(-4.0, 0.0, 0.0),
-                        new Vertex(-2.0, 3.0, 2.0),
-                        new Vertex(0.0, 0.0, 4.0)
+                new Vector[]{
+                        new Vector(-4.0, 0.0, 0.0),
+                        new Vector(-2.0, 3.0, 2.0),
+                        new Vector(0.0, 0.0, 4.0)
                 },
                 new Material(
                         10000,
@@ -80,29 +78,24 @@ public class Pyramid extends BaseScene {
         triangles.add(floor);
         triangles.add(mirror);
 
-        pointLights.add(new PointLight(new Vertex(3, 2, -1), new Color(1, 1, 1)));
-        pointLights.add(new PointLight(new Vertex(3, 2, 1), new Color(1, 1, 1)));
+        pointLights.add(new PointLight(new Vector(3, 2, -1), new Color(1, 1, 1)));
+        pointLights.add(new PointLight(new Vector(3, 2, 1), new Color(1, 1, 1)));
 
-        VolumeProperties cameraVolume = new VolumeProperties(new ColorFilter(1, 1, 1), 1);
-        Resolution renderResolution = new Resolution(500, 500);
-        renderCamera = new Camera(
+        Camera renderCamera = new Camera(
                 new Positioning(
                         new Vector(0, 2, -10),
                         UnitVector.construct(0, 0, 1))
-                ,1
-                , renderResolution
-                , this.subscriberFactory.createSubscriber(renderResolution)
-        );
+                , 1);
 
-        Resolution debugResolution = new Resolution(500, 500);
         DebugWindow debugWindow = new DebugWindow(
                 new Vector(0, 0, 0),
                 UnitVector.construct(new Vector(1, 0, 0)),
                 UnitVector.construct(new Vector(0, 1, 0)),
-                new Dimension(10,10),
-                debugResolution
+                new Dimension(10, 10)
         );
         debugWindows.add(debugWindow);
+        
+        this.scene = new Scene(triangles, pointLights, renderCamera, debugWindows);
     }
 
     /**
@@ -114,38 +107,38 @@ public class Pyramid extends BaseScene {
     private Triangle[] createPyramid(Material surface, VolumeProperties volume, Vector position) {
         Triangle[] triangles = {
                 new Triangle(
-                        new Vertex[]{
-                                new Vertex(-1.0, 0.0, -1.0).translate(position),
-                                new Vertex(0.0, 1.0, 0.0).translate(position),
-                                new Vertex(1.0, 0.0, -1.0).translate(position)
+                        new Vector[]{
+                                new Vector(-1.0, 0.0, -1.0).addSelf(position),
+                                new Vector(0.0, 1.0, 0.0).addSelf(position),
+                                new Vector(1.0, 0.0, -1.0).addSelf(position)
                         },
                         surface,
                         volume
                 )
                 ,
                 new Triangle(
-                        new Vertex[]{
-                                new Vertex(1.0, 0.0, -1.0).translate(position),
-                                new Vertex(0.0, 1.0, 0.0).translate(position),
-                                new Vertex(1.0, 0.0, 1.0).translate(position)
+                        new Vector[]{
+                                new Vector(1.0, 0.0, -1.0).addSelf(position),
+                                new Vector(0.0, 1.0, 0.0).addSelf(position),
+                                new Vector(1.0, 0.0, 1.0).addSelf(position)
                         },
                         surface,
                         volume
                 ),
                 new Triangle(
-                        new Vertex[]{
-                                new Vertex(1.0, 0.0, 1.0).translate(position),
-                                new Vertex(0.0, 1.0, 0.0).translate(position),
-                                new Vertex(-1.0, 0.0, 1.0).translate(position)
+                        new Vector[]{
+                                new Vector(1.0, 0.0, 1.0).addSelf(position),
+                                new Vector(0.0, 1.0, 0.0).addSelf(position),
+                                new Vector(-1.0, 0.0, 1.0).addSelf(position)
                         },
                         surface,
                         volume
                 ),
                 new Triangle(
-                        new Vertex[]{
-                                new Vertex(-1.0, 0.0, 1.0).translate(position),
-                                new Vertex(0.0, 1.0, 0.0).translate(position),
-                                new Vertex(-1.0, 0.0, -1.0).translate(position)
+                        new Vector[]{
+                                new Vector(-1.0, 0.0, 1.0).addSelf(position),
+                                new Vector(0.0, 1.0, 0.0).addSelf(position),
+                                new Vector(-1.0, 0.0, -1.0).addSelf(position)
                         },
                         surface,
                         volume

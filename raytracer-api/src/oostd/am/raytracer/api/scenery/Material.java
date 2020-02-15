@@ -15,7 +15,7 @@ package oostd.am.raytracer.api.scenery;
  * another thought, depending on the angle more of the color filter is applied to reflective rays? (also depends on the 'hardness' of the material?)
  *
  */
-public class Material {
+public final class Material {
 
     public final double specularPower;
     public final double specularIntensity;

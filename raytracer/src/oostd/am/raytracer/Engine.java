@@ -1,5 +1,6 @@
 package oostd.am.raytracer;
 
+import oostd.am.raytracer.api.PixelSubscriberFactory;
 import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.camera.Pixel;
@@ -38,10 +39,11 @@ public class Engine implements Runnable{
 
     ReflectionFactorCalculator reflectionFactorCalculator = new ReflectionFactorCalculator();
 
-    public Engine(Scene scene) {
+    public Engine(Scene scene, PixelSubscriberFactory pixelSubscriberFactory) {
         this.renderOutput = new SubmissionPublisher<>();
         this.debugLineOutput = new SubmissionPublisher<>();
-        Camera camera = scene.getRenderCamera();
+        pixelSubscriberFactory.createSubscriber(scene.renderCamera.)
+        Camera camera = scene.renderCamera;
         renderOutput.subscribe(camera.outputConsumer);
         scene.getDebugWindows().forEach(lineSubscriber -> debugLineOutput.subscribe(lineSubscriber));
 
@@ -119,7 +121,7 @@ public class Engine implements Runnable{
         }
         double c2 = Math.sqrt(tir);
 
-        Vector T = I.scale(n).add(N.scale(n*c1-c2));
+        Vector T = I.scaleNew(n).addNew(N.scaleNew(n*c1-c2));
 
         return UnitVector.construct(T);
     }
@@ -139,7 +141,7 @@ public class Engine implements Runnable{
             }
         }
         if(target == null) return null; // did not hit anything.
-        Vector collisionPoint = ray.position.add(ray.direction.scale(distance));
+        Vector collisionPoint = ray.position.addNew(ray.direction.scaleNew(distance));
         return new Collision(target, collisionPoint);
     }
 
@@ -310,7 +312,7 @@ public class Engine implements Runnable{
     //Check if shadowRay hits the light.
     private boolean rayHitsLight(ShadowRay shadowRay){
 
-        double distanceToLight = shadowRay.light.position.subtract(shadowRay.position).length();
+        double distanceToLight = shadowRay.light.position.subtractNew(shadowRay.position).length();
         for (Triangle triangle : triangles) {
             if (triangle == shadowRay.triangle) {
                 //No need to check collision with self.

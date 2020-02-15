@@ -1,46 +1,37 @@
 package oostd.am.raytracer.visualize.desktop.menu;
 
-import oostd.am.raytracer.api.scenery.Scene;
+import oostd.am.raytracer.api.scenery.SceneService;
 import oostd.am.raytracer.visualize.desktop.RenderService;
-import oostd.am.raytracer.visualize.desktop.render.ScreenManager;
-import oostd.am.raytracer.visualize.desktop.scene.Simple;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class MenuListener implements ActionListener {
 
     private RenderService renderService;
-    private ScreenManager screenManager;
 
-    MenuListener(RenderService renderService, ScreenManager screenManager) {
+    //TODO: selection window for user to select what scene to use.
+    private SceneService sceneService;
+
+    MenuListener(RenderService renderService) {
         this.renderService = renderService;
-        this.screenManager = screenManager;
+
+        List<SceneService> sceneServices = SceneService.getInstances();
+        if(sceneServices.isEmpty()) throw new RuntimeException("No scene services found.");
+        if(sceneServices.size() > 1){
+            System.out.println("Found multiple instances of the scene service. Using the first one.");
+            for(SceneService service : sceneServices){
+                System.out.println(service.toString());
+            }
+        }
+        sceneService = sceneServices.get(0);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if ("startRendering".equals(e.getActionCommand())) {
-//            Pyramid scene = new Pyramid();
-//            List<Flow.Subscriber<Pixel>> debugCams = scene.getDebugCameras().stream()
-//                    .map(c -> screenManager.createWindow(convert(c.resolution))).collect(Collectors.toList());
-//            Flow.Subscriber<Pixel> renderOutput = screenManager.createWindow(convert(scene.getRenderCamera().resolution));
-//            scene.attachPixelConsumers(renderOutput, debugCams.get(0));
-//            renderService.startRender(scene);
-
-//            LotsOCameras scene = new LotsOCameras();
-//
-//            List<Flow.Subscriber<Pixel>> debugCams = scene.getDebugCameras().stream()
-//                    .map(c -> screenManager.createWindow(convert(c.resolution))).collect(Collectors.toList());
-//            Flow.Subscriber<Pixel> renderOutput = screenManager.createWindow(convert(scene.getRenderCamera().resolution));
-//            List<Flow.Subscriber<Pixel>> outputs = new ArrayList<>();
-//            outputs.add(renderOutput);
-//            outputs.addAll(debugCams);
-//            scene.attachCameraOutput(outputs);
-//            renderService.startRender(scene);
-
-            Scene simple = new Simple(screenManager);
-            renderService.startRender(simple);
+            renderService.startRender(sceneService.getScene());
         }
     }
 }

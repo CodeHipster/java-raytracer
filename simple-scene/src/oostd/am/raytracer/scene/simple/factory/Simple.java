@@ -1,4 +1,4 @@
-package oostd.am.raytracer.visualize.desktop.scene;
+package oostd.am.raytracer.scene.simple.factory;
 
 import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Color;
@@ -11,16 +11,20 @@ import oostd.am.raytracer.api.geography.Vector;
 import oostd.am.raytracer.api.scenery.ColorFilter;
 import oostd.am.raytracer.api.scenery.Material;
 import oostd.am.raytracer.api.scenery.PointLight;
+import oostd.am.raytracer.api.scenery.Scene;
 import oostd.am.raytracer.api.scenery.Triangle;
-import oostd.am.raytracer.api.scenery.Vertex;
 import oostd.am.raytracer.api.scenery.VolumeProperties;
-import oostd.am.raytracer.visualize.desktop.render.PixelSubscriberFactory;
 
-public class Simple extends BaseScene {
+import java.util.ArrayList;
+import java.util.List;
 
-    public Simple(PixelSubscriberFactory factory) {
-        super(factory);
+public class Simple extends BaseSceneFactory{
 
+    public Simple() {
+
+        List<Triangle> triangles = new ArrayList<>();
+        List<PointLight> pointLights = new ArrayList<>();
+        List<DebugWindow> debugWindows = new ArrayList<>();
         Material material = new Material(
                 100,
                 1,
@@ -30,33 +34,31 @@ public class Simple extends BaseScene {
         );
 
         triangles.add(new Triangle(
-                new Vertex[]{
-                        new Vertex(-2.0, 0.0, -2.0),
-                        new Vertex(0.0, 5.0, 0.0),
-                        new Vertex(2.0, 0.0, 2.0)
+                new Vector[]{
+                        new Vector(-2.0, 0.0, -2.0),
+                        new Vector(0.0, 5.0, 0.0),
+                        new Vector(2.0, 0.0, 2.0)
                 },
                 material,
                 new VolumeProperties(new ColorFilter(1, 1, 1), 1)
         ));
-        pointLights.add(new PointLight(new Vertex(3, 2, 1), new Color(1, 1, 1)));
+        pointLights.add(new PointLight(new Vector(3, 2, 1), new Color(1, 1, 1)));
 
         Resolution renderResolution = new Resolution(1, 1);
-        renderCamera = new Camera(
+        Camera renderCamera = new Camera(
                 new Positioning(
                         new Vector(0, 2, -10),
                         UnitVector.construct(0, 0, 1))
                 ,1
-                , renderResolution
-                , this.subscriberFactory.createSubscriber(renderResolution)
         );
 
-        Resolution debugResolution = new Resolution(300, 300);
-        debugWindows.add(new DebugWindow(
+        DebugWindow debugWindow = new DebugWindow(
                 new Vector(0, 0, -10),
                 UnitVector.construct(new Vector(1, 0, 0)),
                 UnitVector.construct(new Vector(0, 1, 0)),
-                new Dimension(10,10),
-                debugResolution
-        ));
+                new Dimension(10, 10)
+        );
+        debugWindows.add(debugWindow);
+        this.scene = new Scene(triangles, pointLights, renderCamera, debugWindows);
     }
 }

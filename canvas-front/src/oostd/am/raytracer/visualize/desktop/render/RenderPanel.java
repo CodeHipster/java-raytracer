@@ -1,26 +1,30 @@
 package oostd.am.raytracer.visualize.desktop.render;
 
 import oostd.am.raytracer.api.camera.Pixel;
+import oostd.am.raytracer.api.camera.PixelSubscriber;
+import oostd.am.raytracer.api.camera.Resolution;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.Flow;
 
-public class RenderPanel extends JPanel implements Flow.Subscriber<Pixel> {
+public class RenderPanel extends JPanel implements PixelSubscriber {
 
     private volatile BufferedImage imageBuffer;
+    private Resolution resolution;
     private Flow.Subscription subscription;
     private long lastRepaint;
     private long repaintInterval;
 
     /**
      *
-     * @param dimension, the size of the panel.
+     * @param resolution, the size of the panel.
      * @param refreshRate, amount of repaints per second.
      */
-    public RenderPanel(Dimension dimension, int refreshRate) {
-        this.imageBuffer = new BufferedImage(dimension.width, dimension.height, BufferedImage.TYPE_3BYTE_BGR);
+    public RenderPanel(Resolution resolution, int refreshRate) {
+        this.imageBuffer = new BufferedImage(resolution.width, resolution.height, BufferedImage.TYPE_3BYTE_BGR);
+        this.resolution = resolution;
         this.lastRepaint = System.currentTimeMillis();
         this.repaintInterval = 1000/refreshRate;
     }
@@ -76,5 +80,10 @@ public class RenderPanel extends JPanel implements Flow.Subscriber<Pixel> {
             super.repaint();
             lastRepaint = now;
         }
+    }
+
+    @Override
+    public Resolution getResolution() {
+        return resolution;
     }
 }

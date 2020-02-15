@@ -30,7 +30,7 @@ public class Plane {
      * @return a 2D vector containing the x, y position on the plane.
      */
     public Vector2D project(Vector point){
-        Vector pointToOrigin = point.subtract(origin);
+        Vector pointToOrigin = point.subtractNew(origin);
         double x = pointToOrigin.dot(xAxis);
         double y = pointToOrigin.dot(normal.cross(xAxis));
         return new Vector2D(x, y);
