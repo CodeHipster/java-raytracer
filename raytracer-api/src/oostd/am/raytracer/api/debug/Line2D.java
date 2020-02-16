@@ -11,8 +11,9 @@ public class Line2D {
         this.to = to;
     }
 
-    public void add(Vector2D vector){
+    public void addSelf(Vector2D vector){
         from.addSelf(vector);
+        to.addSelf(vector);
     }
 
     @Override

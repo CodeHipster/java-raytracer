@@ -9,12 +9,12 @@ public class Plane {
      *
      * @param origin
      * @param normal
-     * @param alignmentVector, aligns the plane's xAxis to this vector
+     * @param xAxis, aligns the plane's xAxis to this vector
      */
-    public Plane(Vector origin, Vector normal, UnitVector alignmentVector) {
+    public Plane(Vector origin, Vector normal, UnitVector xAxis) {
         this.origin = origin;
         this.normal = normal;
-        this.alignTo(alignmentVector);
+        this.xAxis = xAxis;
     }
 
     /**
@@ -34,10 +34,5 @@ public class Plane {
         double x = pointToOrigin.dot(xAxis);
         double y = pointToOrigin.dot(normal.cross(xAxis));
         return new Vector2D(x, y);
-    }
-
-    private void alignTo(Vector axis){
-        //cross normal with axis
-        xAxis = normal.cross(axis).cross(normal);
     }
 }

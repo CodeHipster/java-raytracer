@@ -48,8 +48,8 @@ public class Simple extends BaseSceneFactory{
 
         Window debugWindow = new Window(
                 new Vector(0, 0, -10),
+                UnitVector.construct(new Vector(0, 0, 1)),
                 UnitVector.construct(new Vector(1, 0, 0)),
-                UnitVector.construct(new Vector(0, 1, 0)),
                 new Dimension(10, 10)
         );
         debugWindows.add(debugWindow);

@@ -60,7 +60,7 @@ public class DebugLineProcessor implements Flow.Processor<Line, Pixel> {
     private Line2D convertToScreenSize(Line2D line){
         //line is plotted on a window with an origin in the middle.
         // screen has 0,0 on the left bottom
-        line.add(new Vector2D(window.dimension.width / 2, window.dimension.height / 2));
+        line.addSelf(new Vector2D(window.dimension.width / 2, window.dimension.height / 2));
         double hScale = resolution.width / window.dimension.width;
         double vScale = resolution.height / window.dimension.height;
 

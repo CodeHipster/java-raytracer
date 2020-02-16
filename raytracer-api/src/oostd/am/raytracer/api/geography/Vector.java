@@ -6,6 +6,7 @@ package oostd.am.raytracer.api.geography;
  * y = up
  * z = forward
  */
+//TODO: make self and new vector operations more consistent.
 public class Vector {
 
     public double x, y, z;
