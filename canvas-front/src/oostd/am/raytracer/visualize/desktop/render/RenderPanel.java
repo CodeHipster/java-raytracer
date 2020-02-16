@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.Flow;
 
+//TODO: panel name
 public class RenderPanel extends JPanel implements PixelSubscriber {
 
     private volatile BufferedImage imageBuffer;
@@ -70,6 +71,7 @@ public class RenderPanel extends JPanel implements PixelSubscriber {
 
     @Override
     public void onComplete() {
+        super.repaint();
         System.out.println("subscriber completed");
     }
 

@@ -29,9 +29,9 @@ public class Simple extends BaseSceneFactory{
 
         triangles.add(new Triangle(
                 new Vector[]{
-                        new Vector(-2.0, 0.0, -2.0),
+                        new Vector(-7.0, 0.0, -2.0),
                         new Vector(0.0, 5.0, 0.0),
-                        new Vector(2.0, 0.0, 2.0)
+                        new Vector(2.0, -3.0, 2.0)
                 },
                 material,
                 new VolumeProperties(new ColorFilter(1, 1, 1), 1)
@@ -50,9 +50,17 @@ public class Simple extends BaseSceneFactory{
                 new Vector(0, 0, -10),
                 UnitVector.construct(new Vector(0, 0, 1)),
                 UnitVector.construct(new Vector(1, 0, 0)),
-                new Dimension(10, 10)
+                new Dimension(20, 20)
         );
         debugWindows.add(debugWindow);
+
+        Window debugWindow2 = new Window(
+                new Vector(10, 0, 0),
+                UnitVector.construct(new Vector(-1, 0, 0)),
+                UnitVector.construct(new Vector(0, 0, 1)),
+                new Dimension(20, 20)
+        );
+        debugWindows.add(debugWindow2);
         this.scene = new Scene(triangles, pointLights, renderCamera, debugWindows);
     }
 }

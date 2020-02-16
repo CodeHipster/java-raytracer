@@ -97,6 +97,7 @@ public class Engine implements Runnable{
     /**
      * output lines for geometry
      */
+    //TODO: also print x,y,z axis
     public void debugSceneGeometry() {
         triangles.forEach(triangle -> {
             debugLineOutput.submit(new Line(triangle.vertices[0], triangle.vertices[1],1));
