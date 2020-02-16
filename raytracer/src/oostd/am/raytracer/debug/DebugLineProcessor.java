@@ -1,12 +1,15 @@
 package oostd.am.raytracer.debug;
 
+import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.camera.Pixel;
 import oostd.am.raytracer.api.camera.Resolution;
 import oostd.am.raytracer.api.debug.Line;
 import oostd.am.raytracer.api.debug.Line2D;
 import oostd.am.raytracer.api.debug.Window;
+import oostd.am.raytracer.api.geography.PixelPosition;
 import oostd.am.raytracer.api.geography.Vector2D;
 
+import java.util.List;
 import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
 
@@ -18,6 +21,7 @@ public class DebugLineProcessor implements Flow.Processor<Line, Pixel> {
     private Resolution resolution;
     private Window window;
     private SubmissionPublisher<Pixel> output;
+    private Flow.Subscription subscription;
 
     public DebugLineProcessor(Window window, Resolution resolution) {
         this.resolution = resolution;
@@ -27,7 +31,9 @@ public class DebugLineProcessor implements Flow.Processor<Line, Pixel> {
 
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
-
+        this.subscription = subscription;
+        subscription.request(1);
+        System.out.println("Line processor subscribed: " + subscription);
     }
 
     @Override
@@ -38,14 +44,17 @@ public class DebugLineProcessor implements Flow.Processor<Line, Pixel> {
 
         Line2D clippedLine = LineClipper.clipLine(new Line2D(from, to), window);
         // convert to pixels
-        Line2D screenLine = convertToScreenSize(clippedLine);
-
-        drawLine(screenLine);
-
+        if(clippedLine != null){
+            Line2D screenLine = convertToScreenSize(clippedLine);
+            drawLine(screenLine);
+        }
+        subscription.request(1);
     }
 
     private void drawLine(Line2D line){
         // what algorithm to use?
+        List<PixelPosition> draw = LineDrawer.draw(line);
+        draw.forEach(p -> output.submit(new Pixel(p, new Color(1,1,1))));
     }
 
     private Line2D convertToScreenSize(Line2D line){

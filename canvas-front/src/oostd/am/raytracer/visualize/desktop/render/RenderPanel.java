@@ -44,7 +44,7 @@ public class RenderPanel extends JPanel implements PixelSubscriber {
     public void onSubscribe(Flow.Subscription subscription) {
         this.subscription = subscription;
         subscription.request(1);
-        System.out.println("subscribed: " + subscription);
+        System.out.println("Render panel subscribed: " + subscription);
     }
 
     @Override
