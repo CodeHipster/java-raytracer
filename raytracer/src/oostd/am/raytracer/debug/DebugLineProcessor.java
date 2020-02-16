@@ -6,7 +6,6 @@ import oostd.am.raytracer.api.debug.Line;
 import oostd.am.raytracer.api.debug.Line2D;
 import oostd.am.raytracer.api.debug.Window;
 import oostd.am.raytracer.api.geography.Vector2D;
-import oostd.am.raytracer.api.scenery.Scene;
 
 import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
@@ -26,42 +25,39 @@ public class DebugLineProcessor implements Flow.Processor<Line, Pixel> {
         this.output = new SubmissionPublisher<>();
     }
 
-    /**
-     * draw lines for the scene geometry to the camera
-     *
-     * @param scene
-     */
-    public void renderSceneGeometry(Scene scene) {
-        scene.triangles.stream().forEach(triangle -> {
-            // render each line of the triangle to the window.
-            Vector2D v0 = window.project(triangle.vertices[0]);
-            Vector2D v1 = window.project(triangle.vertices[1]);
-            Vector2D v2 = window.project(triangle.vertices[2]);
-
-            this.drawLine(new Line2D(v0, v1));
-            this.drawLine(new Line2D(v1, v2));
-            this.drawLine(new Line2D(v2, v0));
-        });
-    }
-
-    private void drawLine(Line2D line) {
-        // clip
-        Line2D clip = LineClipper.clipLine(line, window);
-        // convert to pixels
-
-        // submit pixels to the publisher.
-
-    }
-
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
 
     }
 
     @Override
-    public void onNext(Line item) {
-        //draw pixels on the camera
-        //TODO: implement
+    public void onNext(Line line) {
+        // clip
+        Vector2D from = window.project(line.from);
+        Vector2D to = window.project(line.to);
+
+        Line2D clippedLine = LineClipper.clipLine(new Line2D(from, to), window);
+        // convert to pixels
+        Line2D screenLine = convertToScreenSize(clippedLine);
+
+        drawLine(screenLine);
+
+    }
+
+    private void drawLine(Line2D line){
+        // what algorithm to use?
+    }
+
+    private Line2D convertToScreenSize(Line2D line){
+        //line is plotted on a window with an origin in the middle.
+        // screen has 0,0 on the left bottom
+        line.add(new Vector2D(window.dimension.width / 2, window.dimension.height / 2));
+        double hScale = resolution.width / window.dimension.width;
+        double vScale = resolution.height / window.dimension.height;
+
+        line.from.scaleSelf(hScale, vScale);
+        line.to.scaleSelf(hScale, vScale);
+        return line;
     }
 
     @Override

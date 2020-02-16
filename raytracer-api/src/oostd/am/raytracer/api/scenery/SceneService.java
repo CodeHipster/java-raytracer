@@ -1,7 +1,5 @@
 package oostd.am.raytracer.api.scenery;
 
-import oostd.am.raytracer.api.RayTracerService;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;

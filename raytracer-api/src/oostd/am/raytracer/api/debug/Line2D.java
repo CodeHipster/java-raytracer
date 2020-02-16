@@ -11,6 +11,10 @@ public class Line2D {
         this.to = to;
     }
 
+    public void add(Vector2D vector){
+        from.addSelf(vector);
+    }
+
     @Override
     public String toString() {
         return "Line2D{" +

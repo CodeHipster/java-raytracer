@@ -94,8 +94,20 @@ public class Engine implements Runnable{
         }
     }
 
+    /**
+     * output lines for geometry
+     */
+    public void debugSceneGeometry() {
+        triangles.forEach(triangle -> {
+            debugLineOutput.submit(new Line(triangle.vertices[0], triangle.vertices[1],1));
+            debugLineOutput.submit(new Line(triangle.vertices[1], triangle.vertices[2],1));
+            debugLineOutput.submit(new Line(triangle.vertices[2], triangle.vertices[0],1));
+        });
+    }
+
     @Override
     public void run() {
+        debugSceneGeometry();
         boolean running = true;
         while(running) {
             processInverseRays();
