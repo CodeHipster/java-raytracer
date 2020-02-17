@@ -1,5 +1,6 @@
 package oostd.am.raytracer.random;
 
+import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.debug.Line;
 import oostd.am.raytracer.api.geography.Vector;
 
@@ -12,7 +13,7 @@ public class LineSupplier implements Runnable, Flow.Publisher<Line> {
 
     private SubmissionPublisher<Line> publisher = new SubmissionPublisher<>();
 
-    public LineSupplier(){
+    public LineSupplier() {
 
     }
 
@@ -20,7 +21,7 @@ public class LineSupplier implements Runnable, Flow.Publisher<Line> {
     public void run() {
         final Random random = new Random();
 
-        while(true){
+        while (true) {
             //random from to, within width height bounds
 
             int x1 = random.nextInt() % 10;
@@ -29,7 +30,8 @@ public class LineSupplier implements Runnable, Flow.Publisher<Line> {
             int x2 = random.nextInt() % 10;
             int y2 = random.nextInt() % 10;
             int z2 = random.nextInt() % 10;
-            Line debugLine = new Line(new Vector(x1, y1, z1), new Vector(x2, y2, z2), random.nextDouble());
+            Line debugLine = new Line(new Vector(x1, y1, z1), new Vector(x2, y2, z2)
+                    , new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255)));
             System.out.println("Submitting pixel");
             publisher.submit(debugLine);
         }

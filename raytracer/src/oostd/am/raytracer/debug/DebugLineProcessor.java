@@ -1,8 +1,8 @@
 package oostd.am.raytracer.debug;
 
-import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.camera.Pixel;
 import oostd.am.raytracer.api.camera.Resolution;
+import oostd.am.raytracer.api.debug.ColoredLine2D;
 import oostd.am.raytracer.api.debug.Line;
 import oostd.am.raytracer.api.debug.Line2D;
 import oostd.am.raytracer.api.debug.Window;
@@ -42,22 +42,24 @@ public class DebugLineProcessor implements Flow.Processor<Line, Pixel> {
         Vector2D from = window.project(line.from);
         Vector2D to = window.project(line.to);
 
-        Line2D clippedLine = LineClipper.clipLine(new Line2D(from, to), window);
+        ColoredLine2D colored = new ColoredLine2D(from, to, line.color);
+        boolean clipped = LineClipper.clipLine(colored, window);
+
         // convert to pixels
-        if(clippedLine != null){
-            Line2D screenLine = convertToScreenSize(clippedLine);
+        if(clipped){
+            ColoredLine2D screenLine = convertToScreenSize(colored);
             drawLine(screenLine);
         }
         subscription.request(1);
     }
 
-    private void drawLine(Line2D line){
+    private void drawLine(ColoredLine2D line){
         // what algorithm to use?
         List<PixelPosition> draw = LineDrawer.draw(line);
-        draw.forEach(p -> output.submit(new Pixel(p, new Color(1,1,1))));
+        draw.forEach(p -> output.submit(new Pixel(p, line.color)));
     }
 
-    private Line2D convertToScreenSize(Line2D line){
+    private <T extends Line2D> T convertToScreenSize(T line){
         //line is plotted on a window with an origin in the middle.
         // screen has 0,0 on the left bottom
         line.addSelf(new Vector2D(window.dimension.width / 2, window.dimension.height / 2));

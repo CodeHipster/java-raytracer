@@ -1,8 +1,11 @@
 package oostd.am.raytracer.api.camera;
 
-import oostd.am.raytracer.api.scenery.ColorFilter;
-
 public class Color {
+    public static Color WHITE = new Color(1,1,1);
+    public static Color RED = new Color(1,0,0);
+    public static Color GREEN = new Color(0,1,0);
+    public static Color BLUE = new Color(0,0,1);
+
     public double r,g,b;
 
     public Color(double r, double g, double b){

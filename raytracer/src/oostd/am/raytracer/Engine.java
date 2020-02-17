@@ -27,11 +27,11 @@ import java.util.concurrent.SubmissionPublisher;
  * It does this asynchronously and continously generates pixel updates.
  * The pixels that are published will have to be added to previous pixels for the same pixelPosition.
  * This way each iteration provides more detail.
- *
+ * <p>
  * The engine first renders the first ray for each pixel of the render camera.
  * Then it goes full depth for each ray.
  */
-public class Engine implements Runnable{
+public class Engine implements Runnable {
     private List<PointLight> pointLights;
     private Queue<InverseRay> inverseRays = new ArrayDeque<>();
     private Queue<InverseRay> inverseRaysBuffer = new ArrayDeque<>();
@@ -68,9 +68,10 @@ public class Engine implements Runnable{
     /**
      * Initailize the first rays from the scene.
      * The rays start from the camera position and are aimed at a 1 by 1 unit square at given offset.
+     *
      * @param camera
      */
-    private void initializeRays(Camera camera, Resolution resolution){
+    private void initializeRays(Camera camera, Resolution resolution) {
         int pixelsX = resolution.width;
         int pixelsY = resolution.height;
         //TODO: use camera direction as well.
@@ -88,7 +89,7 @@ public class Engine implements Runnable{
                         , camera.positioning.position
                         , new PixelPosition(x, y)
                         , null
-                        , new VolumeProperties(new ColorFilter(1,1,1), 1)); //expect the camera to be in the void. TODO: check if the camera is inside an object and use those properties.
+                        , new VolumeProperties(new ColorFilter(1, 1, 1), 1)); //expect the camera to be in the void. TODO: check if the camera is inside an object and use those properties.
                 inverseRays.add(ray);
             }
         }
@@ -97,26 +98,38 @@ public class Engine implements Runnable{
     /**
      * output lines for geometry
      */
-    //TODO: also print x,y,z axis
     public void debugSceneGeometry() {
         triangles.forEach(triangle -> {
-            debugLineOutput.submit(new Line(triangle.vertices[0], triangle.vertices[1],1));
-            debugLineOutput.submit(new Line(triangle.vertices[1], triangle.vertices[2],1));
-            debugLineOutput.submit(new Line(triangle.vertices[2], triangle.vertices[0],1));
+            debugLineOutput.submit(new Line(triangle.vertices[0], triangle.vertices[1], Color.WHITE));
+            debugLineOutput.submit(new Line(triangle.vertices[1], triangle.vertices[2], Color.WHITE));
+            debugLineOutput.submit(new Line(triangle.vertices[2], triangle.vertices[0], Color.WHITE));
         });
+        // print axis
+        debugLineOutput.submit(new Line(
+                new Vector(0,0,0),
+                new Vector(1,0,0),
+                Color.RED));
+        debugLineOutput.submit(new Line(
+                new Vector(0,0,0),
+                new Vector(0,1,0),
+                Color.GREEN));
+        debugLineOutput.submit(new Line(
+                new Vector(0,0,0),
+                new Vector(0,0,1),
+                Color.BLUE));
     }
 
     @Override
     public void run() {
         debugSceneGeometry();
         boolean running = true;
-        while(running) {
+        while (running) {
             processInverseRays();
 
             processShadowRays();
 
             // If there are no new rays generated, we can stop the engine.
-            if(inverseRays.isEmpty()){
+            if (inverseRays.isEmpty()) {
                 running = false;
             }
         }
@@ -124,7 +137,7 @@ public class Engine implements Runnable{
         renderOutput.close();
     }
 
-    private void swapBuffer(){
+    private void swapBuffer() {
         Queue<InverseRay> temp = inverseRays;
         inverseRays = inverseRaysBuffer;
         inverseRaysBuffer = temp;
@@ -132,66 +145,66 @@ public class Engine implements Runnable{
 
     //https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel
     //Returns null when there is no refraction, because of total internal reflection.
-    private UnitVector calculateRefractionDirection(double refractionIndexFrom, double refractionIndexTo, InverseRay ray, Triangle target, boolean hitFromBehind){
+    private UnitVector calculateRefractionDirection(double refractionIndexFrom, double refractionIndexTo, InverseRay ray, Triangle target, boolean hitFromBehind) {
 
         UnitVector I = ray.direction;
-        UnitVector N = (hitFromBehind)?target.surfaceNormal.inverse():target.surfaceNormal;
+        UnitVector N = (hitFromBehind) ? target.surfaceNormal.inverse() : target.surfaceNormal;
         double n = refractionIndexFrom / refractionIndexTo;
 
         double c1 = I.dot(N);
 
         double tir = 1 - (n * n) * (1 - (c1 * c1));
-        if(tir < 0) {
+        if (tir < 0) {
             return null; //Total internal reflection
         }
         double c2 = Math.sqrt(tir);
 
-        Vector T = I.scaleNew(n).addNew(N.scaleNew(n*c1-c2));
+        Vector T = I.scaleNew(n).addNew(N.scaleNew(n * c1 - c2));
 
         return UnitVector.construct(T);
     }
 
-    private Collision findCollision(Ray ray, Triangle origin){
+    private Collision findCollision(Ray ray, Triangle origin) {
 
         //check collision with triangles;
         double distance = Double.POSITIVE_INFINITY;
         Triangle target = null;
 
         for (Triangle triangle : triangles) {
-            if(triangle == origin) continue; //skip triangle we come from.
+            if (triangle == origin) continue; //skip triangle we come from.
             double d = CollisionCalculator.calculateCollisionDistance(triangle, ray);
             if (d > 0 && d < distance) {
                 distance = d;
                 target = triangle;
             }
         }
-        if(target == null) return null; // did not hit anything.
+        if (target == null) return null; // did not hit anything.
         Vector collisionPoint = ray.position.addNew(ray.direction.scaleNew(distance));
         return new Collision(target, collisionPoint);
     }
 
-    private void processInverseRays(){
+    private void processInverseRays() {
 
         inverseRays.stream().forEach(
-                ray ->{
+                ray -> {
                     Collision collision = findCollision(ray, ray.origin);
-                    if(collision == null) return; // We did not hit anything. No light comes from the void.
+                    if (collision == null) return; // We did not hit anything. No light comes from the void.
                     Triangle target = collision.target;
 
-                    debugLineOutput.submit(new Line(ray.position, collision.impactPoint, ray.intensity));
+                    debugLineOutput.submit(new Line(ray.position, collision.impactPoint, target.material.colorFilter.filter(Color.WHITE)));
 
                     boolean hitFromBehind = (ray.direction.dot(target.surfaceNormal) > 0);
 
                     double totalReflectionFactor = getReflectionFactor(target, ray, hitFromBehind);
                     double nonReflectionFactor = 1 - totalReflectionFactor; // part of light which is not reflected, either refracted or diffuse.
 
-                    if(totalReflectionFactor > 0){
+                    if (totalReflectionFactor > 0) {
                         castReflectionRay(ray, totalReflectionFactor, collision, hitFromBehind);
                     }
 
-                    if(target.material.transparent){ //cast refraction ray.
+                    if (target.material.transparent) { //cast refraction ray.
                         castRefractionRay(ray, nonReflectionFactor, collision, hitFromBehind);
-                    }else{
+                    } else {
                         castShadowRay(nonReflectionFactor, ray, collision);
                     }
                 }
@@ -203,12 +216,12 @@ public class Engine implements Runnable{
         swapBuffer();
     }
 
-    private void castShadowRay(double diffuseFactor, InverseRay ray, Collision collision){
+    private void castShadowRay(double diffuseFactor, InverseRay ray, Collision collision) {
         double lightIntensity = diffuseFactor * ray.intensity;
 
         //TODO: add color filter based on refraction factor. (for reflection and diffuse)
         //for each light create a lightray
-        if(lightIntensity > 0.001) { //no need to add the light as it has to little impact on the scene.
+        if (lightIntensity > 0.001) { //no need to add the light as it has to little impact on the scene.
             for (PointLight light : pointLights) {
                 shadowRays.add(new ShadowRay(
                         light,
@@ -217,19 +230,19 @@ public class Engine implements Runnable{
                         ray,
                         ray.volumeProperties));
             }
-        }else{
+        } else {
             System.out.println("Not casting shadow ray. Intensity: " + lightIntensity + " depth: " + ray.depth);
         }
     }
 
-    private void castReflectionRay(InverseRay ray, double reflectionFactor, Collision collision, boolean hitFromBehind){
+    private void castReflectionRay(InverseRay ray, double reflectionFactor, Collision collision, boolean hitFromBehind) {
 
         //create reflection ray.
         int depth = ray.depth + 1;
         System.out.println("Creating reflection ray. depth: " + depth);
         double intensity = ray.intensity * reflectionFactor;
-        if(intensity > 0.001 && depth < 20){ //Only create ray if it has an impact on the scene.
-            UnitVector surfaceNormal = (hitFromBehind)?collision.target.surfaceNormal.inverse() : collision.target.surfaceNormal;
+        if (intensity > 0.001 && depth < 20) { //Only create ray if it has an impact on the scene.
+            UnitVector surfaceNormal = (hitFromBehind) ? collision.target.surfaceNormal.inverse() : collision.target.surfaceNormal;
             UnitVector direction = ray.direction.reflectOn(surfaceNormal);
             //volumeProperties is the same, as we stay within the same space.
             InverseRay reflection = new InverseRay(
@@ -241,68 +254,68 @@ public class Engine implements Runnable{
                     collision.target,
                     ray.volumeProperties);
             inverseRaysBuffer.add(reflection);
-        }else{
+        } else {
             System.out.println("Not casting reflection ray. Intensity: " + intensity + " depth: " + depth);
         }
     }
 
-    private void castRefractionRay(InverseRay ray, double refractionFactor, Collision collision, boolean hitFromBehind){
+    private void castRefractionRay(InverseRay ray, double refractionFactor, Collision collision, boolean hitFromBehind) {
         //cast refraction ray.
         int depth = ray.depth + 1;
         System.out.println("Creating refraction ray. depth: " + depth);
         double intensity = ray.intensity * refractionFactor;
-        if(intensity > 0.001 && depth < 20){ //no need to add the light as it has to little impact on the scene.
+        if (intensity > 0.001 && depth < 20) { //no need to add the light as it has to little impact on the scene.
             UnitVector vector;
-            if(hitFromBehind){
+            if (hitFromBehind) {
                 vector = calculateRefractionDirection(collision.target.volumeProperties.refractionIndex,
-                       1 , ray, collision.target, hitFromBehind);
-            }else{
+                        1, ray, collision.target, hitFromBehind);
+            } else {
                 vector = calculateRefractionDirection(1,
                         collision.target.volumeProperties.refractionIndex, ray, collision.target, hitFromBehind);
             }
-            if(vector == null){ // Total internal reflection
+            if (vector == null) { // Total internal reflection
                 //cast reflection ray
                 castReflectionRay(ray, refractionFactor, collision, hitFromBehind);
                 System.out.println("Not casting refraction ray. Intensity: " + intensity + " depth: " + depth);
-            }else{
+            } else {
                 InverseRay inverseRay = new InverseRay(depth, intensity, UnitVector.construct(vector), collision.impactPoint, ray.pixelPosition, collision.target, collision.target.volumeProperties);
                 inverseRaysBuffer.add(inverseRay);
             }
-        }else{
+        } else {
             System.out.println("Not casting refraction ray. Intensity: " + intensity + " depth: " + depth);
         }
     }
 
     // Part of the light that is reflected, calculated by base reflection + factor based on angle.
-    private double getReflectionFactor(Triangle target, Ray ray, boolean hitFromBehind){
+    private double getReflectionFactor(Triangle target, Ray ray, boolean hitFromBehind) {
         // initial refractionFactor = (1 - reflectionFactor) * refractionFactor. e.g. (1-0.1) * 0.5 = 0.45
         double reflectionFactor = target.material.reflectionFactor;
         double additionalReflectionFactor;
-        if(hitFromBehind){
+        if (hitFromBehind) {
             //TODO figure out a way to know the refraction index of the volume we are going into.
             additionalReflectionFactor = reflectionFactorCalculator.calculateReflectionFactor(
                     target.surfaceNormal.inverse(), ray.direction.inverse(), target.volumeProperties.refractionIndex, 1);
-        }else{
+        } else {
             additionalReflectionFactor = reflectionFactorCalculator.calculateReflectionFactor(
                     target.surfaceNormal, ray.direction.inverse(), 1, target.volumeProperties.refractionIndex);
         }
         double total = (1 - reflectionFactor) * additionalReflectionFactor + reflectionFactor;
-        if(total > 1){
+        if (total > 1) {
             int debug = 0;
         }
         return total;
     }
 
-    private void processShadowRays(){
-        shadowRays.stream().forEach(shadowRay ->{
+    private void processShadowRays() {
+        shadowRays.stream().forEach(shadowRay -> {
             double diffuseFactor = shadowRay.triangle.surfaceNormal.dot(shadowRay.direction);
 
             //if light is behind triangle it will not hit.
-            if(diffuseFactor < 0) {
+            if (diffuseFactor < 0) {
                 return;
             }
 
-            if(!rayHitsLight(shadowRay)){
+            if (!rayHitsLight(shadowRay)) {
                 return;
             }
 
@@ -315,10 +328,10 @@ public class Engine implements Runnable{
             double specularIntensity = shadowRay.triangle.material.specularIntensity;
             double specularPower = shadowRay.triangle.material.specularPower;
             double specularFactor = reflectNormal.dot(inverseViewNormal);
-            if(specularFactor < 0){
+            if (specularFactor < 0) {
                 //makes no sense to apply specular if the light does not reflect in the direction of the eye.
                 specularFactor = 0;
-            }else{
+            } else {
                 specularFactor = Math.pow(specularFactor, specularPower);
             }
             Color specular = shadowRay.light.color.clone().scale(specularIntensity * specularFactor);
@@ -335,7 +348,7 @@ public class Engine implements Runnable{
     }
 
     //Check if shadowRay hits the light.
-    private boolean rayHitsLight(ShadowRay shadowRay){
+    private boolean rayHitsLight(ShadowRay shadowRay) {
 
         double distanceToLight = shadowRay.light.position.subtractNew(shadowRay.position).length();
         for (Triangle triangle : triangles) {
@@ -344,7 +357,7 @@ public class Engine implements Runnable{
                 continue;
             }
             double collisionDistance = CollisionCalculator.calculateCollisionDistance(triangle, shadowRay);
-            if(collisionDistance < 0) continue; //triangle was not hit.
+            if (collisionDistance < 0) continue; //triangle was not hit.
             if (collisionDistance < distanceToLight) {
                 return false;
             }

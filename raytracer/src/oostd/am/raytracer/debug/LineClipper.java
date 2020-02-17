@@ -44,7 +44,13 @@ public class LineClipper {
         return windowZone;
     }
 
-    public static Line2D clipLine(Line2D line, Window window){
+    /**
+     * @param line
+     * @param window
+     * @param <T>
+     * @return if line is clipped, false if it does not intersect with window.
+     */
+    public static <T extends Line2D> boolean clipLine( T line, Window window){
         // Compute region codes for P1, P2
         byte ZoneCodePoint1 = getWindowZoneCode(line.from, window);
         byte ZoneCodePoint2 = getWindowZoneCode(line.to, window);
@@ -131,9 +137,13 @@ public class LineClipper {
         }
         if (accept)
         {
-            return new Line2D(new Vector2D(x1, y1), new Vector2D(x2, y2));
+            line.from.x = x1;
+            line.from.y = y1;
+            line.to.x = x2;
+            line.to.y = y2;
+            return true;
         }else{
-            return null;
+            return false;
         }
     }
 }
