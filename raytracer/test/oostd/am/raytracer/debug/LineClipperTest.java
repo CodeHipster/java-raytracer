@@ -29,6 +29,7 @@ class LineClipperTest {
     public void rejectSameZone2(){
         boolean clipped = LineClipper.clipLine(
                 new Line2D(new Vector2D(-3, 7), new Vector2D(3, 8)),
+                //make the line clipper work with dimension and not the entire window.
                 new Window(null, null, null, new Dimension(10, 10))); //-5 to 5
 
         assertFalse(clipped);

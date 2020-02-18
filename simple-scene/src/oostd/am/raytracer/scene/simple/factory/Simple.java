@@ -2,8 +2,6 @@ package oostd.am.raytracer.scene.simple.factory;
 
 import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Color;
-import oostd.am.raytracer.api.camera.Positioning;
-import oostd.am.raytracer.api.camera.Resolution;
 import oostd.am.raytracer.api.debug.Window;
 import oostd.am.raytracer.api.geography.Dimension;
 import oostd.am.raytracer.api.geography.UnitVector;
@@ -15,7 +13,7 @@ import oostd.am.raytracer.api.scenery.Scene;
 import oostd.am.raytracer.api.scenery.Triangle;
 import oostd.am.raytracer.api.scenery.VolumeProperties;
 
-public class Simple extends BaseSceneFactory{
+public class Simple extends BaseSceneFactory {
 
     public Simple() {
 
@@ -38,26 +36,25 @@ public class Simple extends BaseSceneFactory{
         ));
         pointLights.add(new PointLight(new Vector(3, 2, 1), new Color(1, 1, 1)));
 
-        Resolution renderResolution = new Resolution(1, 1);
         Camera renderCamera = new Camera(
-                new Positioning(
-                        new Vector(0, 2, -10),
-                        UnitVector.construct(0, 0, 1))
-                ,1
+                new Vector(0, 2, -10),
+                new UnitVector(0, 0, 1),
+                new UnitVector(0, 1, 0)
+                , 1
         );
 
         Window debugWindow = new Window(
                 new Vector(0, 0, -10),
-                UnitVector.construct(new Vector(0, 0, 1)),
-                UnitVector.construct(new Vector(1, 0, 0)),
+                new UnitVector(new Vector(0, 0, 1)),
+                new UnitVector(new Vector(0, 1, 0)),
                 new Dimension(20, 20)
         );
         debugWindows.add(debugWindow);
 
         Window debugWindow2 = new Window(
                 new Vector(10, 0, 0),
-                UnitVector.construct(new Vector(-1, 0, 0)),
-                UnitVector.construct(new Vector(0, 0, 1)),
+                new UnitVector(new Vector(-1, 0, 0)),
+                new UnitVector(new Vector(0, 1, 0)),
                 new Dimension(20, 20)
         );
         debugWindows.add(debugWindow2);

@@ -10,6 +10,7 @@ import oostd.am.raytracer.api.debug.Line;
 import oostd.am.raytracer.api.geography.PixelPosition;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
+import oostd.am.raytracer.api.geography.Vector2D;
 import oostd.am.raytracer.api.scenery.ColorFilter;
 import oostd.am.raytracer.api.scenery.PointLight;
 import oostd.am.raytracer.api.scenery.Scene;
@@ -72,24 +73,30 @@ public class Engine implements Runnable {
      * @param camera
      */
     private void initializeRays(Camera camera, Resolution resolution) {
-        int pixelsX = resolution.width;
-        int pixelsY = resolution.height;
-        //TODO: use camera direction as well.
-        double width = 1;
-        double height = 1;
-        for (int y = 0; y < pixelsY; ++y) {
-            double ypos = ((double) y / pixelsY) * height - height / 2.0;
-            for (int x = 0; x < pixelsX; ++x) {
-                double xpos = ((double) x / pixelsX) * width - width / 2.0;
-                UnitVector rayDirection = UnitVector.construct(xpos, ypos, camera.lensOffset);
+        Vector point = camera.lens.positionOf(new Vector2D(1,1));
+        double xStep = camera.lens.dimension.width / resolution.width;
+        double yStep = camera.lens.dimension.height / resolution.height;
+        //start in the left bottom
+        double xStart = (camera.lens.dimension.width / -2) + (xStep/2); //+half a step to move to the center of the pixel
+        double yStart = camera.lens.dimension.height / -2 + (yStep/2);
+
+        for (int y = 0; y < resolution.height; ++y) {
+            double yLensPos = yStart + y * yStep;
+            for (int x = 0; x < resolution.width; ++x) {
+                double xLensPos = xStart + x * xStep;
+                Vector lensPoint = camera.lens.positionOf(new Vector2D(xLensPos, yLensPos));
+                Vector camToPoint = lensPoint.subtract(camera.position);
+                UnitVector rayDirection = new UnitVector(camToPoint);
                 InverseRay ray = new InverseRay(
-                        1
-                        , 1
-                        , rayDirection
-                        , camera.positioning.position
-                        , new PixelPosition(x, y)
-                        , null
-                        , new VolumeProperties(new ColorFilter(1, 1, 1), 1)); //expect the camera to be in the void. TODO: check if the camera is inside an object and use those properties.
+                        1,
+                        1,
+                        rayDirection,
+                        camera.position,
+                        new PixelPosition(x, y),
+                        null,
+                        //expect the camera to be in the void.
+                        // TODO: check if the camera is inside an object and use those properties.
+                        new VolumeProperties(new ColorFilter(1, 1, 1), 1));
                 inverseRays.add(ray);
             }
         }
@@ -148,7 +155,7 @@ public class Engine implements Runnable {
     private UnitVector calculateRefractionDirection(double refractionIndexFrom, double refractionIndexTo, InverseRay ray, Triangle target, boolean hitFromBehind) {
 
         UnitVector I = ray.direction;
-        UnitVector N = (hitFromBehind) ? target.surfaceNormal.inverse() : target.surfaceNormal;
+        UnitVector N = (hitFromBehind) ? target.surfaceNormal.invert() : target.surfaceNormal;
         double n = refractionIndexFrom / refractionIndexTo;
 
         double c1 = I.dot(N);
@@ -159,9 +166,9 @@ public class Engine implements Runnable {
         }
         double c2 = Math.sqrt(tir);
 
-        Vector T = I.scaleNew(n).addNew(N.scaleNew(n * c1 - c2));
+        Vector T = I.scale(n).add(N.scale(n * c1 - c2));
 
-        return UnitVector.construct(T);
+        return new UnitVector(T);
     }
 
     private Collision findCollision(Ray ray, Triangle origin) {
@@ -179,7 +186,7 @@ public class Engine implements Runnable {
             }
         }
         if (target == null) return null; // did not hit anything.
-        Vector collisionPoint = ray.position.addNew(ray.direction.scaleNew(distance));
+        Vector collisionPoint = ray.position.add(ray.direction.scale(distance));
         return new Collision(target, collisionPoint);
     }
 
@@ -242,7 +249,7 @@ public class Engine implements Runnable {
         System.out.println("Creating reflection ray. depth: " + depth);
         double intensity = ray.intensity * reflectionFactor;
         if (intensity > 0.001 && depth < 20) { //Only create ray if it has an impact on the scene.
-            UnitVector surfaceNormal = (hitFromBehind) ? collision.target.surfaceNormal.inverse() : collision.target.surfaceNormal;
+            UnitVector surfaceNormal = (hitFromBehind) ? collision.target.surfaceNormal.invert() : collision.target.surfaceNormal;
             UnitVector direction = ray.direction.reflectOn(surfaceNormal);
             //volumeProperties is the same, as we stay within the same space.
             InverseRay reflection = new InverseRay(
@@ -278,7 +285,7 @@ public class Engine implements Runnable {
                 castReflectionRay(ray, refractionFactor, collision, hitFromBehind);
                 System.out.println("Not casting refraction ray. Intensity: " + intensity + " depth: " + depth);
             } else {
-                InverseRay inverseRay = new InverseRay(depth, intensity, UnitVector.construct(vector), collision.impactPoint, ray.pixelPosition, collision.target, collision.target.volumeProperties);
+                InverseRay inverseRay = new InverseRay(depth, intensity, new UnitVector(vector), collision.impactPoint, ray.pixelPosition, collision.target, collision.target.volumeProperties);
                 inverseRaysBuffer.add(inverseRay);
             }
         } else {
@@ -294,10 +301,10 @@ public class Engine implements Runnable {
         if (hitFromBehind) {
             //TODO figure out a way to know the refraction index of the volume we are going into.
             additionalReflectionFactor = reflectionFactorCalculator.calculateReflectionFactor(
-                    target.surfaceNormal.inverse(), ray.direction.inverse(), target.volumeProperties.refractionIndex, 1);
+                    target.surfaceNormal.invert(), ray.direction.invert(), target.volumeProperties.refractionIndex, 1);
         } else {
             additionalReflectionFactor = reflectionFactorCalculator.calculateReflectionFactor(
-                    target.surfaceNormal, ray.direction.inverse(), 1, target.volumeProperties.refractionIndex);
+                    target.surfaceNormal, ray.direction.invert(), 1, target.volumeProperties.refractionIndex);
         }
         double total = (1 - reflectionFactor) * additionalReflectionFactor + reflectionFactor;
         if (total > 1) {
@@ -321,9 +328,9 @@ public class Engine implements Runnable {
 
             //calculate color
             UnitVector surfaceNormal = shadowRay.triangle.surfaceNormal;
-            UnitVector lightNormal = shadowRay.direction.inverse();
+            UnitVector lightNormal = shadowRay.direction.invert();
             UnitVector reflectNormal = lightNormal.reflectOn(surfaceNormal);
-            UnitVector inverseViewNormal = shadowRay.inverseRay.direction.inverse();
+            UnitVector inverseViewNormal = shadowRay.inverseRay.direction.invert();
 
             double specularIntensity = shadowRay.triangle.material.specularIntensity;
             double specularPower = shadowRay.triangle.material.specularPower;
@@ -350,7 +357,7 @@ public class Engine implements Runnable {
     //Check if shadowRay hits the light.
     private boolean rayHitsLight(ShadowRay shadowRay) {
 
-        double distanceToLight = shadowRay.light.position.subtractNew(shadowRay.position).length();
+        double distanceToLight = shadowRay.light.position.subtract(shadowRay.position).length();
         for (Triangle triangle : triangles) {
             if (triangle == shadowRay.triangle) {
                 //No need to check collision with self.

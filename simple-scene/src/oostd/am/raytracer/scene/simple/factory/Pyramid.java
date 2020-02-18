@@ -2,7 +2,6 @@ package oostd.am.raytracer.scene.simple.factory;
 
 import oostd.am.raytracer.api.camera.Camera;
 import oostd.am.raytracer.api.camera.Color;
-import oostd.am.raytracer.api.camera.Positioning;
 import oostd.am.raytracer.api.debug.Window;
 import oostd.am.raytracer.api.geography.Dimension;
 import oostd.am.raytracer.api.geography.UnitVector;
@@ -77,19 +76,19 @@ public class Pyramid extends BaseSceneFactory {
         pointLights.add(new PointLight(new Vector(3, 2, 1), new Color(1, 1, 1)));
 
         Camera renderCamera = new Camera(
-                new Positioning(
-                        new Vector(0, 2, -10),
-                        UnitVector.construct(0, 0, 1))
+                new UnitVector(0, 2, -10),
+                new UnitVector(0, 0, 1),
+                new UnitVector(0, 1, 0)
                 , 1);
 
         Window debugWindow = new Window(
                 new Vector(0, 0, 0),
-                UnitVector.construct(new Vector(1, 0, 0)),
-                UnitVector.construct(new Vector(0, 1, 0)),
+                new UnitVector(new Vector(1, 0, 0)),
+                new UnitVector(new Vector(0, 1, 0)),
                 new Dimension(10, 10)
         );
         debugWindows.add(debugWindow);
-        
+
         this.scene = new Scene(triangles, pointLights, renderCamera, debugWindows);
     }
 
