@@ -46,12 +46,12 @@ public class Engine implements Runnable {
     public Engine(Scene scene, PixelSubscriberFactory pixelSubscriberFactory) {
         this.renderOutput = new SubmissionPublisher<>();
         this.debugLineOutput = new SubmissionPublisher<>();
-        PixelSubscriber renderSubscriber = pixelSubscriberFactory.createRenderSubscriber();
+        PixelSubscriber renderSubscriber = pixelSubscriberFactory.createRenderSubscriber(scene.renderCamera.lens.name);
         renderOutput.subscribe(renderSubscriber);
 
         scene.debugWindows.forEach(window -> {
             // consumes Pixels
-            PixelSubscriber pixelSubscriber = pixelSubscriberFactory.createDebugSubscriber();
+            PixelSubscriber pixelSubscriber = pixelSubscriberFactory.createDebugSubscriber(window.name);
             // consumes Lines, produces Pixels
             DebugLineProcessor lineToPixelProcessor = new DebugLineProcessor(window, pixelSubscriber.getResolution());
             // hook up pixel consumer to pixel producer
@@ -142,6 +142,7 @@ public class Engine implements Runnable {
         }
         System.out.println("finished tracing rays");
         renderOutput.close();
+        debugLineOutput.close();
     }
 
     private void swapBuffer() {
@@ -228,7 +229,7 @@ public class Engine implements Runnable {
 
         //TODO: add color filter based on refraction factor. (for reflection and diffuse)
         //for each light create a lightray
-        if (lightIntensity > 0.001) { //no need to add the light as it has to little impact on the scene.
+        if (lightIntensity > 0.001) { //no need to add the light when it has to little impact on the scene.
             for (PointLight light : pointLights) {
                 shadowRays.add(new ShadowRay(
                         light,
@@ -300,6 +301,7 @@ public class Engine implements Runnable {
         double additionalReflectionFactor;
         if (hitFromBehind) {
             //TODO figure out a way to know the refraction index of the volume we are going into.
+            //maintain a stack of densities? or not allow objects to intersect?
             additionalReflectionFactor = reflectionFactorCalculator.calculateReflectionFactor(
                     target.surfaceNormal.invert(), ray.direction.invert(), target.volumeProperties.refractionIndex, 1);
         } else {
@@ -326,6 +328,8 @@ public class Engine implements Runnable {
                 return;
             }
 
+            debugLineOutput.submit(new Line(shadowRay.position,shadowRay.light.position, shadowRay.light.color));
+
             //calculate color
             UnitVector surfaceNormal = shadowRay.triangle.surfaceNormal;
             UnitVector lightNormal = shadowRay.direction.invert();
@@ -336,7 +340,7 @@ public class Engine implements Runnable {
             double specularPower = shadowRay.triangle.material.specularPower;
             double specularFactor = reflectNormal.dot(inverseViewNormal);
             if (specularFactor < 0) {
-                //makes no sense to apply specular if the light does not reflect in the direction of the eye.
+                //makes no sense to apply specular if the light does not reflect in the direction of the camera.
                 specularFactor = 0;
             } else {
                 specularFactor = Math.pow(specularFactor, specularPower);
@@ -344,7 +348,7 @@ public class Engine implements Runnable {
             Color specular = shadowRay.light.color.clone().scale(specularIntensity * specularFactor);
             Color diffuse = shadowRay.triangle.material.colorFilter.filter(shadowRay.light.color.clone()).scale(diffuseFactor);
 
-            //TODO: actual intensity /  how much it adds to the color? That is based on the intensity of all predecessor rays.
+            //TODO: actual intensity / how much it adds to the color? That is based on the intensity of all predecessor rays.
             Color color = diffuse.add(specular).scale(shadowRay.inverseRay.intensity);
             //Color color = diffuse.scale(shadowRay.intensity);
             renderOutput.submit(new Pixel(shadowRay.inverseRay.pixelPosition, color));

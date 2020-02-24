@@ -11,13 +11,13 @@ public class RandomPixelService implements oostd.am.raytracer.api.RayTracerServi
     @Override
     public void startRendering(Scene scene, PixelSubscriberFactory pixelSubscriberFactory) {
         Thread pixelThread = new Thread(
-                new PixelSupplier(pixelSubscriberFactory.createRenderSubscriber()));
+                new PixelSupplier(pixelSubscriberFactory.createRenderSubscriber("random pixels")));
         pixelThread.start();
 
         for(Window window: scene.debugWindows){
             Thread thread = new Thread(
                     new PixelSupplier(
-                            pixelSubscriberFactory.createDebugSubscriber()));
+                            pixelSubscriberFactory.createDebugSubscriber("random pixels")));
             thread.start();
         }
 

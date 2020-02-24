@@ -9,7 +9,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.Flow;
 
-//TODO: panel name
 public class RenderPanel extends JPanel implements PixelSubscriber {
 
     private volatile BufferedImage imageBuffer;
@@ -19,15 +18,15 @@ public class RenderPanel extends JPanel implements PixelSubscriber {
     private long repaintInterval;
 
     /**
-     *
-     * @param resolution, the size of the panel.
+     * @param resolution,  the size of the panel.
      * @param refreshRate, amount of repaints per second.
      */
-    public RenderPanel(Resolution resolution, int refreshRate) {
+    public RenderPanel(Resolution resolution, int refreshRate, String name) {
         this.imageBuffer = new BufferedImage(resolution.width, resolution.height, BufferedImage.TYPE_3BYTE_BGR);
         this.resolution = resolution;
         this.lastRepaint = System.currentTimeMillis();
-        this.repaintInterval = 1000/refreshRate;
+        this.repaintInterval = 1000 / refreshRate;
+        this.setName(name);
     }
 
     public Dimension getPreferredSize() {
@@ -54,12 +53,15 @@ public class RenderPanel extends JPanel implements PixelSubscriber {
         //in screen space y goes down, in scene space it goes up.
         int y = imageBuffer.getHeight() - 1 - pixel.position.y;
 
-        RGBColor rgbColor = new RGBColor(imageBuffer.getRGB(x, y));
-        rgbColor.add(pixel.color.r, pixel.color.g, pixel.color.b);
+        if (x < imageBuffer.getWidth() && y < imageBuffer.getHeight() &&
+                x >= 0 && y >= 0) {
+            RGBColor rgbColor = new RGBColor(imageBuffer.getRGB(x, y));
+            rgbColor.add(pixel.color.r, pixel.color.g, pixel.color.b);
 
-        imageBuffer.setRGB(x, y, rgbColor.asInt());
+            imageBuffer.setRGB(x, y, rgbColor.asInt());
+        }
+
         subscription.request(1);
-
         this.repaint();
     }
 
@@ -72,13 +74,13 @@ public class RenderPanel extends JPanel implements PixelSubscriber {
     @Override
     public void onComplete() {
         super.repaint();
-        System.out.println("subscriber completed");
+        System.out.println("subscriber completed: " + this.getName());
     }
 
     @Override
-    public void repaint(){
+    public void repaint() {
         long now = System.currentTimeMillis();
-        if(lastRepaint + repaintInterval < now){
+        if (lastRepaint + repaintInterval < now) {
             super.repaint();
             lastRepaint = now;
         }

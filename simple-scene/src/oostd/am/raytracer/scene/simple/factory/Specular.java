@@ -13,9 +13,9 @@ import oostd.am.raytracer.api.scenery.Scene;
 import oostd.am.raytracer.api.scenery.Triangle;
 import oostd.am.raytracer.api.scenery.VolumeProperties;
 
-public class Simple extends BaseSceneFactory {
+public class Specular extends BaseSceneFactory {
 
-    public Simple() {
+    public Specular() {
 
         Material material = new Material(
                 100,

@@ -1,7 +1,7 @@
 package oostd.am.raytracer.debug;
 
 import oostd.am.raytracer.api.debug.Line2D;
-import oostd.am.raytracer.api.debug.Window;
+import oostd.am.raytracer.api.geography.Dimension;
 import oostd.am.raytracer.api.geography.Vector2D;
 
 /**
@@ -29,31 +29,31 @@ public class LineClipper {
 
     /**
      * Get a zone code using binary flags represented by a byte.
-     * @param point
-     * @param window
-     * @return
      */
-    private static byte getWindowZoneCode(Vector2D point, Window window) {
+    private static byte getWindowZoneCode(Vector2D point, double left, double right, double bottom, double top) {
         byte windowZone = INSIDE;
 
-        if (point.x > window.right) windowZone |= RIGHT;
-        if (point.x < window.left) windowZone |= LEFT;
-        if (point.y > window.top) windowZone |= TOP;
-        if (point.y < window.bottom) windowZone |= BOTTOM;
+        if (point.x > right) windowZone |= RIGHT;
+        if (point.x < left) windowZone |= LEFT;
+        if (point.y > top) windowZone |= TOP;
+        if (point.y < bottom) windowZone |= BOTTOM;
 
         return windowZone;
     }
 
     /**
-     * @param line
-     * @param window
-     * @param <T>
      * @return if line is clipped, false if it does not intersect with window.
      */
-    public static <T extends Line2D> boolean clipLine( T line, Window window){
+    public static <T extends Line2D> boolean clipLine( T line, Dimension dimension){
+
+        double right = dimension.width / 2;
+        double left = right * -1;
+        double top = dimension.height / 2;
+        double bottom = top * -1;
+
         // Compute region codes for P1, P2
-        byte ZoneCodePoint1 = getWindowZoneCode(line.from, window);
-        byte ZoneCodePoint2 = getWindowZoneCode(line.to, window);
+        byte ZoneCodePoint1 = getWindowZoneCode(line.from, left, right, bottom, top);
+        byte ZoneCodePoint2 = getWindowZoneCode(line.to, left, right, bottom, top);
 
         double x1 = line.from.x;
         double y1 = line.from.y;
@@ -96,26 +96,26 @@ public class LineClipper {
                 if ((code_out & TOP) > 0)
                 {
                     // point is above the clip rectangle
-                    x = x1 + (x2 - x1) * (window.top - y1) / (y2 - y1);
-                    y = window.top;
+                    x = x1 + (x2 - x1) * (top - y1) / (y2 - y1);
+                    y = top;
                 }
                 else if ((code_out & BOTTOM) > 0)
                 {
                     // point is below the rectangle
-                    x = x1 + (x2 - x1) * (window.bottom - y1) / (y2 - y1);
-                    y = window.bottom;
+                    x = x1 + (x2 - x1) * (bottom - y1) / (y2 - y1);
+                    y = bottom;
                 }
                 else if ((code_out & RIGHT) > 0)
                 {
                     // point is to the right of rectangle
-                    y = y1 + (y2 - y1) * (window.right - x1) / (x2 - x1);
-                    x = window.right;
+                    y = y1 + (y2 - y1) * (right - x1) / (x2 - x1);
+                    x = right;
                 }
                 else if ((code_out & LEFT) > 0)
                 {
                     // point is to the left of rectangle
-                    y = y1 + (y2 - y1) * (window.left - x1) / (x2 - x1);
-                    x = window.left;
+                    y = y1 + (y2 - y1) * (left - x1) / (x2 - x1);
+                    x = left;
                 }
 
                 // Now intersection point x,y is found
@@ -125,13 +125,13 @@ public class LineClipper {
                 {
                     x1 = x;
                     y1 = y;
-                    ZoneCodePoint1 = getWindowZoneCode(new Vector2D(x1, y1), window);
+                    ZoneCodePoint1 = getWindowZoneCode(new Vector2D(x1, y1), left, right, bottom, top);
                 }
                 else
                 {
                     x2 = x;
                     y2 = y;
-                    ZoneCodePoint2 = getWindowZoneCode(new Vector2D(x2, y2), window); //TODO: accept equal to boundry?
+                    ZoneCodePoint2 = getWindowZoneCode(new Vector2D(x2, y2), left, right, bottom, top);
                 }
             }
         }

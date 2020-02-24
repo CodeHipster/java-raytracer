@@ -59,7 +59,3 @@ public class CollisionCalculator {
         return edge2.dot(qvec) * invDet;
     }
 }
-
-//TODO: vector subtraction
-// dot product
-// cross product

@@ -10,14 +10,14 @@ package oostd.am.raytracer.api.scenery;
  * e.g. we have 10% reflective (0.1)
  * 50% refractive (0.5) (50% of what is not reflected)
  *  which means that at an angle of 0, 45% is refracted and  45% is diffuse and 10% reflected
- *  but at an angle of 90%, 100% of what is not initially reflected is still reflected
+ *  but at an angle of 90degrees, 100% of what is not initially reflected is still reflected
  *
  * another thought, depending on the angle more of the color filter is applied to reflective rays? (also depends on the 'hardness' of the material?)
  *
  */
 public final class Material {
 
-    public final double specularPower;
+    public final double specularPower; // determines the smoothness of the surface, 255 is mirror like. 0 is diffuse
     public final double specularIntensity;
     public final double reflectionFactor;
     public final ColorFilter colorFilter;

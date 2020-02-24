@@ -26,6 +26,5 @@ public class RenderService {
 
     public void startRender(Scene scene){
         rayTracerService.startRendering(scene, pixelSubscriberFactory);
-        System.out.println("started timer.");
     }
 }

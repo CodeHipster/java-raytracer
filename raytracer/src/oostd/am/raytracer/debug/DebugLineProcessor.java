@@ -43,7 +43,8 @@ public class DebugLineProcessor implements Flow.Processor<Line, Pixel> {
         Vector2D to = window.project(line.to);
 
         ColoredLine2D colored = new ColoredLine2D(from, to, line.color);
-        boolean clipped = LineClipper.clipLine(colored, window);
+        //TODO: clipping with integers? on the frontend side?
+        boolean clipped = LineClipper.clipLine(colored, window.dimension);
 
         // convert to pixels
         if(clipped){
@@ -78,7 +79,7 @@ public class DebugLineProcessor implements Flow.Processor<Line, Pixel> {
 
     @Override
     public void onComplete() {
-
+        output.close();
     }
 
     @Override

@@ -25,28 +25,28 @@ public class ScreenManager implements PixelSubscriberFactory {
         this.debugResolution = debugResolution;
         this.frames = new ArrayList<>();
         DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
-        screen = new Rectangle(0,0, displayMode.getWidth(), displayMode.getHeight());
+        screen = new Rectangle(0, 0, displayMode.getWidth(), displayMode.getHeight());
     }
 
     @Override
-    public PixelSubscriber createRenderSubscriber() {
-        return this.createSubscriber(renderResolution);
+    public PixelSubscriber createRenderSubscriber(String name) {
+        return this.createSubscriber(renderResolution, "render: " + name);
     }
 
     @Override
-    public PixelSubscriber createDebugSubscriber() {
-        return this.createSubscriber(debugResolution);
+    public PixelSubscriber createDebugSubscriber(String name) {
+        return this.createSubscriber(debugResolution, "debug: " + name);
     }
 
-    public PixelSubscriber createSubscriber(Resolution resolution) {
-        RenderFrame renderFrame = new RenderFrame(resolution);
+    public PixelSubscriber createSubscriber(Resolution resolution, String name) {
+        RenderFrame renderFrame = new RenderFrame(resolution, name);
         placeFrame(renderFrame);
         frames.add(renderFrame);
         return renderFrame.getPixelConsumer();
     }
 
-    private void placeFrame(JFrame frame){
-        if(frames.isEmpty()) {
+    private void placeFrame(JFrame frame) {
+        if (frames.isEmpty()) {
             frame.setLocation(0, 0);
             return;
         }
@@ -55,24 +55,24 @@ public class ScreenManager implements PixelSubscriberFactory {
         JFrame previousFrame = frames.get(frames.size() - 1);
         Rectangle previousBounds = previousFrame.getBounds();
 
-        if(placeNextTo(frame, previousBounds)) return;
-        else if(placeBelow(frame, previousBounds)) return;
-        else{ // place on the left top again
-            frame.setLocation(0,0);
+        if (placeNextTo(frame, previousBounds)) return;
+        else if (placeBelow(frame, previousBounds)) return;
+        else { // place on the left top again
+            frame.setLocation(0, 0);
         }
     }
 
-    private boolean placeNextTo(JFrame frame, Rectangle rectangle){
-        if(screen.contains(rectangle.getMaxX()+ frame.getWidth(), rectangle.getY())){
-            frame.setLocation((int)rectangle.getMaxX(), (int)rectangle.getY());
+    private boolean placeNextTo(JFrame frame, Rectangle rectangle) {
+        if (screen.contains(rectangle.getMaxX() + frame.getWidth(), rectangle.getY())) {
+            frame.setLocation((int) rectangle.getMaxX(), (int) rectangle.getY());
             return true;
         }
         return false;
     }
 
-    private boolean placeBelow(JFrame frame, Rectangle rectangle){
-        if(screen.contains(rectangle.getX(), rectangle.getMaxY() + frame.getHeight())){
-            frame.setLocation((int)rectangle.getX(), (int)rectangle.getMaxY());
+    private boolean placeBelow(JFrame frame, Rectangle rectangle) {
+        if (screen.contains(rectangle.getX(), rectangle.getMaxY() + frame.getHeight())) {
+            frame.setLocation((int) rectangle.getX(), (int) rectangle.getMaxY());
             return true;
         }
         return false;

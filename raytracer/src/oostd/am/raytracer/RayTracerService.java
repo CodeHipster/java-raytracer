@@ -5,9 +5,15 @@ import oostd.am.raytracer.api.scenery.Scene;
 
 public class RayTracerService implements oostd.am.raytracer.api.RayTracerService {
 
+    private Thread thread;
+
     @Override
     public void startRendering(Scene scene, PixelSubscriberFactory pixelSubscriberFactory) {
-        //TODO: do not start another thread if this one is still running.
-        new Thread(new Engine(scene, pixelSubscriberFactory)).start();
+        if (thread != null) {
+            System.out.println("rendering already started, not starting again.");
+        } else {
+            thread = new Thread(new Engine(scene, pixelSubscriberFactory));
+            thread.start();
+        }
     }
 }

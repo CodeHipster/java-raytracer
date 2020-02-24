@@ -12,7 +12,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             System.out.println("Created Menu on EDT? " + SwingUtilities.isEventDispatchThread());
             ScreenManager screenManager = new ScreenManager(
-                    new Resolution(1, 1),
+                    new Resolution(300, 300),
                     new Resolution(300, 300));
             new MenuFrame(screenManager);
         });
