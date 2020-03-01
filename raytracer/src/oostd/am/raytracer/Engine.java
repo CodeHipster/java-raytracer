@@ -230,6 +230,9 @@ public class Engine implements Runnable {
     }
 
     private void castRay(InverseRay origin, Collision collision, UnitVector direction, double factor) {
+        if(direction == null){
+            int de = 1;
+        }
         int depth = origin.depth + 1;
         double intensity = origin.intensity * factor;
         if (intensity > 0.001 && depth < 20) { //Only create ray if it has an impact on the scene.

@@ -24,6 +24,9 @@ public class CollisionCalculator {
             return -1;
 
         // Begin calculating determinant -- also used to calculate U parameter
+        if(ray == null || ray.direction == null || edge2 == null){
+            int de = 1;
+        }
         Vector pvec = ray.direction.cross(edge2);
 
         // If determinant is near zero, ray lies in plane of triangle

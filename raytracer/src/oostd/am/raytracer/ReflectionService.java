@@ -38,8 +38,8 @@ public class ReflectionService {
         double n1 = 1;
         double n2 = collision.target.volumeProperties.refractionIndex;
         double cosI = incident.dot(normal);
-        if (cosI <= 0) {
-            normal.invert();
+        if (cosI > 0) {
+            normal = normal.invert();
             n1 = n2;
             n2 = 1;
         }
@@ -47,14 +47,14 @@ public class ReflectionService {
         if(collision.target.material.transparent){
            refraction = calculateRefractionVector(ray.direction, normal, n1, n2);
         }
-        UnitVector reflection = null;
-        if(collision.target.material.reflectionFactor > 0){
-            reflection = ray.direction.reflectOn(normal);
-        }
         double reflectionFactor = 1;
         if (refraction != null) {
             //TODO: reuse calculation results from refraction in calculating reflection factor
             reflectionFactor = calculateReflectionFactor(n1, n2, normal, incident);
+        }
+        UnitVector reflection = null;
+        if(collision.target.material.reflectionFactor > 0 || reflectionFactor > 0){ //TODO: material reflectionfactor should not be taken into account when hitting from behind.
+            reflection = ray.direction.reflectOn(normal);
         }
         double refractionFactor = 1 - reflectionFactor;
         return new Scatter(reflection, reflectionFactor, refraction, refractionFactor);
@@ -82,7 +82,8 @@ public class ReflectionService {
         double densityFactor = densityFrom / densityTo;
         double cosI = -incident.dot(normal);
         double squaredSinI = densityFactor * densityFactor * (1 - cosI * cosI);
-        if (squaredSinI > 1) return null; // Total internal reflection
+        if (squaredSinI > 1)
+            return null; // Total internal reflection
         double cosT = Math.sqrt(1 - squaredSinI);
         return incident.scale(densityFactor).addSelf(normal.scale(densityFactor * cosI - cosT)).unit(); //TODO: we know this ends with a unit vector, avoid costly .unit() calls
     }
