@@ -16,9 +16,6 @@ public final class ColorFilter {
     }
 
     public Color filter(Color color){
-        color.r *= this.r;
-        color.g *= this.g;
-        color.b *= this.b;
-        return color;
+        return new Color(color.r * this.r, color.g * this.g, color.b * this.b);
     }
 }

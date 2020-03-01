@@ -2,6 +2,7 @@ package oostd.am.raytracer.api.scenery;
 
 
 /**
+ * TODO: update documentation
  * material either diffuse or refractive (unless its dirty?)
  * amount of reflection depends on fresnell
  * unless it is a mirror, which reflects a lot at each angle
@@ -17,15 +18,17 @@ package oostd.am.raytracer.api.scenery;
  */
 public final class Material {
 
-    public final double specularPower; // determines the smoothness of the surface, 255 is mirror like. 0 is diffuse
-    public final double specularIntensity;
+    public final double shininess;
+    public final double diffuseFactor;
+    public final double specularFactor;
     public final double reflectionFactor;
     public final ColorFilter colorFilter;
     public final boolean transparent;
 
-    public Material(double specularPower, double specularIntensity, double reflectionFactor, boolean transparent, ColorFilter colorFilter) {
-        this.specularPower = specularPower;
-        this.specularIntensity = specularIntensity;
+    public Material(double shininess, double diffuseFactor, double specularFactor, double reflectionFactor, boolean transparent, ColorFilter colorFilter) {
+        this.shininess = shininess;
+        this.diffuseFactor = diffuseFactor;
+        this.specularFactor = specularFactor; //TODO: make it clear that this only works when material is diffuse.
         this.reflectionFactor = reflectionFactor;
         this.colorFilter = colorFilter;
         this.transparent = transparent;

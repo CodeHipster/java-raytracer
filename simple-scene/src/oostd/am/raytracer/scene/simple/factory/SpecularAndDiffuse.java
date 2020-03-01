@@ -13,14 +13,14 @@ import oostd.am.raytracer.api.scenery.Scene;
 import oostd.am.raytracer.api.scenery.Triangle;
 import oostd.am.raytracer.api.scenery.VolumeProperties;
 
-public class Diffuse extends BaseSceneFactory {
+public class SpecularAndDiffuse extends BaseSceneFactory {
 
-    public Diffuse() {
+    public SpecularAndDiffuse() {
 
         Material material = new Material(
-                20,
+                10,
                 1,
-                0,
+                0.5,
                 0,
                 false,
                 new ColorFilter(0, 1, 0)
@@ -40,7 +40,7 @@ public class Diffuse extends BaseSceneFactory {
 
         Camera renderCamera = new Camera(
                 new Vector(0, 5, -10),
-                new UnitVector(0, -0.4, 1),
+                new UnitVector(0, -0.2, 1),
                 new UnitVector(0, 1, 0)
                 , 1,
                 "camera"

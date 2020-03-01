@@ -20,6 +20,7 @@ public class Simple extends BaseSceneFactory {
         Material material = new Material(
                 100,
                 1,
+                1,
                 0,
                 false,
                 new ColorFilter(1f, 1f, 0.0f)

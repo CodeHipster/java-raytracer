@@ -19,17 +19,11 @@ public class Color {
     }
 
     public Color add(Color color){
-        this.r += color.r;
-        this.g += color.g;
-        this.b += color.b;
-        return this;
+        return new Color(this.r + color.r, this.g + color.g, this.b + color.b);
     }
 
     public Color scale(double factor){
-        this.r = r * factor;
-        this.g = g * factor;
-        this.b = b * factor;
-        return this;
+        return new Color(r * factor, g * factor, b * factor);
     }
 
     @Override

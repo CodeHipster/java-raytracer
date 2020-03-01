@@ -13,26 +13,44 @@ import oostd.am.raytracer.api.scenery.Scene;
 import oostd.am.raytracer.api.scenery.Triangle;
 import oostd.am.raytracer.api.scenery.VolumeProperties;
 
-public class Diffuse extends BaseSceneFactory {
+public class Reflection extends BaseSceneFactory {
 
-    public Diffuse() {
+    public Reflection() {
 
         Material material = new Material(
-                20,
+                10,
                 1,
-                0,
+                0.5,
                 0,
                 false,
                 new ColorFilter(0, 1, 0)
         );
 
+        //floor
         triangles.add(new Triangle(
                 new Vector[]{
-                        new Vector(-20.0, 0.0, 20.0),
-                        new Vector(20.0, 0.0, 20.0),
-                        new Vector(0.0, 0.0, -20.0)
+                        new Vector(-2000.0, 0.0, 2000.0),
+                        new Vector(2000.0, 0.0, 2000.0),
+                        new Vector(0.0, 0.0, -2000.0)
                 },
                 material,
+                new VolumeProperties(new ColorFilter(1, 1, 1), 1)
+        ));
+
+        // mirror
+        triangles.add(new Triangle(
+                new Vector[]{
+                        new Vector(-2.0, 0.0, 8.0),
+                        new Vector(0.0, 4.0, 6.5),
+                        new Vector(2.0, 0.0, 5.0)
+                },
+                new Material(
+                        10,
+                        0,
+                        0,
+                        1,
+                        false,
+                        new ColorFilter(1, 1, 1)),
                 new VolumeProperties(new ColorFilter(1, 1, 1), 1)
         ));
 
@@ -40,7 +58,7 @@ public class Diffuse extends BaseSceneFactory {
 
         Camera renderCamera = new Camera(
                 new Vector(0, 5, -10),
-                new UnitVector(0, -0.4, 1),
+                new UnitVector(0, -0.2, 1),
                 new UnitVector(0, 1, 0)
                 , 1,
                 "camera"

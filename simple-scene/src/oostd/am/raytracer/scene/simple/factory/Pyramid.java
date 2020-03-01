@@ -21,6 +21,7 @@ public class Pyramid extends BaseSceneFactory {
         Material pyramidSurface = new Material(
                 100,
                 1,
+                1,
                 0,
                 false,
                 new ColorFilter(1f, 1f, 0.0f)
@@ -36,6 +37,7 @@ public class Pyramid extends BaseSceneFactory {
                 },
                 new Material(
                         1000,
+                        1,
                         0.7,
                         0,
                         false,
