@@ -19,10 +19,10 @@ Shadow ray to light source
 Step 3 , done
 Add phong
 
-Step 4 , skip
+Step 4 , done
 Multiple point lights
 
-Step 6, in progress
+Step 6, done
 Transparent objects
 
 Step 7 , done
