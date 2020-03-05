@@ -1,7 +1,7 @@
 package oostd.am.raytracer.visualize.desktop.render;
 
 public class RGBColor {
-    private int r, g, b;
+    public int r, g, b;
 
     public RGBColor(int rgb){
         r = (rgb & 0x00ff0000) >> 16;

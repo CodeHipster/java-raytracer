@@ -13,11 +13,13 @@ import oostd.am.raytracer.api.scenery.VolumeProperties;
 public class ShadowRay extends Ray{
     public final Triangle triangle;
     public PointLight light;
+    public double intensity;
     public InverseRay inverseRay;
     public ShadowRay(PointLight light, Triangle triangle, Vector position, InverseRay inverseRay
-            , VolumeProperties volumeProperties) {
+            , VolumeProperties volumeProperties, double intensity) {
         super(new UnitVector(light.position.subtract(position)), position, volumeProperties);
         this.light = light;
+        this.intensity = intensity;
         this.triangle = triangle;
         this.inverseRay = inverseRay;
     }

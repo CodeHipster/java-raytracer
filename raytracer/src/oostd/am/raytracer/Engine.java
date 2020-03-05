@@ -79,7 +79,6 @@ public class Engine implements Runnable {
      * @param camera
      */
     private void initializeRays(Camera camera, Resolution resolution) {
-        Vector point = camera.lens.positionOf(new Vector2D(1, 1));
         double xStep = camera.lens.dimension.width / resolution.width;
         double yStep = camera.lens.dimension.height / resolution.height;
         //start in the left bottom
@@ -93,6 +92,9 @@ public class Engine implements Runnable {
                 Vector lensPoint = camera.lens.positionOf(new Vector2D(xLensPos, yLensPos));
                 Vector camToPoint = lensPoint.subtract(camera.position);
                 UnitVector rayDirection = new UnitVector(camToPoint);
+                if(x == 281 && 170 == y){
+                    int debug = 1; //TODO: cleanup
+                }
                 InverseRay ray = new InverseRay(
                         1,
                         1,
@@ -191,6 +193,7 @@ public class Engine implements Runnable {
 
                     boolean hitFromBehind = (ray.direction.dot(target.surfaceNormal) > 0);
                     ReflectionService.Scatter scatter = new ReflectionService().scatter(ray, collision);
+                    //TODO: looks like we generating extra light, check the reflection and refraction factors.
                     if (hitFromBehind) {
                         castRay(ray, collision, scatter.reflection, scatter.reflectionFactor);
                         if (scatter.refraction != null) {
@@ -231,7 +234,7 @@ public class Engine implements Runnable {
 
     private void castRay(InverseRay origin, Collision collision, UnitVector direction, double factor) {
         if(direction == null){
-            int de = 1;
+            int debug = 1; //TODO: cleanup
         }
         int depth = origin.depth + 1;
         double intensity = origin.intensity * factor;
@@ -247,6 +250,9 @@ public class Engine implements Runnable {
                     origin.volumeProperties);
             inverseRaysBuffer.add(reflection);
         } else {
+            if(depth == 20 ){
+                int debug = 1; //TODO: cleanup
+            }
             System.out.println("Not casting ray. Intensity: " + intensity + " depth: " + depth);
         }
     }
@@ -263,83 +269,12 @@ public class Engine implements Runnable {
                         collision.target,
                         collision.impactPoint,
                         ray,
-                        ray.volumeProperties));
+                        ray.volumeProperties,
+                        lightIntensity));
             }
         } else {
             System.out.println("Not casting shadow ray. Intensity: " + lightIntensity + " depth: " + ray.depth);
         }
-    }
-
-    private void castReflectionRay(InverseRay ray, double reflectionFactor, Collision collision, boolean hitFromBehind) {
-
-        //create reflection ray.
-        int depth = ray.depth + 1;
-        System.out.println("Creating reflection ray. depth: " + depth);
-        double intensity = ray.intensity * reflectionFactor;
-        if (intensity > 0.001 && depth < 20) { //Only create ray if it has an impact on the scene.
-            UnitVector surfaceNormal = (hitFromBehind) ? collision.target.surfaceNormal.invert() : collision.target.surfaceNormal;
-            UnitVector direction = ray.direction.reflectOn(surfaceNormal);
-            //volumeProperties is the same, as we stay within the same space.
-            InverseRay reflection = new InverseRay(
-                    depth,
-                    intensity,
-                    direction,
-                    collision.impactPoint,
-                    ray.pixelPosition,
-                    collision.target,
-                    ray.volumeProperties);
-            inverseRaysBuffer.add(reflection);
-        } else {
-            System.out.println("Not casting reflection ray. Intensity: " + intensity + " depth: " + depth);
-        }
-    }
-
-    private void castRefractionRay(InverseRay ray, double refractionFactor, Collision collision, boolean hitFromBehind) {
-        //cast refraction ray.
-        int depth = ray.depth + 1;
-        System.out.println("Creating refraction ray. depth: " + depth);
-        double intensity = ray.intensity * refractionFactor;
-        if (intensity > 0.001 && depth < 20) { //no need to add the light as it has to little impact on the scene.
-            UnitVector vector;
-            if (hitFromBehind) {
-                vector = calculateRefractionDirection(collision.target.volumeProperties.refractionIndex,
-                        1, ray, collision.target, hitFromBehind);
-            } else {
-                vector = calculateRefractionDirection(1,
-                        collision.target.volumeProperties.refractionIndex, ray, collision.target, hitFromBehind);
-            }
-            if (vector == null) { // Total internal reflection
-                //cast reflection ray
-                castReflectionRay(ray, refractionFactor, collision, hitFromBehind);
-                System.out.println("Not casting refraction ray. Intensity: " + intensity + " depth: " + depth);
-            } else {
-                InverseRay inverseRay = new InverseRay(depth, intensity, new UnitVector(vector), collision.impactPoint, ray.pixelPosition, collision.target, collision.target.volumeProperties);
-                inverseRaysBuffer.add(inverseRay);
-            }
-        } else {
-            System.out.println("Not casting refraction ray. Intensity: " + intensity + " depth: " + depth);
-        }
-    }
-
-    // Part of the light that is reflected, calculated by base reflection + factor based on angle.
-    private double getReflectionFactor(Triangle target, Ray ray, boolean hitFromBehind) {
-        // initial refractionFactor = (1 - reflectionFactor) * refractionFactor. e.g. (1-0.1) * 0.5 = 0.45
-        double reflectionFactor = target.material.reflectionFactor;
-        double additionalReflectionFactor;
-        if (hitFromBehind) {
-            //TODO figure out a way to know the refraction index of the volume we are going into.
-            //maintain a stack of densities? or not allow objects to intersect?
-            additionalReflectionFactor = reflectionFactorCalculator.calculateReflectionFactor(
-                    target.surfaceNormal.invert(), ray.direction.invert(), target.volumeProperties.refractionIndex, 1);
-        } else {
-            additionalReflectionFactor = reflectionFactorCalculator.calculateReflectionFactor(
-                    target.surfaceNormal, ray.direction.invert(), 1, target.volumeProperties.refractionIndex);
-        }
-        double total = (1 - reflectionFactor) * additionalReflectionFactor + reflectionFactor;
-        if (total > 1) {
-            int debug = 0;
-        }
-        return total;
     }
 
     private void processShadowRays() {
@@ -357,7 +292,8 @@ public class Engine implements Runnable {
             debugLineOutput.submit(new Line(shadowRay.position, shadowRay.light.position, shadowRay.light.color));
 
             Color color = PhongReflection.calculatePhong(shadowRay.inverseRay, shadowRay.light, shadowRay.position, shadowRay.triangle);
-            renderOutput.submit(new Pixel(shadowRay.inverseRay.pixelPosition, color));
+            Color scale = color.scale(shadowRay.intensity);
+            renderOutput.submit(new Pixel(shadowRay.inverseRay.pixelPosition, scale));
         });
         shadowRays.clear();
     }
