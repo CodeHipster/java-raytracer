@@ -16,14 +16,14 @@ import java.util.concurrent.SubmissionPublisher;
 /**
  * DebugWindow wraps a DebugCamera to translate from lines to pixels.
  */
-public class DebugLineProcessor implements Flow.Processor<Line, Pixel> {
+class DebugLineProcessor implements Flow.Processor<Line, Pixel> {
 
     private Resolution resolution;
     private Window window;
     private SubmissionPublisher<Pixel> output;
     private Flow.Subscription subscription;
 
-    public DebugLineProcessor(Window window, Resolution resolution) {
+    DebugLineProcessor(Window window, Resolution resolution) {
         this.resolution = resolution;
         this.window = window;
         this.output = new SubmissionPublisher<>();

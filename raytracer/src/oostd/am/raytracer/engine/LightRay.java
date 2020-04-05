@@ -9,12 +9,12 @@ import oostd.am.raytracer.api.scenery.Triangle;
  * Ray from object pointing towards a lightsource.
  * Always has an InverseRay associated, as it adds color to that inverseRay
  */
-public class ShadowRay extends Ray{
+public class LightRay extends Ray{
     public final Triangle triangle;
     public PointLight light;
     public double intensity;
     public InverseRay inverseRay;
-    public ShadowRay(PointLight light, Triangle triangle, Vector position, InverseRay inverseRay
+    public LightRay(PointLight light, Triangle triangle, Vector position, InverseRay inverseRay
             , double intensity) {
         super(new UnitVector(light.position.subtract(position)), position);
         this.light = light;
