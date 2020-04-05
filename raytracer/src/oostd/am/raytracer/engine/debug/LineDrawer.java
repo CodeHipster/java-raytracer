@@ -1,4 +1,4 @@
-package oostd.am.raytracer.debug;
+package oostd.am.raytracer.engine.debug;
 
 import oostd.am.raytracer.api.debug.Line2D;
 import oostd.am.raytracer.api.geography.PixelPosition;

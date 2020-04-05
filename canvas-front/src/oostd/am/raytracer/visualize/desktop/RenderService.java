@@ -4,7 +4,9 @@ import oostd.am.raytracer.api.PixelSubscriberFactory;
 import oostd.am.raytracer.api.RayTracerService;
 import oostd.am.raytracer.api.scenery.Scene;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 public class RenderService {
 
@@ -13,7 +15,7 @@ public class RenderService {
 
     public RenderService(PixelSubscriberFactory pixelSubscriberFactory){
         this.pixelSubscriberFactory = pixelSubscriberFactory;
-        List<RayTracerService> rayTracerServices = RayTracerService.getInstances();
+        List<RayTracerService> rayTracerServices = this.getInstances();
         if(rayTracerServices.isEmpty()) throw new RuntimeException("No raytracer service found.");
         if(rayTracerServices.size() > 1){
             System.out.println("Found multiple instances of the raytracer service. Using the first one.");
@@ -26,5 +28,13 @@ public class RenderService {
 
     public void startRender(Scene scene){
         rayTracerService.startRendering(scene, pixelSubscriberFactory);
+    }
+
+
+    List<RayTracerService> getInstances() {
+        ServiceLoader<RayTracerService> services = ServiceLoader.load(RayTracerService.class);
+        List<RayTracerService> list = new ArrayList<>();
+        services.iterator().forEachRemaining(list::add);
+        return list;
     }
 }

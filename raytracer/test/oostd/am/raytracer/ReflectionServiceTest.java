@@ -2,6 +2,7 @@ package oostd.am.raytracer;
 
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
+import oostd.am.raytracer.engine.ReflectionService;
 import org.junit.jupiter.api.Test;
 
 class ReflectionServiceTest {

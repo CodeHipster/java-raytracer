@@ -1,10 +1,9 @@
-package oostd.am.raytracer;
+package oostd.am.raytracer.engine;
 
 import oostd.am.raytracer.api.geography.PixelPosition;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
 import oostd.am.raytracer.api.scenery.Triangle;
-import oostd.am.raytracer.api.scenery.VolumeProperties;
 
 /**
  * an inverse ray is a ray from a destination (camera, reflective surface e.g.)
@@ -18,8 +17,8 @@ public class InverseRay extends Ray{
     public final double intensity; // the amount of effect on the lens (in terms of color intensity from 0 - 1).
 
     public InverseRay(int depth, double intensity, UnitVector direction, Vector position
-            , PixelPosition pixelPosition, Triangle origin, VolumeProperties volumeProperties) {
-        super(direction, position, volumeProperties);
+            , PixelPosition pixelPosition, Triangle origin) {
+        super(direction, position);
         this.depth = depth;
         this.origin = origin;
         this.intensity = intensity;

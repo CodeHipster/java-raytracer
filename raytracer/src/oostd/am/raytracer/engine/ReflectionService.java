@@ -1,4 +1,4 @@
-package oostd.am.raytracer;
+package oostd.am.raytracer.engine;
 
 import oostd.am.raytracer.api.geography.UnitVector;
 

@@ -1,18 +1,46 @@
-package oostd.am.raytracer;
+package oostd.am.raytracer.engine.collision;
 
+import oostd.am.raytracer.engine.Collision;
+import oostd.am.raytracer.engine.CollisionCalculator;
+import oostd.am.raytracer.engine.Ray;
 import oostd.am.raytracer.api.geography.Vector;
 import oostd.am.raytracer.api.scenery.Triangle;
 
-public class CollisionCalculator {
+import java.util.List;
+
+public class CollisionService {
 
     private static double EPSILON = Math.ulp(1.0);
+
+    private List<Triangle> triangles;
+
+    public CollisionService(List<Triangle> triangles) {
+        this.triangles = triangles;
+    }
+    public Collision findCollision(Ray ray, Triangle origin) {
+        // check collision with triangles;
+        double distance = Double.POSITIVE_INFINITY;
+        Triangle target = null;
+
+        for (Triangle triangle : triangles) {
+            if (triangle == origin) continue; //skip triangle we come from.
+            double d = CollisionCalculator.calculateCollisionDistance(triangle, ray);
+            if (d > 0 && d < distance) {
+                distance = d;
+                target = triangle;
+            }
+        }
+        if (target == null) return null; // did not hit anything.
+        Vector collisionPoint = ray.position.add(ray.direction.scale(distance));
+        return new Collision(target, collisionPoint);
+    }
 
     /**
      * Algorithm from Moller, Trumbore, "Fast, Minimum Storage
      *  Ray / Triangle Intersection", Journal of Graphics Tools, Volume 2,
      *  Number 1, 1997, pp. 21-28.
      */
-    public static double calculateCollisionDistance(Triangle triangle, Ray ray) {
+    public double calculateCollisionDistance(Triangle triangle, Ray ray) {
         Vector vert0 = triangle.vertices[0];
 
         Vector edge1 = triangle.vertices[1].subtract(triangle.vertices[0]);
@@ -24,9 +52,6 @@ public class CollisionCalculator {
             return -1;
 
         // Begin calculating determinant -- also used to calculate U parameter
-        if(ray == null || ray.direction == null || edge2 == null){
-            int de = 1;
-        }
         Vector pvec = ray.direction.cross(edge2);
 
         // If determinant is near zero, ray lies in plane of triangle

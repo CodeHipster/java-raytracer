@@ -1,4 +1,4 @@
-package oostd.am.raytracer;
+package oostd.am.raytracer.engine;
 
 import oostd.am.raytracer.api.PixelSubscriberFactory;
 import oostd.am.raytracer.api.camera.Camera;
@@ -11,13 +11,11 @@ import oostd.am.raytracer.api.geography.PixelPosition;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
 import oostd.am.raytracer.api.geography.Vector2D;
-import oostd.am.raytracer.api.scenery.ColorFilter;
 import oostd.am.raytracer.api.scenery.PointLight;
 import oostd.am.raytracer.api.scenery.Scene;
 import oostd.am.raytracer.api.scenery.Triangle;
-import oostd.am.raytracer.api.scenery.VolumeProperties;
-import oostd.am.raytracer.collision.CollisionService;
-import oostd.am.raytracer.debug.DebugLineProcessor;
+import oostd.am.raytracer.engine.collision.CollisionService;
+import oostd.am.raytracer.engine.debug.DebugLineProcessor;
 
 import java.util.ArrayDeque;
 import java.util.List;
@@ -35,19 +33,27 @@ import java.util.concurrent.SubmissionPublisher;
  */
 public class Engine implements Runnable {
 
-    private CollisionService collisionService;
+    // scene
     private List<PointLight> pointLights;
+    private List<Triangle> triangles;
+
     //TODO: use it like a queue.
+    // rays to process
     private Queue<InverseRay> inverseRays = new ArrayDeque<>();
     private Queue<InverseRay> inverseRaysBuffer = new ArrayDeque<>();
     private Queue<ShadowRay> shadowRays = new ArrayDeque<>();
-    private List<Triangle> triangles;
+
+    // engine output
     private SubmissionPublisher<Pixel> renderOutput;
     private SubmissionPublisher<Line> debugLineOutput;
 
+    private CollisionService collisionService;
     ReflectionFactorCalculator reflectionFactorCalculator = new ReflectionFactorCalculator();
 
     public Engine(Scene scene, PixelSubscriberFactory pixelSubscriberFactory) {
+        this.pointLights = scene.pointLights;
+        this.triangles = scene.triangles;
+
         //TODO: decouple
         this.collisionService = new CollisionService(scene.triangles);
         this.renderOutput = new SubmissionPublisher<>();
@@ -66,48 +72,7 @@ public class Engine implements Runnable {
             debugLineOutput.subscribe(lineToPixelProcessor);
         });
 
-        this.pointLights = scene.pointLights;
-        this.triangles = scene.triangles;
-
-        initializeRays(scene.renderCamera, renderSubscriber.getResolution());
-    }
-
-    /**
-     * Initailize the first rays from the scene.
-     * The rays start from the camera position and are aimed at a 1 by 1 unit square at given offset.
-     *
-     * @param camera
-     */
-    private void initializeRays(Camera camera, Resolution resolution) {
-        double xStep = camera.lens.dimension.width / resolution.width;
-        double yStep = camera.lens.dimension.height / resolution.height;
-        //start in the left bottom
-        double xStart = (camera.lens.dimension.width / -2) + (xStep / 2); //+half a step to move to the center of the pixel
-        double yStart = camera.lens.dimension.height / -2 + (yStep / 2);
-
-        for (int y = 0; y < resolution.height; ++y) {
-            double yLensPos = yStart + y * yStep;
-            for (int x = 0; x < resolution.width; ++x) {
-                double xLensPos = xStart + x * xStep;
-                Vector lensPoint = camera.lens.positionOf(new Vector2D(xLensPos, yLensPos));
-                Vector camToPoint = lensPoint.subtract(camera.position);
-                UnitVector rayDirection = new UnitVector(camToPoint);
-                if(x == 281 && 170 == y){
-                    int debug = 1; //TODO: cleanup
-                }
-                InverseRay ray = new InverseRay(
-                        1,
-                        1,
-                        rayDirection,
-                        camera.position,
-                        new PixelPosition(x, y),
-                        null,
-                        //expect the camera to be in the void.
-                        // TODO: check if the camera is inside an object and use those properties.
-                        new VolumeProperties(new ColorFilter(1, 1, 1), 1));
-                inverseRays.add(ray);
-            }
-        }
+        inverseRays.addAll(RayInitializer.createRays(scene.renderCamera, renderSubscriber.getResolution()));
     }
 
     /**
@@ -246,8 +211,7 @@ public class Engine implements Runnable {
                     direction,
                     collision.impactPoint,
                     origin.pixelPosition,
-                    collision.target,
-                    origin.volumeProperties);
+                    collision.target);
             inverseRaysBuffer.add(reflection);
         } else {
             if(depth == 20 ){
@@ -269,7 +233,6 @@ public class Engine implements Runnable {
                         collision.target,
                         collision.impactPoint,
                         ray,
-                        ray.volumeProperties,
                         lightIntensity));
             }
         } else {

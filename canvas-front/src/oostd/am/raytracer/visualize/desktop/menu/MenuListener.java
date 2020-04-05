@@ -5,7 +5,9 @@ import oostd.am.raytracer.visualize.desktop.RenderService;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 public class MenuListener implements ActionListener {
 
@@ -17,7 +19,7 @@ public class MenuListener implements ActionListener {
     MenuListener(RenderService renderService) {
         this.renderService = renderService;
 
-        List<SceneService> sceneServices = SceneService.getInstances();
+        List<SceneService> sceneServices = this.getInstances();
         if(sceneServices.isEmpty()) throw new RuntimeException("No scene services found.");
         if(sceneServices.size() > 1){
             System.out.println("Found multiple instances of the scene service. Using the first one.");
@@ -33,5 +35,12 @@ public class MenuListener implements ActionListener {
         if ("startRendering".equals(e.getActionCommand())) {
             renderService.startRender(sceneService.getScene());
         }
+    }
+
+    private List<SceneService> getInstances() {
+        ServiceLoader<SceneService> services = ServiceLoader.load(SceneService.class);
+        List<SceneService> list = new ArrayList<>();
+        services.iterator().forEachRemaining(list::add);
+        return list;
     }
 }

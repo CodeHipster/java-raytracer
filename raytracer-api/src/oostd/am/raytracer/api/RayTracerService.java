@@ -7,12 +7,6 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 public interface RayTracerService {
-    static List<RayTracerService> getInstances() {
-        ServiceLoader<RayTracerService> services = ServiceLoader.load(RayTracerService.class);
-        List<RayTracerService> list = new ArrayList<>();
-        services.iterator().forEachRemaining(list::add);
-        return list;
-    }
 
     /**
      * This method should immediately return and render asynchronously

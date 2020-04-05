@@ -1,4 +1,4 @@
-package oostd.am.raytracer.debug;
+package oostd.am.raytracer.engine.debug;
 
 import oostd.am.raytracer.api.debug.Line2D;
 import oostd.am.raytracer.api.geography.PixelPosition;
@@ -6,8 +6,6 @@ import oostd.am.raytracer.api.geography.Vector2D;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class LineDrawerTest {
 
