@@ -62,7 +62,7 @@ public class Engine implements Runnable {
         while (running) {
             processInverseRays();
 
-            processShadowRays();
+            processLightRays();
 
             // If there are no new rays generated, we can stop the engine.
             if (inverseRays.isEmpty()) {
@@ -83,7 +83,7 @@ public class Engine implements Runnable {
     //TODO: refactor
     private void processInverseRays() {
 
-        inverseRays.stream().forEach(
+        inverseRays.forEach(
                 ray -> {
                     Collision collision = RayCollider.findCollision(ray, ray.origin, triangles);
                     if (collision == null) return; // We did not hit anything. No light comes from the void.
@@ -168,7 +168,7 @@ public class Engine implements Runnable {
         }
     }
 
-    private void processShadowRays() {
+    private void processLightRays() {
         lightRays.forEach(lightRay -> {
             //if light shines on back of triangle it will not hit the visible side.
             //TODO: should we add a property to a ray for being inside or outside an object?
