@@ -29,10 +29,9 @@ public class RayTracerService implements oostd.am.raytracer.api.RayTracerService
                 -> depthController(loop again)
                 -> lightRayProcessor -> renderSubscriber
              */
-
             inverseRayPublisher.subscribe(depthController);
-            rayCaster.subscribeInverseRay(depthController);
             depthController.subscribe(rayCaster);
+            rayCaster.subscribeInverseRay(depthController);
 
             rayCaster.subscribeLightRay(lightRayProcessor);
             lightRayProcessor.subscribe(renderSubscriber);

@@ -3,6 +3,9 @@ package oostd.am.raytracer.streaming.tracer;
 import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
 
+/**
+ * If ray depth or ray intensity fall below given threshold, do not cast the ray.
+ */
 public class DepthController implements Flow.Processor<InverseRay, InverseRay>{
 
     private final SubmissionPublisher<InverseRay> output;
@@ -28,7 +31,7 @@ public class DepthController implements Flow.Processor<InverseRay, InverseRay>{
     @Override
     public void onNext(InverseRay ray) {
         System.out.println("DepthController ray depth:" + ray.depth);
-        if(ray.depth < limit){
+        if(ray.depth < limit || ray.intensity > 0.001){
             output.submit(ray);
         }else{
             System.out.println("DepthController max depth reached:" + limit);

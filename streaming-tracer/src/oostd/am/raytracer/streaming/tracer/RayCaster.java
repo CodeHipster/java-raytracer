@@ -1,7 +1,6 @@
 package oostd.am.raytracer.streaming.tracer;
 
 import oostd.am.raytracer.api.camera.Color;
-import oostd.am.raytracer.api.camera.Pixel;
 import oostd.am.raytracer.api.geography.Vector;
 import oostd.am.raytracer.api.scenery.PointLight;
 
@@ -36,6 +35,11 @@ public class RayCaster implements Flow.Subscriber<InverseRay> {
         subscription.request(1);
     }
 
+    /**
+     * TODO: when do we decide we are done and signal onComplete?
+     * TODO: What happens if we run out of resources, deadlock(submit will block, as it indirectly inserts into this)? Should we build in a timer?
+     * @param ray
+     */
     @Override
     public void onNext(InverseRay ray) {
         System.out.println("Raycaster, cast ray with depth: " + ray.depth);
