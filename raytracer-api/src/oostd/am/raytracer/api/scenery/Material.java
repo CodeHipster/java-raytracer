@@ -25,6 +25,7 @@ public final class Material {
     public final ColorFilter colorFilter;
     public final boolean transparent;
 
+    //TODO: assertions on that factors are correct(and no light is generated)
     public Material(double shininess, double diffuseFactor, double specularFactor, double reflectionFactor, boolean transparent, ColorFilter colorFilter) {
         this.shininess = shininess;
         this.diffuseFactor = diffuseFactor;

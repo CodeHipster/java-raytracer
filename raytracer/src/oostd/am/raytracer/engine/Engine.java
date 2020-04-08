@@ -18,7 +18,7 @@ import java.util.concurrent.SubmissionPublisher;
 
 /**
  * The engine renders a given scene from a camera perspective.
- * It does this asynchronously and continously generates pixel updates.
+ * It does this asynchronously and continuously generating pixel updates.
  * The pixels that are published will have to be added to previous pixels for the same pixelPosition.
  * This way each iteration provides more detail.
  * <p>

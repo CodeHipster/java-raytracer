@@ -18,10 +18,20 @@ public class InverseRay extends Ray{
 
     public InverseRay(int depth, double intensity, UnitVector direction, Vector position
             , PixelPosition pixelPosition, Triangle origin) {
-        super(direction, position);
+        super(direction, position, origin);
         this.depth = depth;
         this.origin = origin;
         this.intensity = intensity;
         this.pixelPosition = pixelPosition;
+    }
+
+    @Override
+    public String toString() {
+        return "InverseRay{" +
+                "depth=" + depth +
+                ", origin=" + origin +
+                ", pixelPosition=" + pixelPosition +
+                ", intensity=" + intensity +
+                '}';
     }
 }

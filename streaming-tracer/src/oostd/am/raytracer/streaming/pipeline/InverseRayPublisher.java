@@ -1,4 +1,6 @@
-package oostd.am.raytracer.streaming.tracer;
+package oostd.am.raytracer.streaming.pipeline;
+
+import oostd.am.raytracer.streaming.tracer.InverseRay;
 
 import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;

@@ -19,7 +19,7 @@ class RayTracerServiceTest {
 
                     @Override
                     public Resolution getResolution() {
-                        return new Resolution(4, 4);
+                        return new Resolution(1, 1);
                     }
 
                     @Override

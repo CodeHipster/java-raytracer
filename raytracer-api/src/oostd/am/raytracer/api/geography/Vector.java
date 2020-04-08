@@ -116,4 +116,13 @@ public class Vector {
     public int hashCode() {
         return Objects.hash(x, y, z);
     }
+
+    @Override
+    public String toString() {
+        return "Vector{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
+    }
 }
