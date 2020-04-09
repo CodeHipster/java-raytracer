@@ -41,8 +41,7 @@ public class RayTracerService implements oostd.am.raytracer.api.RayTracerService
 
         SubmissionPublisher<InverseRay> inverseRayPublisher = new SubmissionPublisher<>();
 
-        //TODO: refactor, implement some sort of abstract class for the processors?
-        DepthProcessor depthProcessor = new DepthProcessor(5, 0.0001, new PipelineSubmissionPublisher<>(100_000_000));
+        DepthProcessor depthProcessor = new DepthProcessor(5, 0.0001, new PipelineSubmissionPublisher<>(100_000_000)); // limit 100 times higher then the rest to avoid blockades.
         CollisionProcessor<InverseRay> inverseRayCollisionProcessor = new CollisionProcessor<>(collider, new PipelineSubmissionPublisher<>());
         InverseRayCastProcessor inverseRayCastProcessor = new InverseRayCastProcessor(new PipelineSubmissionPublisher<>(), inverseRayCaster);
         LightRayCastProcessor lightRayCastProcessor = new LightRayCastProcessor(new PipelineSubmissionPublisher<>(), lightRayCaster);
