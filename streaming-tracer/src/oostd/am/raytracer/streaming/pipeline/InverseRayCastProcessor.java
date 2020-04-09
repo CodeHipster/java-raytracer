@@ -41,8 +41,11 @@ public class InverseRayCastProcessor implements Flow.Processor<Collision<Inverse
     @Override
     public void onNext(Collision<InverseRay> collision) {
         List<InverseRay> inverseRays = inverseRayCaster.castRay(collision);
-        System.out.println("InverseRayCastProcessor: inverseRays: " + inverseRays);
-        inverseRays.forEach(output::submit);
+//        System.out.println("InverseRayCastProcessor: inverseRays: " + inverseRays);
+        inverseRays.forEach(item -> {
+            int lag = output.submit(item);
+//            System.out.println("InverseRayCastProcessor: lag : " + lag);
+        });
     }
 
     @Override

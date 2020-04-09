@@ -57,10 +57,6 @@ public class RenderPanel extends JPanel implements PixelSubscriber {
                 x >= 0 && y >= 0) {
             RGBColor rgbColor = new RGBColor(imageBuffer.getRGB(x, y));
             rgbColor.add(pixel.color.r, pixel.color.g, pixel.color.b);
-            if((rgbColor.r > 255 || rgbColor.g > 255 || rgbColor.b > 255)&& this.getName().startsWith("render")){
-                int debug = 1; //TODO: cleanup
-            }
-
             imageBuffer.setRGB(x, y, rgbColor.asInt());
         }
 

@@ -40,7 +40,8 @@ public class CollisionProcessor<R extends Ray> implements Flow.Processor<R, Coll
     @Override
     public void onNext(R ray) {
         Collision<R> collision = collider.collide(ray);
-        System.out.println("CollisionProcessor: Ray : " + ray + " collision: " + collision);
-        output.submit(collision);
+//        System.out.println("CollisionProcessor: Ray : " + ray + " collision: " + collision);
+        int lag = output.submit(collision);
+//        System.out.println("CollisionProcessor: lag : " + lag);
     }
 }

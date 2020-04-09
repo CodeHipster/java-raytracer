@@ -23,7 +23,7 @@ public class LightRayCaster {
                     .map(light -> new LightRay(light, collision.target, collision.impactPoint, collision.ray, lightIntensity))
                     .collect(Collectors.toList());
         } else {
-            System.out.println("Not casting shadow from collision: " + collision);
+//            System.out.println("Not casting shadow from collision: " + collision);
             return new ArrayList<>();
         }
     }

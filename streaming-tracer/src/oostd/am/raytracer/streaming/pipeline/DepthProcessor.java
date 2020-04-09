@@ -37,11 +37,12 @@ public class DepthProcessor implements Flow.Processor<InverseRay, InverseRay>{
 
     @Override
     public void onNext(InverseRay ray) {
-        System.out.println("DepthProcessor ray:" + ray);
+//        System.out.println("DepthProcessor ray:" + ray);
         if(ray.depth < limit || ray.intensity > intensityLimit){
-            output.submit(ray);
+            int lag = output.submit(ray);
+//            System.out.println("DepthProcessor: lag : " + lag);
         }else{
-            System.out.println("DepthProcessor max depth reached:" + limit);
+//            System.out.println("DepthProcessor max depth reached:" + limit);
         }
     }
 

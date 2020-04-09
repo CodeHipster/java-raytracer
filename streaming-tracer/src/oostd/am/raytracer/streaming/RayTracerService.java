@@ -9,6 +9,7 @@ import oostd.am.raytracer.streaming.pipeline.LightRayCastProcessor;
 import oostd.am.raytracer.streaming.pipeline.InverseRayCastProcessor;
 import oostd.am.raytracer.streaming.pipeline.LightRayPixelProcessor;
 import oostd.am.raytracer.streaming.pipeline.LightRayShadowProcessor;
+import oostd.am.raytracer.streaming.pipeline.PipelineSubmissionPublisher;
 import oostd.am.raytracer.streaming.tracer.Collider;
 import oostd.am.raytracer.streaming.tracer.InverseRay;
 import oostd.am.raytracer.streaming.tracer.InverseRayCaster;
@@ -19,8 +20,19 @@ import java.util.concurrent.SubmissionPublisher;
 
 public class RayTracerService implements oostd.am.raytracer.api.RayTracerService {
 
+    private Thread thread;
+
     @Override
     public void startRendering(Scene scene, PixelSubscriberFactory pixelSubscriberFactory) {
+        if (thread != null) {
+            System.out.println("rendering already started, not starting again.");
+        } else {
+            thread = new Thread(() -> render(scene, pixelSubscriberFactory));
+            thread.start();
+        }
+    }
+
+    public void render(Scene scene, PixelSubscriberFactory pixelSubscriberFactory) {
         Collider collider = new Collider(scene.triangles);
         InverseRayCaster inverseRayCaster = new InverseRayCaster();
         LightRayCaster lightRayCaster = new LightRayCaster(scene.pointLights);
@@ -30,12 +42,12 @@ public class RayTracerService implements oostd.am.raytracer.api.RayTracerService
         SubmissionPublisher<InverseRay> inverseRayPublisher = new SubmissionPublisher<>();
 
         //TODO: refactor, implement some sort of abstract class for the processors?
-        DepthProcessor depthProcessor = new DepthProcessor(5, 0.0001, new SubmissionPublisher<>());
-        CollisionProcessor<InverseRay> inverseRayCollisionProcessor = new CollisionProcessor<>(collider, new SubmissionPublisher<>());
-        InverseRayCastProcessor inverseRayCastProcessor = new InverseRayCastProcessor(new SubmissionPublisher<>(), inverseRayCaster);
-        LightRayCastProcessor lightRayCastProcessor = new LightRayCastProcessor(new SubmissionPublisher<>(), lightRayCaster);
-        LightRayShadowProcessor lightRayShadowProcessor = new LightRayShadowProcessor(new SubmissionPublisher<>(), collider);
-        LightRayPixelProcessor lightRayPixelProcessor = new LightRayPixelProcessor(new SubmissionPublisher<>());
+        DepthProcessor depthProcessor = new DepthProcessor(5, 0.0001, new PipelineSubmissionPublisher<>(100_000_000));
+        CollisionProcessor<InverseRay> inverseRayCollisionProcessor = new CollisionProcessor<>(collider, new PipelineSubmissionPublisher<>());
+        InverseRayCastProcessor inverseRayCastProcessor = new InverseRayCastProcessor(new PipelineSubmissionPublisher<>(), inverseRayCaster);
+        LightRayCastProcessor lightRayCastProcessor = new LightRayCastProcessor(new PipelineSubmissionPublisher<>(), lightRayCaster);
+        LightRayShadowProcessor lightRayShadowProcessor = new LightRayShadowProcessor(new PipelineSubmissionPublisher<>(), collider);
+        LightRayPixelProcessor lightRayPixelProcessor = new LightRayPixelProcessor(new PipelineSubmissionPublisher<>());
             /*
             inverseRayPublisher -> depth -> collision   -> inverseRayCaster -> depth (loop back)
                                                         -> lightRayCaster -> shadow -> render -> other system

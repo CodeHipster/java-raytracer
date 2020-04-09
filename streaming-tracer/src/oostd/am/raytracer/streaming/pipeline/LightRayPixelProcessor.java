@@ -31,8 +31,9 @@ public class LightRayPixelProcessor implements Flow.Processor<LightRay, Pixel> {
     public void onNext(LightRay lightRay) {
         Color color = PhongReflection.calculatePhong(lightRay.inverseRay, lightRay.light, lightRay.position, lightRay.triangle);
         Color scaled = color.scale(lightRay.intensity);
-        System.out.println("LightRayPixelProcessor: adding color: " + color + " for ray: " + lightRay);
-        output.submit(new Pixel(lightRay.inverseRay.pixelPosition, scaled));
+//        System.out.println("LightRayPixelProcessor: adding color: " + color + " for ray: " + lightRay);
+        int lag = output.submit(new Pixel(lightRay.inverseRay.pixelPosition, scaled));
+//        System.out.println("LightRayPixelProcessor: lag : " + lag);
     }
 
     @Override

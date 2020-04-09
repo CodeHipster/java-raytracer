@@ -35,15 +35,17 @@ public class LightRayShadowProcessor implements Flow.Processor<LightRay, LightRa
             double distanceToLight = lightRay.position.subtract(lightRay.light.position).length();
             if(distanceToLight < distanceToImpact){
                 //Nothing is blocking the lightRay
-                System.out.println("LightRayShadowProcessor ray: "+ lightRay +" reaches light");
-                output.submit(lightRay);
+//                System.out.println("LightRayShadowProcessor ray: "+ lightRay +" reaches light");
+                int lag = output.submit(lightRay);
+//                System.out.println("LightRayShadowProcessor: lag : " + lag);
             }
         }else{
             //Nothing is blocking the lightRay
-            System.out.println("LightRayShadowProcessor ray: "+ lightRay +" reaches light");
-            output.submit(lightRay);
+//            System.out.println("LightRayShadowProcessor ray: "+ lightRay +" reaches light");
+            int lag = output.submit(lightRay);
+//            System.out.println("LightRayShadowProcessor: lag : " + lag);
         }
-        System.out.println("LightRayShadowProcessor ray: "+ lightRay +" does NOT reach light");
+//        System.out.println("LightRayShadowProcessor ray: "+ lightRay +" does NOT reach light");
     }
 
     @Override
