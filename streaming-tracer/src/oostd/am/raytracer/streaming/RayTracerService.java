@@ -2,7 +2,10 @@ package oostd.am.raytracer.streaming;
 
 import oostd.am.raytracer.api.PixelSubscriberFactory;
 import oostd.am.raytracer.api.camera.PixelSubscriber;
+import oostd.am.raytracer.api.camera.Resolution;
+import oostd.am.raytracer.api.geography.PixelPosition;
 import oostd.am.raytracer.api.scenery.Scene;
+import oostd.am.raytracer.streaming.debug.Debugger;
 import oostd.am.raytracer.streaming.pipeline.CollisionProcessor;
 import oostd.am.raytracer.streaming.pipeline.DepthProcessor;
 import oostd.am.raytracer.streaming.pipeline.LightRayCastProcessor;
@@ -33,19 +36,25 @@ public class RayTracerService implements oostd.am.raytracer.api.RayTracerService
     }
 
     public void configurePipeline(Scene scene, PixelSubscriberFactory pixelSubscriberFactory) {
+
         Collider collider = new Collider(scene.triangles);
         InverseRayCaster inverseRayCaster = new InverseRayCaster();
         LightRayCaster lightRayCaster = new LightRayCaster(scene.pointLights);
 
         PixelSubscriber renderSubscriber = pixelSubscriberFactory.createRenderSubscriber(scene.renderCamera.lens.name);
+        Resolution resolution = renderSubscriber.getResolution();
+
+        PixelPosition pixelsToTrace = new PixelPosition(resolution.width / 2, resolution.height / 2);
+        Debugger debugger = new Debugger(scene.debugWindows, pixelSubscriberFactory, new PipelineSubmissionPublisher<>(), pixelsToTrace);
+        debugger.drawSceneGeometry(scene.triangles);
 
         SubmissionPublisher<InverseRay> inverseRayPublisher = new SubmissionPublisher<>();
 
         DepthProcessor depthProcessor = new DepthProcessor(5, 0.0001, new PipelineSubmissionPublisher<>(100_000_000)); // limit 100 times higher then the rest to avoid blockades.
         CollisionProcessor<InverseRay> inverseRayCollisionProcessor = new CollisionProcessor<>(collider, new PipelineSubmissionPublisher<>());
-        InverseRayCastProcessor inverseRayCastProcessor = new InverseRayCastProcessor(new PipelineSubmissionPublisher<>(), inverseRayCaster);
+        InverseRayCastProcessor inverseRayCastProcessor = new InverseRayCastProcessor(new PipelineSubmissionPublisher<>(), inverseRayCaster, debugger);
         LightRayCastProcessor lightRayCastProcessor = new LightRayCastProcessor(new PipelineSubmissionPublisher<>(), lightRayCaster);
-        LightRayShadowProcessor lightRayShadowProcessor = new LightRayShadowProcessor(new PipelineSubmissionPublisher<>(), collider);
+        LightRayShadowProcessor lightRayShadowProcessor = new LightRayShadowProcessor(new PipelineSubmissionPublisher<>(), collider, debugger);
         LightRayPixelProcessor lightRayPixelProcessor = new LightRayPixelProcessor(new PipelineSubmissionPublisher<>());
 
         /*
@@ -62,7 +71,7 @@ public class RayTracerService implements oostd.am.raytracer.api.RayTracerService
         lightRayPixelProcessor.subscribe(renderSubscriber);
 
         // put initial rays into the pipeline
-        RayInitializer rayInitializer = new RayInitializer(scene.renderCamera, renderSubscriber.getResolution(), inverseRayPublisher);
+        RayInitializer rayInitializer = new RayInitializer(scene.renderCamera, resolution, inverseRayPublisher);
         rayInitializer.initialize();
     }
 }

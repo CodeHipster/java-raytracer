@@ -16,6 +16,7 @@ TODO:
     - it decides to go broad(trace rays with lowest depth) or narrow(trace rays with highest depth)
 - Add debug output
 - Close everything when done.
+    - When do we decide that we are completed? When all processors are done?
 - Collider: Make EPSILON based on largest distance in scene?
 - Collider: intelligent triangle ray intersection (Bounding Volume Hierarchy?)
 - Split Raytracer classes and Math classes(Vector etc.) in different modules.

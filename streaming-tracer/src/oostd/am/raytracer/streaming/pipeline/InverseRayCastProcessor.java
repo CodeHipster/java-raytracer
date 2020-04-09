@@ -1,5 +1,6 @@
 package oostd.am.raytracer.streaming.pipeline;
 
+import oostd.am.raytracer.streaming.debug.Debugger;
 import oostd.am.raytracer.streaming.tracer.Collision;
 import oostd.am.raytracer.streaming.tracer.InverseRay;
 import oostd.am.raytracer.streaming.tracer.InverseRayCaster;
@@ -13,13 +14,15 @@ import java.util.concurrent.SubmissionPublisher;
  */
 public class InverseRayCastProcessor implements Flow.Processor<Collision<InverseRay>, InverseRay> {
 
+    private Debugger debugger;
     private final SubmissionPublisher<InverseRay> output;
     private InverseRayCaster inverseRayCaster;
 
     /**
      * subscribe an inverseRay subscriber and a lightRay subscriber
      */
-    public InverseRayCastProcessor(SubmissionPublisher<InverseRay> inverseRayPublisher, InverseRayCaster inverseRayCaster){
+    public InverseRayCastProcessor(SubmissionPublisher<InverseRay> inverseRayPublisher, InverseRayCaster inverseRayCaster, Debugger debugger){
+        this.debugger = debugger;
         this.output = inverseRayPublisher;
         this.inverseRayCaster = inverseRayCaster;
     }
@@ -34,17 +37,12 @@ public class InverseRayCastProcessor implements Flow.Processor<Collision<Inverse
         subscription.request(Long.MAX_VALUE);
     }
 
-    /**
-     * TODO: when do we decide we are done and signal onComplete?
-     * TODO: What happens if we run out of resources, deadlock(submit will block, as it indirectly inserts into this)? Should we build in a timer?
-     */
     @Override
     public void onNext(Collision<InverseRay> collision) {
+        debugger.line(collision);
         List<InverseRay> inverseRays = inverseRayCaster.castRay(collision);
-//        System.out.println("InverseRayCastProcessor: inverseRays: " + inverseRays);
         inverseRays.forEach(item -> {
             int lag = output.submit(item);
-//            System.out.println("InverseRayCastProcessor: lag : " + lag);
         });
     }
 

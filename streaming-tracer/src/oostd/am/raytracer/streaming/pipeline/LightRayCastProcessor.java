@@ -28,10 +28,8 @@ public class LightRayCastProcessor implements Flow.Processor<Collision<InverseRa
     @Override
     public void onNext(Collision<InverseRay> collision) {
         List<LightRay> lightRays = lightRayCaster.cast(collision);
-//        System.out.println("LightRayCastProcessor: lightRays: " + lightRays);
         lightRays.forEach(item -> {
             int lag = output.submit(item);
-//            System.out.println("LightRayCastProcessor: lag : " + lag);
         });
     }
 
