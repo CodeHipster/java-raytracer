@@ -28,24 +28,15 @@ public class LightRayShadowProcessor implements Flow.Processor<LightRay, LightRa
 
     @Override
     public void onNext(LightRay lightRay) {
-        //TODO: shadow calculator
         Collision<LightRay> collide = collider.collide(lightRay);
         if(collide != null){
             double distanceToImpact = lightRay.position.subtract(collide.impactPoint).length();
             double distanceToLight = lightRay.position.subtract(lightRay.light.position).length();
-            if(distanceToLight < distanceToImpact){
-                //Nothing is blocking the lightRay
-//                System.out.println("LightRayShadowProcessor ray: "+ lightRay +" reaches light");
-                int lag = output.submit(lightRay);
-//                System.out.println("LightRayShadowProcessor: lag : " + lag);
+            if(distanceToLight > distanceToImpact){
+                return; // We are in the shadow.
             }
-        }else{
-            //Nothing is blocking the lightRay
-//            System.out.println("LightRayShadowProcessor ray: "+ lightRay +" reaches light");
-            int lag = output.submit(lightRay);
-//            System.out.println("LightRayShadowProcessor: lag : " + lag);
         }
-//        System.out.println("LightRayShadowProcessor ray: "+ lightRay +" does NOT reach light");
+        output.submit(lightRay);
     }
 
     @Override

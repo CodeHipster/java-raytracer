@@ -27,12 +27,12 @@ public class RayTracerService implements oostd.am.raytracer.api.RayTracerService
         if (thread != null) {
             System.out.println("rendering already started, not starting again.");
         } else {
-            thread = new Thread(() -> render(scene, pixelSubscriberFactory));
+            thread = new Thread(() -> configurePipeline(scene, pixelSubscriberFactory));
             thread.start();
         }
     }
 
-    public void render(Scene scene, PixelSubscriberFactory pixelSubscriberFactory) {
+    public void configurePipeline(Scene scene, PixelSubscriberFactory pixelSubscriberFactory) {
         Collider collider = new Collider(scene.triangles);
         InverseRayCaster inverseRayCaster = new InverseRayCaster();
         LightRayCaster lightRayCaster = new LightRayCaster(scene.pointLights);
@@ -47,10 +47,11 @@ public class RayTracerService implements oostd.am.raytracer.api.RayTracerService
         LightRayCastProcessor lightRayCastProcessor = new LightRayCastProcessor(new PipelineSubmissionPublisher<>(), lightRayCaster);
         LightRayShadowProcessor lightRayShadowProcessor = new LightRayShadowProcessor(new PipelineSubmissionPublisher<>(), collider);
         LightRayPixelProcessor lightRayPixelProcessor = new LightRayPixelProcessor(new PipelineSubmissionPublisher<>());
-            /*
-            inverseRayPublisher -> depth -> collision   -> inverseRayCaster -> depth (loop back)
-                                                        -> lightRayCaster -> shadow -> render -> other system
-             */
+
+        /*
+        inverseRayPublisher -> depth -> collision   -> inverseRayCaster -> depth (loop back)
+                                                    -> lightRayCaster -> shadow -> render -> other system
+         */
         inverseRayPublisher.subscribe(depthProcessor);
         depthProcessor.subscribe(inverseRayCollisionProcessor);
         inverseRayCollisionProcessor.subscribe(inverseRayCastProcessor);

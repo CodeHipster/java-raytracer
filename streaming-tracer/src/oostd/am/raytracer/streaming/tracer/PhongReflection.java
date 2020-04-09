@@ -13,7 +13,7 @@ import oostd.am.raytracer.api.scenery.Triangle;
  */
 public class PhongReflection {
 
-    public static Color calculatePhong(Ray ray, PointLight light, Vector intersection, Triangle surface){
+    public static Color calculatePhong(UnitVector viewRay, PointLight light, Vector intersection, Triangle surface){
         // Kd = diffuse factor (together with reflection and refraction adds up to 1)
         // L = unitvector from point to light
         // N = unitvector surface normal
@@ -31,7 +31,7 @@ public class PhongReflection {
         Color Id = surface.material.colorFilter.filter(light.color);
         double Ks = surface.material.specularFactor;
         UnitVector R = L.reflectOn(N).invert();
-        UnitVector V = ray.direction.invert();
+        UnitVector V = viewRay.invert();
         double a = surface.material.shininess;
         // specular is not filtered by material, because it is reflection (color is not absorbed by the surface of the material.
         Color Is = light.color;

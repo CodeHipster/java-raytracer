@@ -42,8 +42,7 @@ public class RayInitializer {
                         1,
                         rayDirection,
                         camera.position,
-                        new PixelPosition(x, y),
-                        null);
+                        new PixelPosition(x, y));
                 int lag = publisher.submit(ray);
 //                System.out.println("RayInitializer: lag : " + lag);
 

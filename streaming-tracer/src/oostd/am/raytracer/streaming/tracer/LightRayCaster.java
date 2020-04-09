@@ -20,10 +20,9 @@ public class LightRayCaster {
         //for each light create a lightray
         if (lightIntensity > 0.001) { //no need to add the light when it has to little impact on the scene.
             return lights.stream()
-                    .map(light -> new LightRay(light, collision.target, collision.impactPoint, collision.ray, lightIntensity))
+                    .map(light -> new LightRay(light, collision.target, collision.impactPoint, collision.ray.pixelPosition, lightIntensity, collision.ray.direction))
                     .collect(Collectors.toList());
         } else {
-//            System.out.println("Not casting shadow from collision: " + collision);
             return new ArrayList<>();
         }
     }

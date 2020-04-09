@@ -6,7 +6,6 @@ import oostd.am.raytracer.api.scenery.Triangle;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: refractor
 public class InverseRayCaster {
 
     public List<InverseRay> castRay(Collision<InverseRay> collision) {
@@ -35,10 +34,10 @@ public class InverseRayCaster {
         }
 
         if (scatter.reflection != null) {
-            rays.add(new InverseRay(ray.depth + 1, ray.intensity * reflectionFactor, scatter.reflection, collision.impactPoint, ray.pixelPosition, collision.target));
+            rays.add(new InverseRay(ray.depth + 1, ray.intensity * reflectionFactor, scatter.reflection, collision.impactPoint, ray.pixelPosition));
         }
         if (scatter.refraction != null) {
-            rays.add(new InverseRay(ray.depth + 1, ray.intensity * refractionFactor, scatter.refraction, collision.impactPoint, ray.pixelPosition, collision.target));
+            rays.add(new InverseRay(ray.depth + 1, ray.intensity * refractionFactor, scatter.refraction, collision.impactPoint, ray.pixelPosition));
         }
         return rays;
     }
@@ -60,17 +59,25 @@ public class InverseRayCaster {
         }
         double reflectionFactor = 1;
         if (refraction != null) {
-            //TODO: reuse calculation results from refraction in calculating reflection factor
             reflectionFactor = calculateReflectionFactor(n1, n2, normal, incident);
         }
         UnitVector reflection = null;
-        if (collision.target.material.reflectionFactor > 0 || reflectionFactor > 0) { //TODO: material reflectionfactor should not be taken into account when hitting from behind.
+        if (reflectionFactor > 0) {
             reflection = ray.direction.reflectOn(normal);
         }
         double refractionFactor = 1 - reflectionFactor;
         return new Scatter(reflection, reflectionFactor, refraction, refractionFactor);
     }
 
+    /**
+     * Calculate the intensity of the reflection vector based on its angle and material density.
+     * The rest of the intensity goes to the refracted vector
+     * @param n1 density 'outside'
+     * @param n2 density 'inside'
+     * @param normal unit vector pointing to the 'outside'
+     * @param incident incident unit vector comming from the 'outside'
+     * @return amount of light that is reflected, a value between 0 and 1
+     */
     public double calculateReflectionFactor(double n1, double n2, UnitVector normal, UnitVector incident) {
         double densityFactor = n1 / n2;
         double cosI = -incident.dot(normal);
@@ -82,6 +89,14 @@ public class InverseRayCaster {
         return (rO * rO + rP * rP) / 2;
     }
 
+    /**
+     * Calculate the direction of a refraction vector based on an incident vector and material densities.
+     * @param incident incident unit vector comming from the 'outside'
+     * @param normal unit vector pointing to the 'outside'
+     * @param densityFrom density 'outside'
+     * @param densityTo density 'inside'
+     * @return UnitVector as the direction of the refracted ray
+     */
     public UnitVector calculateRefractionVector(UnitVector incident, UnitVector normal, double densityFrom, double densityTo) {
         double densityFactor = densityFrom / densityTo;
         double cosI = -incident.dot(normal);
@@ -89,7 +104,7 @@ public class InverseRayCaster {
         if (squaredSinI > 1)
             return null; // Total internal reflection
         double cosT = Math.sqrt(1 - squaredSinI);
-        return incident.scale(densityFactor).addSelf(normal.scale(densityFactor * cosI - cosT)).unit(); //TODO: we know this ends with a unit vector, avoid costly .unit() calls
+        return incident.scale(densityFactor).addSelf(normal.scale(densityFactor * cosI - cosT)).unit();
     }
 
     public static class Scatter {

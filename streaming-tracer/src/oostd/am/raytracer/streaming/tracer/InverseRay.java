@@ -11,16 +11,13 @@ import oostd.am.raytracer.api.scenery.Triangle;
  */
 public class InverseRay extends Ray{
     public final int depth; //nr of reflections/refractions
-    //TODO: refactor this out, offset collision point by epsilon.
-    public Triangle origin; //the surface it comes from (reflected or refracted, or null from camera.)
     public PixelPosition pixelPosition; // the position on the lens it has effect on.
     public final double intensity; // the amount of effect on the lens (in terms of color intensity from 0 - 1).
 
     public InverseRay(int depth, double intensity, UnitVector direction, Vector position
-            , PixelPosition pixelPosition, Triangle origin) {
-        super(direction, position, origin);
+            , PixelPosition pixelPosition) {
+        super(direction, position);
         this.depth = depth;
-        this.origin = origin;
         this.intensity = intensity;
         this.pixelPosition = pixelPosition;
     }
@@ -29,9 +26,10 @@ public class InverseRay extends Ray{
     public String toString() {
         return "InverseRay{" +
                 "depth=" + depth +
-                ", origin=" + origin +
                 ", pixelPosition=" + pixelPosition +
                 ", intensity=" + intensity +
+                ", direction=" + direction +
+                ", position=" + position +
                 '}';
     }
 }

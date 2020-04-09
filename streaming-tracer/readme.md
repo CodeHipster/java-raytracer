@@ -11,7 +11,13 @@ inverseRayPublisher -> depth -> collision   -> inverseRayCaster -> depth (loop b
 TODO:
 -----
 
-- introduce a load balancer 
+- Introduce a load balancer (as another processor)
     - it can prioritize subscribers (block input from initializer when at 50% capacity, but still accept from other subscribers)
     - it decides to go broad(trace rays with lowest depth) or narrow(trace rays with highest depth)
-- add debug output
+- Add debug output
+- Close everything when done.
+- Collider: Make EPSILON based on largest distance in scene?
+- Collider: intelligent triangle ray intersection (Bounding Volume Hierarchy?)
+- Split Raytracer classes and Math classes(Vector etc.) in different modules.
+- Optimize a little (reuse heavy calculation results)
+- Different material densities
