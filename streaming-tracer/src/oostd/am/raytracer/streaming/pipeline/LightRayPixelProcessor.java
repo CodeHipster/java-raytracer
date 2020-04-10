@@ -29,7 +29,7 @@ public class LightRayPixelProcessor implements Flow.Processor<LightRay, Pixel> {
 
     @Override
     public void onNext(LightRay lightRay) {
-        Color color = PhongReflection.calculatePhong(lightRay.viewDirection, lightRay.light, lightRay.position, lightRay.triangle);
+        Color color = PhongReflection.calculatePhong(lightRay.viewDirection, lightRay.light, lightRay.position, lightRay.sceneObject, lightRay.surfaceNormal);
         Color scaled = color.scale(lightRay.intensity);
         int lag = output.submit(new Pixel(lightRay.pixelPosition, scaled));
     }

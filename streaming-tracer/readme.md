@@ -14,7 +14,6 @@ TODO:
 - Introduce a load balancer (as another processor)
     - it can prioritize subscribers (block input from initializer when at 50% capacity, but still accept from other subscribers)
     - it decides to go broad(trace rays with lowest depth) or narrow(trace rays with highest depth)
-- Add debug output
 - Close everything when done.
     - When do we decide that we are completed? When all processors are done?
 - Collider: Make EPSILON based on largest distance in scene?

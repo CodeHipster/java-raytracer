@@ -37,7 +37,7 @@ public class RayTracerService implements oostd.am.raytracer.api.RayTracerService
 
     public void configurePipeline(Scene scene, PixelSubscriberFactory pixelSubscriberFactory) {
 
-        Collider collider = new Collider(scene.triangles);
+        Collider collider = new Collider(scene.triangles, scene.spheres);
         InverseRayCaster inverseRayCaster = new InverseRayCaster();
         LightRayCaster lightRayCaster = new LightRayCaster(scene.pointLights);
 
@@ -46,7 +46,7 @@ public class RayTracerService implements oostd.am.raytracer.api.RayTracerService
 
         PixelPosition pixelsToTrace = new PixelPosition(resolution.width / 2, resolution.height / 2);
         Debugger debugger = new Debugger(scene.debugWindows, pixelSubscriberFactory, new PipelineSubmissionPublisher<>(), pixelsToTrace);
-        debugger.drawSceneGeometry(scene.triangles);
+        debugger.drawSceneGeometry(scene.triangles, scene.spheres);
 
         SubmissionPublisher<InverseRay> inverseRayPublisher = new SubmissionPublisher<>();
 

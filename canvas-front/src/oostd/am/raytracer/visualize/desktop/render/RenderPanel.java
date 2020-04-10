@@ -43,7 +43,7 @@ public class RenderPanel extends JPanel implements PixelSubscriber {
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
         this.subscription = subscription;
-        subscription.request(1);
+        subscription.request(Long.MAX_VALUE);
         System.out.println("Render panel subscribed: " + subscription);
     }
 
@@ -59,8 +59,6 @@ public class RenderPanel extends JPanel implements PixelSubscriber {
             rgbColor.add(pixel.color.r, pixel.color.g, pixel.color.b);
             imageBuffer.setRGB(x, y, rgbColor.asInt());
         }
-
-        subscription.request(1);
         this.repaint();
     }
 

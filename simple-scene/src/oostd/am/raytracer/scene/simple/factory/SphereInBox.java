@@ -10,15 +10,16 @@ import oostd.am.raytracer.api.scenery.ColorFilter;
 import oostd.am.raytracer.api.scenery.Material;
 import oostd.am.raytracer.api.scenery.PointLight;
 import oostd.am.raytracer.api.scenery.Scene;
+import oostd.am.raytracer.api.scenery.Sphere;
 import oostd.am.raytracer.api.scenery.Triangle;
 import oostd.am.raytracer.api.scenery.VolumeProperties;
 
 import java.util.Arrays;
 
-public class Oktahedron extends BaseSceneFactory {
+public class SphereInBox extends BaseSceneFactory {
 
-    public Oktahedron() {
-        Material oktahedronSurface = new Material(
+    public SphereInBox() {
+        Material material = new Material(
                 100,
                 0,
                 1,
@@ -26,24 +27,22 @@ public class Oktahedron extends BaseSceneFactory {
                 true,
                 new ColorFilter(1f, 1f, 1.0f)
         );
-        VolumeProperties volumeProperties = new VolumeProperties(new ColorFilter(1, 1, 1), 1.5);
-        Triangle[] prism = createPrism(new Vector(0, 0, 0), 6, oktahedronSurface, volumeProperties);
+        VolumeProperties volumeProperties = new VolumeProperties(new ColorFilter(1, 1, 1), 1.1);
+
+        Sphere sphere = new Sphere(new Vector(0,0,0), 4, material, volumeProperties);
+        spheres.add(sphere);
 
         Triangle[] room = createBox(new Vector(0,0,0), 20);
 
         triangles.addAll(Arrays.asList(room));
-        triangles.addAll(Arrays.asList(prism));
 //
-        pointLights.add(new PointLight(new Vector(-15, 8, 15), new Color(1, 1, 1)));
-//        pointLights.add(new PointLight(new Vector(15, -8, -15), new Color(0.5, 0.5, 0.5)));
-//        pointLights.add(new PointLight(new Vector(4, 4, 4), new Color(1, 1, 1)));
-//        pointLights.add(new PointLight(new Vector(4, 4, -4), new Color(1, 1, 1)));
-//        pointLights.add(new PointLight(new Vector(0, 8, 0), new Color(1, 1, 1)));
+        pointLights.add(new PointLight(new Vector(-15, 8, 15), new Color(0.5, 0.5, 0.5)));
+        pointLights.add(new PointLight(new Vector(15, -8, -15), new Color(0.5, 0.5, 0.5)));
 
         Camera renderCamera = new Camera(
-                new Vector(14, 19, -19),
-//                new UnitVector(-1, -1, 1),
-                new UnitVector(-0.37979055041030485, -0.7633176119186549, 0.5225948346030982),
+                new Vector(2, 3, -19),
+                new UnitVector(-0.2, 0, 1),
+//                new UnitVector(-0.2, -0.3, 1),
                 new UnitVector(0, 1, 0)
                 , .6,
                 "camera"
@@ -98,7 +97,7 @@ public class Oktahedron extends BaseSceneFactory {
                         new Material(
                                 10,
                                 1,
-                                0.0,
+                                0.5,
                                 0,
                                 false,
                                 new ColorFilter(0.5f, 1, 0.5f)),
@@ -115,7 +114,7 @@ public class Oktahedron extends BaseSceneFactory {
                         new Material(
                                 10,
                                 1,
-                                0.0,
+                                0.5,
                                 0,
                                 false,
                                 new ColorFilter(0.5f, 0.5f, 1f)),
@@ -133,7 +132,7 @@ public class Oktahedron extends BaseSceneFactory {
                         new Material(
                                 10,
                                 1,
-                                0.0,
+                                0.5,
                                 0,
                                 false,
                                 new ColorFilter(1f, 0.5f, 0.5f)),
@@ -150,10 +149,10 @@ public class Oktahedron extends BaseSceneFactory {
                         new Material(
                                 10,
                                 1,
-                                0.0,
+                                0.5,
                                 0,
                                 false,
-                                new ColorFilter(0.5f, 1, 0.5f)),
+                                new ColorFilter(1f, 1f, 0f)),
                         new VolumeProperties(new ColorFilter(1, 1, 1), 1)
                 ),
 
@@ -165,9 +164,9 @@ public class Oktahedron extends BaseSceneFactory {
                                 new Vector(1000.0, -1, -1000.0).scaleSelf(size).addSelf(position)
                         },
                         new Material(
-                                256,
+                                10,
                                 1,
-                                0.0,
+                                0.5,
                                 0,
                                 false,
                                 new ColorFilter(0.5f, 0.5f, 0.5f)
@@ -183,9 +182,9 @@ public class Oktahedron extends BaseSceneFactory {
                                 new Vector(0.0, 1, 1000.0).scaleSelf(size).addSelf(position)
                         },
                         new Material(
-                                256,
+                                10,
                                 1,
-                                0.0,
+                                0.5,
                                 0,
                                 false,
                                 new ColorFilter(0.1f, 0.3f, 0.6f)
@@ -196,7 +195,54 @@ public class Oktahedron extends BaseSceneFactory {
         return triangles;
     }
 
-    private Triangle[] createPrism(Vector position, double size, Material surface, VolumeProperties volume) {
+    private Triangle[] createTetraHedron(Vector position, double size, Material surface, VolumeProperties volume){
+        Triangle[] triangles = {
+                //Bottom
+                //TODO: make proper tetra hedron, with same angles
+                new Triangle(
+                        new Vector[]{
+                                new Vector(-1.0, -1.0, -1.0).scaleSelf(size).addSelf(position),
+                                new Vector(1.0, -1.0, -1.0).scaleSelf(size).addSelf(position),
+                                new Vector(0.0, -1.0, 1.0).scaleSelf(size).addSelf(position)
+                        },
+                        surface,
+                        volume
+                )
+                ,
+                //front
+                new Triangle(
+                        new Vector[]{
+                                new Vector(-1.0, -1.0, -1.0).scaleSelf(size).addSelf(position),
+                                new Vector(0.0, 1.0, 0.0).scaleSelf(size).addSelf(position),
+                                new Vector(1.0, -1.0, -1.0).scaleSelf(size).addSelf(position)
+                        },
+                        surface,
+                        volume
+                ),
+                //left
+                new Triangle(
+                        new Vector[]{
+                                new Vector(0.0, -1.0, 1.0).scaleSelf(size).addSelf(position),
+                                new Vector(0.0, 1.0, 0.0).scaleSelf(size).addSelf(position),
+                                new Vector(-1.0, -1.0, -1.0).scaleSelf(size).addSelf(position)
+                        },
+                        surface,
+                        volume
+                ),
+                new Triangle(
+                        new Vector[]{
+                                new Vector(1.0, -1.0, -1.0).scaleSelf(size).addSelf(position),
+                                new Vector(0.0, 1.0, 0.0).scaleSelf(size).addSelf(position),
+                                new Vector(0.0, -1.0, 1.0).scaleSelf(size).addSelf(position)
+                        },
+                        surface,
+                        volume
+                )
+        };
+        return triangles;
+    }
+
+    private Triangle[] createOktaHedron(Vector position, double size, Material surface, VolumeProperties volume) {
         Triangle[] triangles = {
                 new Triangle(
                         new Vector[]{

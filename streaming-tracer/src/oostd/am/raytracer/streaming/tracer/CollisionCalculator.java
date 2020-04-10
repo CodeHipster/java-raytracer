@@ -1,6 +1,7 @@
 package oostd.am.raytracer.streaming.tracer;
 
 import oostd.am.raytracer.api.geography.Vector;
+import oostd.am.raytracer.api.scenery.Sphere;
 import oostd.am.raytracer.api.scenery.Triangle;
 
 public class CollisionCalculator {
@@ -9,8 +10,8 @@ public class CollisionCalculator {
 
     /**
      * Algorithm from Moller, Trumbore, "Fast, Minimum Storage
-     *  Ray / Triangle Intersection", Journal of Graphics Tools, Volume 2,
-     *  Number 1, 1997, pp. 21-28.
+     * Ray / Triangle Intersection", Journal of Graphics Tools, Volume 2,
+     * Number 1, 1997, pp. 21-28.
      */
     public static double calculateCollisionDistance(Triangle triangle, Ray ray) {
         Vector vert0 = triangle.vertices[0];
@@ -18,15 +19,13 @@ public class CollisionCalculator {
         Vector edge1 = triangle.vertices[1].subtract(triangle.vertices[0]);
         Vector edge2 = triangle.vertices[2].subtract(triangle.vertices[0]);
 
+        //We can take pre calculated normal from triangle.
         Vector n = edge1.cross(edge2);
         double norm = Math.sqrt(n.square());
-        if(norm == 0)
+        if (norm == 0)
             return -1;
 
         // Begin calculating determinant -- also used to calculate U parameter
-        if(ray == null || ray.direction == null || edge2 == null){
-            int de = 1;
-        }
         Vector pvec = ray.direction.cross(edge2);
 
         // If determinant is near zero, ray lies in plane of triangle
@@ -42,7 +41,7 @@ public class CollisionCalculator {
         double a = -(n.dot(tvec));
         double b = n.dot(ray.direction);
 
-        if(a / b < 0)
+        if (a / b < 0)
             return -1;
 
         // Calculate U parameter and test bounds
@@ -60,5 +59,33 @@ public class CollisionCalculator {
 
         // Calculate t, ray intersects triangle
         return edge2.dot(qvec) * invDet;
+    }
+
+    //https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection
+    public static double calculateCollisionDistance(Sphere sphere, Ray ray) {
+        Vector L = sphere.positon.subtract(ray.position);
+        double Tca = ray.direction.dot(L);
+        double radius = sphere.radius;
+        if (Tca < radius * -1) { // Ray starts outside sphere and points in the wrong direction.
+            return -1;
+        }
+
+        double lengthL = L.length();
+        double TcaSquared = Tca * Tca;
+        double lengthLSquared = lengthL * lengthL;
+        double dSquared = lengthLSquared - TcaSquared;
+        double radiusSquared = radius * radius;
+        if (dSquared > radiusSquared) {
+            return -1; // There is no intersection with the sphere
+        }
+        double ThcSquared = radiusSquared - dSquared;
+
+        if (Tca < 0) {
+            return Math.sqrt(ThcSquared) - Math.sqrt(TcaSquared);
+        } else if (Tca <= radius) {
+            return Math.sqrt(TcaSquared) + Math.sqrt(ThcSquared);
+        } else {
+            return Math.sqrt(TcaSquared) - Math.sqrt(ThcSquared);
+        }
     }
 }

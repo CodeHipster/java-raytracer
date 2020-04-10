@@ -29,6 +29,6 @@ public class LotsOCameras extends BaseSceneFactory {
                 new UnitVector(0, 1, 0),
                 1);
 
-        this.scene = new Scene(new ArrayList<>(), new ArrayList<>(), renderCamera, debugWindows);
+        this.scene = new Scene(new ArrayList<>(), spheres, new ArrayList<>(), renderCamera, debugWindows);
     }
 }

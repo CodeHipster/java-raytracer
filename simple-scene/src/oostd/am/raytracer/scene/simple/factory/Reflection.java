@@ -97,6 +97,6 @@ public class Reflection extends BaseSceneFactory {
                 "top, looking down"
         );
         debugWindows.add(debugWindow4);
-        this.scene = new Scene(triangles, pointLights, renderCamera, debugWindows);
+        this.scene = new Scene(triangles, spheres, pointLights, renderCamera, debugWindows);
     }
 }

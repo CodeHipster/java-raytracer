@@ -83,7 +83,7 @@ public class TetraHedron extends BaseSceneFactory {
         );
         debugWindows.add(debugWindow4);
 
-        this.scene = new Scene(triangles, pointLights, renderCamera, debugWindows);
+        this.scene = new Scene(triangles, spheres, pointLights, renderCamera, debugWindows);
     }
 
     private Triangle[] createBox(Vector position, double size) {

@@ -4,6 +4,7 @@ import oostd.am.raytracer.api.camera.Color;
 import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
 import oostd.am.raytracer.api.scenery.PointLight;
+import oostd.am.raytracer.api.scenery.SceneObject;
 import oostd.am.raytracer.api.scenery.Triangle;
 
 /**
@@ -13,7 +14,7 @@ import oostd.am.raytracer.api.scenery.Triangle;
  */
 public class PhongReflection {
 
-    public static Color calculatePhong(UnitVector viewRay, PointLight light, Vector intersection, Triangle surface){
+    public static Color calculatePhong(UnitVector viewRay, PointLight light, Vector intersection, SceneObject surface, UnitVector surfaceNormal){
         // Kd = diffuse factor (together with reflection and refraction adds up to 1)
         // L = unitvector from point to light
         // N = unitvector surface normal
@@ -26,7 +27,7 @@ public class PhongReflection {
 
         double Kd = surface.material.diffuseFactor;
         UnitVector L = light.position.subtract(intersection).unit();
-        UnitVector N = surface.surfaceNormal;
+        UnitVector N = surfaceNormal;
         // light filtered by surface, the diffuse part is absorbed by the material
         Color Id = surface.material.colorFilter.filter(light.color);
         double Ks = surface.material.specularFactor;

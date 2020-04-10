@@ -14,7 +14,7 @@ public class RenderFrame extends JFrame {
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//TODO: register a WindowListener to unsubscribe from the pixel output.
         this.setVisible(true);
-        renderPanel = new RenderPanel(resolution, 10, name);
+        renderPanel = new RenderPanel(resolution, 1000, name);
         this.add(renderPanel);
         this.pack();
     }

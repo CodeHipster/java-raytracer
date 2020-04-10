@@ -1,6 +1,8 @@
 package oostd.am.raytracer.streaming.tracer;
 
 import oostd.am.raytracer.api.geography.UnitVector;
+import oostd.am.raytracer.api.scenery.SceneObject;
+import oostd.am.raytracer.api.scenery.Sphere;
 import oostd.am.raytracer.api.scenery.Triangle;
 
 import java.util.ArrayList;
@@ -13,11 +15,20 @@ public class InverseRayCaster {
         if (collision == null)
             return rays; // We did not hit anything. No light comes from the void.
 
-        Triangle target = collision.target;
+        SceneObject target = collision.target;
         InverseRay ray = collision.ray;
 
-        boolean hitFromBehind = (collision.ray.direction.dot(target.surfaceNormal) > 0);
-        Scatter scatter = scatter(collision.ray, collision);
+        UnitVector normal;
+        if (target instanceof Triangle) {
+            Triangle t = (Triangle) target;
+            normal = t.surfaceNormal;
+        } else {
+            Sphere s = (Sphere) target;
+            normal = collision.impactPoint.subtract(s.positon).unit();
+        }
+
+        boolean hitFromBehind = (collision.ray.direction.dot(normal) > 0);
+        Scatter scatter = scatter(collision.ray, collision, normal);
         double reflectionFactor = scatter.reflectionFactor;
         double refractionFactor = scatter.refractionFactor;
         if (hitFromBehind) {
@@ -42,9 +53,8 @@ public class InverseRayCaster {
         return rays;
     }
 
-    private Scatter scatter(InverseRay ray, Collision<InverseRay> collision) {
+    private Scatter scatter(InverseRay ray, Collision<InverseRay> collision, UnitVector normal) {
         UnitVector incident = ray.direction;
-        UnitVector normal = collision.target.surfaceNormal;
         double n1 = 1;
         double n2 = collision.target.volumeProperties.refractionIndex;
         double cosI = incident.dot(normal);
@@ -72,9 +82,10 @@ public class InverseRayCaster {
     /**
      * Calculate the intensity of the reflection vector based on its angle and material density.
      * The rest of the intensity goes to the refracted vector
-     * @param n1 density 'outside'
-     * @param n2 density 'inside'
-     * @param normal unit vector pointing to the 'outside'
+     *
+     * @param n1       density 'outside'
+     * @param n2       density 'inside'
+     * @param normal   unit vector pointing to the 'outside'
      * @param incident incident unit vector comming from the 'outside'
      * @return amount of light that is reflected, a value between 0 and 1
      */
@@ -91,10 +102,11 @@ public class InverseRayCaster {
 
     /**
      * Calculate the direction of a refraction vector based on an incident vector and material densities.
-     * @param incident incident unit vector comming from the 'outside'
-     * @param normal unit vector pointing to the 'outside'
+     *
+     * @param incident    incident unit vector comming from the 'outside'
+     * @param normal      unit vector pointing to the 'outside'
      * @param densityFrom density 'outside'
-     * @param densityTo density 'inside'
+     * @param densityTo   density 'inside'
      * @return UnitVector as the direction of the refracted ray
      */
     public UnitVector calculateRefractionVector(UnitVector incident, UnitVector normal, double densityFrom, double densityTo) {

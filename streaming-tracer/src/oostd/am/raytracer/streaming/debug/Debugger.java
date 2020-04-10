@@ -7,6 +7,7 @@ import oostd.am.raytracer.api.debug.Line;
 import oostd.am.raytracer.api.debug.Window;
 import oostd.am.raytracer.api.geography.PixelPosition;
 import oostd.am.raytracer.api.geography.Vector;
+import oostd.am.raytracer.api.scenery.Sphere;
 import oostd.am.raytracer.api.scenery.Triangle;
 import oostd.am.raytracer.streaming.tracer.Collision;
 import oostd.am.raytracer.streaming.tracer.InverseRay;
@@ -40,11 +41,16 @@ public class Debugger {
     /**
      * output lines for geometry
      */
-    public void drawSceneGeometry(List<Triangle> triangles) {
+    public void drawSceneGeometry(List<Triangle> triangles, List<Sphere> spheres) {
         triangles.forEach(triangle -> {
-            debugLineOutput.submit(new Line(triangle.vertices[0], triangle.vertices[1], Color.WHITE));
-            debugLineOutput.submit(new Line(triangle.vertices[1], triangle.vertices[2], Color.WHITE));
-            debugLineOutput.submit(new Line(triangle.vertices[2], triangle.vertices[0], Color.WHITE));
+            debugLineOutput.submit(new Line(triangle.vertices[0], triangle.vertices[1], triangle.material.colorFilter.filter(Color.WHITE)));
+            debugLineOutput.submit(new Line(triangle.vertices[1], triangle.vertices[2], triangle.material.colorFilter.filter(Color.WHITE)));
+            debugLineOutput.submit(new Line(triangle.vertices[2], triangle.vertices[0], triangle.material.colorFilter.filter(Color.WHITE)));
+        });
+        spheres.forEach(sphere -> {
+            debugLineOutput.submit(new Line(sphere.positon.add(new Vector(-sphere.radius, 0, 0)), sphere.positon.add(new Vector(sphere.radius, 0, 0)),sphere.material.colorFilter.filter(Color.WHITE)));
+            debugLineOutput.submit(new Line(sphere.positon.add(new Vector(0, -sphere.radius, 0)), sphere.positon.add(new Vector(0, sphere.radius, 0)),sphere.material.colorFilter.filter(Color.WHITE)));
+            debugLineOutput.submit(new Line(sphere.positon.add(new Vector(0, 0, -sphere.radius)), sphere.positon.add(new Vector(0, 0, sphere.radius)),sphere.material.colorFilter.filter(Color.WHITE)));
         });
         // print axis
         debugLineOutput.submit(new Line(

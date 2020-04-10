@@ -1,6 +1,7 @@
 package oostd.am.raytracer.api.scenery;
 
 import oostd.am.raytracer.api.camera.Color;
+import oostd.am.raytracer.api.geography.UnitVector;
 
 /**
  * filter determines how much light is absorbed and how much is reflected.

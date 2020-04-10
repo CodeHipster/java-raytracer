@@ -37,7 +37,7 @@ public class DepthProcessor implements Flow.Processor<InverseRay, InverseRay>{
 
     @Override
     public void onNext(InverseRay ray) {
-        if(ray.depth < limit || ray.intensity > intensityLimit){
+        if(ray.depth < limit && ray.intensity > intensityLimit){
             int lag = output.submit(ray);
         }else{
         }
