@@ -50,7 +50,7 @@ public class RayTracerService implements oostd.am.raytracer.api.RayTracerService
 
         SubmissionPublisher<InverseRay> inverseRayPublisher = new SubmissionPublisher<>();
 
-        DepthProcessor depthProcessor = new DepthProcessor(5, 0.0001, new PipelineSubmissionPublisher<>(100_000_000)); // limit 100 times higher then the rest to avoid blockades.
+        DepthProcessor depthProcessor = new DepthProcessor(25, 0.0001, new PipelineSubmissionPublisher<>(100_000_000)); // limit 100 times higher then the rest to avoid blockades.
         CollisionProcessor<InverseRay> inverseRayCollisionProcessor = new CollisionProcessor<>(collider, new PipelineSubmissionPublisher<>());
         InverseRayCastProcessor inverseRayCastProcessor = new InverseRayCastProcessor(new PipelineSubmissionPublisher<>(), inverseRayCaster, debugger);
         LightRayCastProcessor lightRayCastProcessor = new LightRayCastProcessor(new PipelineSubmissionPublisher<>(), lightRayCaster);
