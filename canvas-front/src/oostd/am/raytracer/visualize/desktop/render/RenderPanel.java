@@ -9,13 +9,15 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.Flow;
 
+/**
+ * Panel that listens to pixels and draws them on screen with given interval.
+ */
 public class RenderPanel extends JPanel implements PixelSubscriber {
 
-    private volatile BufferedImage imageBuffer;
-    private Resolution resolution;
-    private Flow.Subscription subscription;
+    private final BufferedImage imageBuffer;
+    private final Resolution resolution;
     private long lastRepaint;
-    private long repaintInterval;
+    private final long repaintInterval;
 
     /**
      * @param resolution,  the size of the panel.
@@ -42,7 +44,6 @@ public class RenderPanel extends JPanel implements PixelSubscriber {
 
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
-        this.subscription = subscription;
         subscription.request(Long.MAX_VALUE);
         System.out.println("Render panel subscribed: " + subscription);
     }

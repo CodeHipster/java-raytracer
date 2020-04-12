@@ -8,5 +8,4 @@ import java.util.concurrent.Flow;
  */
 public interface PixelSubscriber extends Flow.Subscriber<Pixel> {
     Resolution getResolution();
-    String getName();
 }

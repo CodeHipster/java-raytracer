@@ -1,6 +1,5 @@
 package oostd.am.raytracer.streaming.pipeline;
 
-import oostd.am.raytracer.api.scenery.PointLight;
 import oostd.am.raytracer.streaming.tracer.Collision;
 import oostd.am.raytracer.streaming.tracer.InverseRay;
 import oostd.am.raytracer.streaming.tracer.LightRay;
@@ -10,10 +9,13 @@ import java.util.List;
 import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
 
+/**
+ * Processor that processes a collision of an InverseRay into multiple LightRays.
+ */
 public class LightRayCastProcessor implements Flow.Processor<Collision<InverseRay>, LightRay> {
 
     private final SubmissionPublisher<LightRay> output;
-    private LightRayCaster lightRayCaster;
+    private final LightRayCaster lightRayCaster;
 
     public LightRayCastProcessor(SubmissionPublisher<LightRay> output, LightRayCaster lightRayCaster) {
         this.output = output;
@@ -36,6 +38,7 @@ public class LightRayCastProcessor implements Flow.Processor<Collision<InverseRa
     @Override
     public void onError(Throwable throwable) {
         System.out.println("Error in LightRayCastProcessor.");
+        throw new RuntimeException(throwable);
     }
 
     @Override

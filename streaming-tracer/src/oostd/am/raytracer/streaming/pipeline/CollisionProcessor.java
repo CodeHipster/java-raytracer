@@ -7,9 +7,12 @@ import oostd.am.raytracer.streaming.tracer.Ray;
 import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
 
+/**
+ * A Flow.Processor that finds a collision point for a ray.
+ */
 public class CollisionProcessor<R extends Ray> implements Flow.Processor<R, Collision<R>> {
 
-    private Collider collider;
+    private final Collider collider;
     private final SubmissionPublisher<Collision<R>> output;
 
     public CollisionProcessor(Collider collider, SubmissionPublisher<Collision<R>> output) {
@@ -30,6 +33,7 @@ public class CollisionProcessor<R extends Ray> implements Flow.Processor<R, Coll
     @Override
     public void onError(Throwable throwable) {
         System.out.println("Error in CollisionProcessor.");
+        throw new RuntimeException(throwable);
     }
 
     @Override

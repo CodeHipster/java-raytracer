@@ -10,14 +10,13 @@ import java.util.concurrent.SubmissionPublisher;
  */
 public class DepthProcessor implements Flow.Processor<InverseRay, InverseRay>{
 
-    private double intensityLimit;
+    private final double intensityLimit;
     private final SubmissionPublisher<InverseRay> output;
-    private int limit;
+    private final int limit;
 
     /**
      * @param depthLimit is the amount of depth a ray can have before it stops being cast further
      * @param intensityLimit is the lower bound of intensity a ray must have to be cast further.
-     * @param publisher
      */
     public DepthProcessor(int depthLimit, double intensityLimit, SubmissionPublisher<InverseRay> publisher){
         this.limit = depthLimit;
@@ -39,13 +38,13 @@ public class DepthProcessor implements Flow.Processor<InverseRay, InverseRay>{
     public void onNext(InverseRay ray) {
         if(ray.depth < limit && ray.intensity > intensityLimit){
             int lag = output.submit(ray);
-        }else{
         }
     }
 
     @Override
     public void onError(Throwable throwable) {
         System.out.println("Error in DepthProcessor.");
+        throw new RuntimeException(throwable);
     }
 
     @Override

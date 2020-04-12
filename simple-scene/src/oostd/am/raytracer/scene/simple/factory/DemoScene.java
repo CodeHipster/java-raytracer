@@ -58,37 +58,14 @@ public class DemoScene extends BaseSceneFactory {
         );
         triangles.addAll(Arrays.asList(frame));
 
-        Triangle[] mirror2 = createPlate(
-                new Vector(-60, 35+2.5, -30),
-                70,
-                new UnitVector(1, 0, 1),
-                new UnitVector(0,1,0),
-                new Material(
-                        10,
-                        0,
-                        1,
-                        1,
-                        false,
-                        new ColorFilter(1f, 1f, 1f))
-                , volumeProperties
-        );
-        triangles.addAll(Arrays.asList(mirror2));
-
-        Triangle[] frame2 = createPlate(
-                new Vector(-60.5, 35+2.5, -30.5),
-                75,
-                new UnitVector(1, 0, 1),
-                new UnitVector(0,1,0),
-                new Material(
-                        1,
-                        1,
-                        1,
-                        0,
-                        false,
-                        new ColorFilter(1f, 1f, 1f))
-                , volumeProperties
-        );
-        triangles.addAll(Arrays.asList(frame2));
+        Sphere reflectiveSphere = new Sphere(new Vector(-130, 0, -70), 60, new Material(
+                100,
+                0,
+                1,
+                1,
+                false,
+                new ColorFilter(1f, 1f, 1f)), volumeProperties);
+        spheres.add(reflectiveSphere);
 
         Sphere transparentSphere = new Sphere(new Vector(20, 15, 10), 15, new Material(
                 100,
@@ -150,7 +127,7 @@ public class DemoScene extends BaseSceneFactory {
                 50);
         triangles.addAll(Arrays.asList(pyramid));
 
-        Triangle[] cubeWhite1 = createCube(new Vector(-50, 5, 40), 10, new UnitVector(-1,0,0), new UnitVector(0,1,0),
+        Triangle[] cubeWhite1 = createCube(new Vector(-50, 10, 40), 20, new UnitVector(-1,0,0), new UnitVector(0,1,0),
                 new Material(
                         100,
                         0.9,
@@ -160,7 +137,7 @@ public class DemoScene extends BaseSceneFactory {
                         new ColorFilter(1, 1, 1)), volumeProperties);
         triangles.addAll(Arrays.asList(cubeWhite1));
 
-        Triangle[] cubeWhite2 = createCube(new Vector(-30, 5, 40), 10, new UnitVector(-1,0,0), new UnitVector(0,1,0),
+        Triangle[] cubeWhite2 = createCube(new Vector(-30, 30, 40), 20, new UnitVector(-1,0,0), new UnitVector(0,1,0),
                 new Material(
                         100,
                         0.9,
@@ -170,7 +147,7 @@ public class DemoScene extends BaseSceneFactory {
                         new ColorFilter(1, 1, 1)), volumeProperties);
         triangles.addAll(Arrays.asList(cubeWhite2));
 
-        Triangle[] cubeWhite3 = createCube(new Vector(-10, 5, 40), 10, new UnitVector(-1,0,0), new UnitVector(0,1,0),
+        Triangle[] cubeWhite3 = createCube(new Vector(-10, 10, 40), 20, new UnitVector(-1,0,0), new UnitVector(0,1,0),
                 new Material(
                         100,
                         0.9,
@@ -180,43 +157,29 @@ public class DemoScene extends BaseSceneFactory {
                         new ColorFilter(1, 1, 1)), volumeProperties);
         triangles.addAll(Arrays.asList(cubeWhite3));
 
+        Triangle[] cubeWhite4 = createCube(new Vector(-30, 10, 60), 20, new UnitVector(-1,0,0), new UnitVector(0,1,0),
+                new Material(
+                        100,
+                        0.9,
+                        1,
+                        0.1,
+                        false,
+                        new ColorFilter(1, 1, 1)), volumeProperties);
+        triangles.addAll(Arrays.asList(cubeWhite4));
 
-        pointLights.add(new PointLight(new Vector(-1000, 500, 200), new Color(0.5, 0.5, 0.5)));
-        pointLights.add(new PointLight(new Vector(0, 500, -100), new Color(0.5, 0.5, 0.5)));
+
+        pointLights.add(new PointLight(new Vector(-3000, 1500, 600), new Color(0.8, 0.8, 0.8)));
+        pointLights.add(new PointLight(new Vector(500, 2000, -1000), new Color(0.5, 0.5, 0.5)));
 
 
 
-        Sphere redSphere = new Sphere(new Vector(-50, 21, 26), 0.8, new Material(
-                100,
-                1,
-                1,
-                0,
-                false,
-                new ColorFilter(1f, 0, 0)), volumeProperties);
-        spheres.add(redSphere);
-        pointLights.add(new PointLight(new Vector(-50, 20, 25), new Color(.5, 0, 0)));
-        Sphere greenSphere = new Sphere(new Vector(-30, 21, 26), 0.8, new Material(
-                100,
-                1,
-                1,
-                0,
-                false,
-                new ColorFilter(0, 1f, 0)), volumeProperties);
-        spheres.add(greenSphere);
-        pointLights.add(new PointLight(new Vector(-30, 20, 25), new Color(0, .5, 0)));
-        Sphere blueSphere = new Sphere(new Vector(-10, 21, 26), 0.8, new Material(
-                100,
-                1,
-                1,
-                0,
-                false,
-                new ColorFilter(0, 0, 1f)), volumeProperties);
-        spheres.add(blueSphere);
-        pointLights.add(new PointLight(new Vector(-10, 20, 25), new Color(0, 0, .5)));
+        pointLights.add(new PointLight(new Vector(-35, 19, 40), new Color(1, 0, 0)));
+        pointLights.add(new PointLight(new Vector(-30, 19, 40), new Color(0, 1, 0)));
+        pointLights.add(new PointLight(new Vector(-25, 19, 40), new Color(0, 0, 1)));
 
         Camera renderCamera = new Camera(
                 new Vector(0, 40, -80),
-                new UnitVector(0, -0.2, 1),
+                new UnitVector(0.1, -0.2, 1),
                 new UnitVector(0, 1, 0)
                 , 0.7,
                 "camera"
@@ -343,7 +306,7 @@ public class DemoScene extends BaseSceneFactory {
                                 0.5,
                                 0,
                                 false,
-                                new ColorFilter(0.529f, 0.808f, 0.922f)),
+                                new ColorFilter(0.2588f, 0.4118f, 0.1843f)),
                         new VolumeProperties(new ColorFilter(1, 1, 1), 1)
                 ),
 
@@ -361,7 +324,7 @@ public class DemoScene extends BaseSceneFactory {
                                 0.5,
                                 0,
                                 false,
-                                new ColorFilter(0.529f, 0.808f, 0.922f)),
+                                new ColorFilter(255f/255f, 8f/255f, 62f/255f)),
                         new VolumeProperties(new ColorFilter(1, 1, 1), 1)
                 ),
 
@@ -378,7 +341,7 @@ public class DemoScene extends BaseSceneFactory {
                                 0.5,
                                 0,
                                 false,
-                                new ColorFilter(0.529f, 0.808f, 0.922f)),
+                                new ColorFilter(0.529f, 0.808f, 0.022f)),
                         new VolumeProperties(new ColorFilter(1, 1, 1), 1)
                 ),
 
@@ -413,7 +376,7 @@ public class DemoScene extends BaseSceneFactory {
                                 0.5,
                                 0,
                                 false,
-                                new ColorFilter(0.529f, 0.808f, 0.922f)),
+                                new ColorFilter(19f/255f, 24f/255f, 98f/255f)),
                         new VolumeProperties(new ColorFilter(1, 1, 1), 1)
                 )
         };

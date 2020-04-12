@@ -9,11 +9,14 @@ import oostd.am.raytracer.api.geography.Vector2D;
 
 import java.util.concurrent.SubmissionPublisher;
 
+/**
+ * Casts rays for given camera into given publisher.
+ */
 public class RayInitializer {
 
-    private Camera camera;
-    private Resolution resolution;
-    private SubmissionPublisher<InverseRay> publisher;
+    private final Camera camera;
+    private final Resolution resolution;
+    private final SubmissionPublisher<InverseRay> publisher;
 
     public RayInitializer(Camera camera, Resolution resolution, SubmissionPublisher<InverseRay> publisher){
         this.camera = camera;
@@ -44,7 +47,6 @@ public class RayInitializer {
                         camera.position,
                         new PixelPosition(x, y));
                 int lag = publisher.submit(ray);
-//                System.out.println("RayInitializer: lag : " + lag);
 
             }
         }

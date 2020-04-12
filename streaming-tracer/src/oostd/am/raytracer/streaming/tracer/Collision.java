@@ -4,6 +4,10 @@ import oostd.am.raytracer.api.geography.Vector;
 import oostd.am.raytracer.api.scenery.SceneObject;
 import oostd.am.raytracer.api.scenery.Triangle;
 
+/**
+ * Object resembling the intersection of a ray with an object from the scene.
+ * @param <R>
+ */
 public class Collision<R extends Ray> {
     public R ray;
     public SceneObject target;

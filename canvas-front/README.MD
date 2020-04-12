@@ -1,32 +1,21 @@
 # desktop-visualizer
-Module that visualizes the raytracer output using java swing.
+Module that visualizes the ray-tracer output using java swing.
 
-It shows 2 windows
-- menu
-- render output
+It has a menu to start the rendering and then creates new windows depending on the amount of camera's in the scene.
 
 ## menu
 The menu makes it possible to:
-- select a scene
-- configure a camera
+- select a scene (TODO)
+- configure a camera (TODO)
 - start rendering
 
-### scene
-yet to figure out
-
-### camera
-Camera consists of a position, orientation and a lens
-The lens is specified in width and height in integers, which corresponds with the window size.
-For each pixel on the lens a ray is cast. The lens is 1 unit in front of the camera position.
-`TODO: make the distance between the camera and lens configurable?`     
-
 ## render output
-The render output window shows the result of the rendering. 
-This window and the rendering output are coupled with an ImageBuffer.
+The render frame shows the result of the rendering. 
+This window and the ray-tracer output are coupled through a shared ImageBuffer.
 The pixels generated from the ray tracers are placed on the image buffer.
-The buffer is painted at an interval on the gui.
+The buffer is painted at an interval on the panel.
 
 # java modules
 This module depends on the raytracer-api during compile time.
-But also on a raytracer-api implementation during runtime. 
-Make sure to add an implementation when running the program. (Add a runtime dependency in Intellij)
+But also on a RayTracerService & SceneService implementations during runtime. 
+Make sure to add the implementations when running the program. (Add a runtime dependency in Intellij)

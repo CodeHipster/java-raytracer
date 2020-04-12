@@ -1,6 +1,5 @@
 package oostd.am.raytracer.streaming.pipeline;
 
-import oostd.am.raytracer.api.debug.Line;
 import oostd.am.raytracer.streaming.debug.Debugger;
 import oostd.am.raytracer.streaming.tracer.Collider;
 import oostd.am.raytracer.streaming.tracer.Collision;
@@ -9,10 +8,13 @@ import oostd.am.raytracer.streaming.tracer.LightRay;
 import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
 
+/**
+ * A Processor that filters lightRays depending if they reach their light.
+ */
 public class LightRayShadowProcessor implements Flow.Processor<LightRay, LightRay> {
-    private SubmissionPublisher<LightRay> output;
-    private Collider collider;
-    private Debugger debugger;
+    private final SubmissionPublisher<LightRay> output;
+    private final Collider collider;
+    private final Debugger debugger;
 
     public LightRayShadowProcessor(SubmissionPublisher<LightRay> output, Collider collider, Debugger debugger) {
         this.output = output;
@@ -48,6 +50,7 @@ public class LightRayShadowProcessor implements Flow.Processor<LightRay, LightRa
     @Override
     public void onError(Throwable throwable) {
         System.out.println("Error in LightRayShadowProcessor.");
+        throw new RuntimeException(throwable);
     }
 
     @Override

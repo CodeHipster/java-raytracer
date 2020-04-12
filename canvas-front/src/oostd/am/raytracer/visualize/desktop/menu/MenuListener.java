@@ -9,12 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
+/**
+ * Listener for actions on the MenuFrame
+ */
 public class MenuListener implements ActionListener {
 
-    private RenderService renderService;
-
-    //TODO: selection window for user to select what scene to use.
-    private SceneService sceneService;
+    private final RenderService renderService;
+    private final SceneService sceneService;
 
     MenuListener(RenderService renderService) {
         this.renderService = renderService;

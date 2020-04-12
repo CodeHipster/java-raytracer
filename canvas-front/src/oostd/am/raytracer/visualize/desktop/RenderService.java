@@ -8,10 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
+/**
+ * Service for starting the ray-tracer.
+ * Uses the first ray-tracer implementation it can find.
+ */
 public class RenderService {
 
-    private RayTracerService rayTracerService;
-    private PixelSubscriberFactory pixelSubscriberFactory;
+    private final RayTracerService rayTracerService;
+    private final PixelSubscriberFactory pixelSubscriberFactory;
 
     public RenderService(PixelSubscriberFactory pixelSubscriberFactory){
         this.pixelSubscriberFactory = pixelSubscriberFactory;
@@ -29,7 +33,6 @@ public class RenderService {
     public void startRender(Scene scene){
         rayTracerService.startRendering(scene, pixelSubscriberFactory);
     }
-
 
     List<RayTracerService> getInstances() {
         ServiceLoader<RayTracerService> services = ServiceLoader.load(RayTracerService.class);

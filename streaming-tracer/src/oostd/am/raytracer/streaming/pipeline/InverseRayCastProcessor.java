@@ -10,17 +10,14 @@ import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
 
 /**
- * Process InverseRays, new rays are published to given publishers.
+ * Process a Collision of an InverseRay into possibly multiple new InverseRays.
  */
 public class InverseRayCastProcessor implements Flow.Processor<Collision<InverseRay>, InverseRay> {
 
-    private Debugger debugger;
+    private final Debugger debugger;
     private final SubmissionPublisher<InverseRay> output;
-    private InverseRayCaster inverseRayCaster;
+    private final InverseRayCaster inverseRayCaster;
 
-    /**
-     * subscribe an inverseRay subscriber and a lightRay subscriber
-     */
     public InverseRayCastProcessor(SubmissionPublisher<InverseRay> inverseRayPublisher, InverseRayCaster inverseRayCaster, Debugger debugger){
         this.debugger = debugger;
         this.output = inverseRayPublisher;
@@ -50,6 +47,7 @@ public class InverseRayCastProcessor implements Flow.Processor<Collision<Inverse
     public void onError(Throwable throwable) {
         //TODO: close?
         System.out.println("Error in InverseRayCastProcessor.");
+        throw new RuntimeException(throwable);
     }
 
     @Override

@@ -4,6 +4,9 @@ import oostd.am.raytracer.api.geography.UnitVector;
 import oostd.am.raytracer.api.geography.Vector;
 import oostd.am.raytracer.api.scenery.Triangle;
 
+/**
+ * Basic definition of a ray
+ */
 public class Ray {
 
     public UnitVector direction;

@@ -15,5 +15,14 @@ implementation of the api
 - first phase: rays without reflection (see release v1)
 - second phase: reflection and refraction (with fresnel)
 
-### side projects
+### demo scene
 
+Render of the demo scene:
+
+![alt text](demo-scene.png)
+
+![alt text](demo-scene.gif)
+
+![alt text](tracing-demo-scene.mp4)
+
+[short clip of the render](tracing-demo-scene.mp4)

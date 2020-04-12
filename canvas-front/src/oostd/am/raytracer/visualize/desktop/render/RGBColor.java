@@ -1,5 +1,8 @@
 package oostd.am.raytracer.visualize.desktop.render;
 
+/**
+ * Color object. each color component(Red Green Blue) can be a value within 0-255
+ */
 public class RGBColor {
     public int r, g, b;
 
@@ -9,18 +12,8 @@ public class RGBColor {
         b = (rgb & 0x000000ff);
     }
 
-    public RGBColor(int r, int g, int b){
-        this.r = r;
-        this.g = g;
-        this.b = b;
-    }
-
     /**
-     * expects the double to be from 0 to 1 for the visible spectrum. anything higher will be capped
-     * @param r
-     * @param g
-     * @param b
-     * @return
+     * expects the double to be from 0 to 1 for the visible spectrum. anything higher will be capped.
      */
     public RGBColor add(double r, double g, double b){
         this.r += (int)(r * 255);
@@ -30,12 +23,11 @@ public class RGBColor {
     }
 
     /**
-     * convert to int where first 2 bytes are untouched, then 2 bytes red, 2 bytes green, 2 bytes blue
-     * @return
+     * convert to int where first 2 bytes are untouched, then 2 bytes red, 2 bytes green, 2 bytes blue.
      */
     public int asInt(){
         //put the colors, capped to bytes, in the correct place in the integer.
-        return (((r > 255)? 255 : r) << 16) + (((g > 255)? 255 : g) << 8) + ((b > 255)? 255 : b);
+        return ((Math.min(r, 255)) << 16) + ((Math.min(g, 255)) << 8) + (Math.min(b, 255));
     }
 
 }

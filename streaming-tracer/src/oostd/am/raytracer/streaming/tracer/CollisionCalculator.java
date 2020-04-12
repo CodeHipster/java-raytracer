@@ -6,7 +6,7 @@ import oostd.am.raytracer.api.scenery.Triangle;
 
 public class CollisionCalculator {
 
-    private static double EPSILON = Math.ulp(1.0);
+    private static final double EPSILON = Math.ulp(1.0);
 
     /**
      * Algorithm from Moller, Trumbore, "Fast, Minimum Storage

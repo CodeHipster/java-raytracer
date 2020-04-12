@@ -15,10 +15,10 @@ import java.util.List;
  * Creates and manages windows for pixel output
  */
 public class ScreenManager implements PixelSubscriberFactory {
-    private List<JFrame> frames;
-    private Rectangle screen;
-    private Resolution renderResolution;
-    private Resolution debugResolution;
+    private final List<JFrame> frames;
+    private final Rectangle screen;
+    private final Resolution renderResolution;
+    private final Resolution debugResolution;
 
     public ScreenManager(Resolution renderResolution, Resolution debugResolution) {
         this.renderResolution = renderResolution;

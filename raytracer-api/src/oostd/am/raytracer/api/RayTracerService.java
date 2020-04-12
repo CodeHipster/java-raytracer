@@ -10,7 +10,6 @@ public interface RayTracerService {
 
     /**
      * This method should immediately return and render asynchronously
-     * @param scene
      */
     void startRendering(Scene scene, PixelSubscriberFactory pixelSubscriberFactory);
 }

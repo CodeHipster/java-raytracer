@@ -15,7 +15,7 @@ public class Collider {
 
     private static final double EPSILON = Math.ulp(1000);
     private final List<Triangle> triangles;
-    private List<Sphere> spheres;
+    private final List<Sphere> spheres;
 
     public Collider(List<Triangle> triangles, List<Sphere> spheres) {
         this.triangles = triangles;

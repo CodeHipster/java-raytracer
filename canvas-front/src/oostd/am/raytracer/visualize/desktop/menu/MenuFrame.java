@@ -5,13 +5,15 @@ import oostd.am.raytracer.visualize.desktop.render.ScreenManager;
 
 import javax.swing.*;
 
+/**
+ * Menu to configure and start the ray-tracer
+ */
 public class MenuFrame extends JFrame {
-    private JButton button;
 
     public MenuFrame(ScreenManager screenManager){
         super("Menu");
 
-        button = new JButton("Start startRendering");
+        JButton button = new JButton("Start startRendering");
         button.setVerticalTextPosition(AbstractButton.CENTER);
         button.setHorizontalTextPosition(AbstractButton.LEADING); //aka LEFT, for left-to-right locales
         button.setActionCommand("startRendering");

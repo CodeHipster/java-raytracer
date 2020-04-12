@@ -8,6 +8,10 @@ import oostd.am.raytracer.api.scenery.Triangle;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Cast rays based on the collision of a ray with an object from the scene.
+ * This casts reflection and/or refraction rays
+ */
 public class InverseRayCaster {
 
     public List<InverseRay> castRay(Collision<InverseRay> collision) {

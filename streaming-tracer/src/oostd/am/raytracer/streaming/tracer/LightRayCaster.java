@@ -10,9 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Cast rays based on the collision of a ray with an object from the scene.
+ * This casts LightRays
+ */
 public class LightRayCaster {
 
-    private List<PointLight> lights;
+    private final List<PointLight> lights;
 
     public LightRayCaster(List<PointLight> lights) {
         this.lights = lights;

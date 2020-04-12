@@ -9,6 +9,9 @@ import oostd.am.raytracer.streaming.tracer.PhongReflection;
 import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
 
+/**
+ * Processor that processes a LightRay into a Pixel
+ */
 public class LightRayPixelProcessor implements Flow.Processor<LightRay, Pixel> {
 
     private final SubmissionPublisher<Pixel> output;
@@ -37,6 +40,7 @@ public class LightRayPixelProcessor implements Flow.Processor<LightRay, Pixel> {
     @Override
     public void onError(Throwable throwable) {
         System.out.println("Error in LightRayPixelProcessor.");
+        throw new RuntimeException(throwable);
     }
 
     @Override

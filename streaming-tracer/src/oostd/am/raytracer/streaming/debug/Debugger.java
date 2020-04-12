@@ -16,9 +16,12 @@ import oostd.am.raytracer.streaming.tracer.LightRay;
 import java.util.List;
 import java.util.concurrent.SubmissionPublisher;
 
+/**
+ * Debugger to draw rays as lines into debugWindows.
+ */
 public class Debugger {
 
-    private SubmissionPublisher<Line> debugLineOutput;
+    private final SubmissionPublisher<Line> debugLineOutput;
     private final PixelPosition pixelToTrace;
 
     public Debugger(List<Window> debugWindows, PixelSubscriberFactory pixelSubscriberFactory, SubmissionPublisher<Line> debugLineOutput, PixelPosition pixelToTrace) {
@@ -78,10 +81,7 @@ public class Debugger {
     }
 
     /**
-     * output a line to object causing shadow.
-     *
-     * @param lightRay
-     * @param distanceToImpact
+     * output a line to scene object causing shadow.
      */
     public void line(LightRay lightRay, double distanceToImpact) {
         if (pixelToTrace.equals(lightRay.pixelPosition)) {
