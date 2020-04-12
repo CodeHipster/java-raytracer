@@ -23,6 +23,4 @@ Render of the demo scene:
 
 ![alt text](demo-scene.gif)
 
-![alt text](tracing-demo-scene.mp4)
-
-[short clip of the render](tracing-demo-scene.mp4)
+Link: [short clip of the render](tracing-demo-scene.mp4)
